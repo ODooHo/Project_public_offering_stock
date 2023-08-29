@@ -1,1 +1,19 @@
-# Project_public_offering_stock
+# 공모주를 쉽게!
+
+**프로젝트 개요:**
+
+
+## 진행 과정:
+
+### 2023-08-23
+- 요구사항 정리 및 프로젝트 개요 설정
+- api명세 / DTO 정리
+
+### 2023-08-28
+- Scrapy 활용한 크롤링/MongoDB에 저장하는 로직 개발
+
+### 2023-08-29
+- 로그인 과정 구현 (Back)
+  JWT/RefreshToken을 이용한 보안 / *추후 카카오|구글 로그인 서비스 추가 계획
+- dto <-> entity간 전환(ModelMapper)로직 개발 (Back)
+- 테스트 DB 구축 및 테스트 완료 (Back)
