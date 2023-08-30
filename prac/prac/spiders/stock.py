@@ -4,8 +4,8 @@ from scrapy import Spider
 from .. import items
 from pymongo import MongoClient
 
-client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
-db = client.test
+#client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
+#db = client.test
 
 class StockSpider(Spider):
     name = 'prac'
@@ -17,14 +17,14 @@ class StockSpider(Spider):
     def parse_start(self, response):
         # Find the total number of items and generate indices for the URLs
         total = 30
-        indices = range(1,total+1)
 
         base_url = "http://www.38.co.kr"
         # for index in indices:
         #     # Generate the link xpath
-        for index in indices:
+        for index in range(1,total+1):
             link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
             
+
             link = response.xpath(link_xpath).get()
 
             if link:
@@ -42,6 +42,6 @@ class StockSpider(Spider):
         item['owner'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[4]/td[2]/text()').get().strip()
         item['locate'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[5]/td[2]/text()').get().strip()
         
-        #yield item
-        db.test.insert_one(dict(item))
+        yield item
         print(item)
+        #db.test.insert_one(dict(item))

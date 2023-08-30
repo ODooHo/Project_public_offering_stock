@@ -18,6 +18,7 @@ NEWSPIDER_MODULE = "prac.spiders"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
+LOG_LEVEL = 'WARNING'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -62,9 +63,9 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "prac.pipelines.PracPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "prac.pipelines.IPOPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

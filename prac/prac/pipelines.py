@@ -8,6 +8,16 @@
 from itemadapter import ItemAdapter
 
 
-class PracPipeline:
+class IPOPipeline:
+    def __init__(self):
+        self.IPO_list = []
+        self.item_count = 0
+
     def process_item(self, item, spider):
+        self.item_count+=1
+        self.IPO_list.append((self.item_count,item))
         return item
+
+    def close_spider(self, spider):
+        print("IPO_list:{}\n".format(self.IPO_list))
+        print("Total number of items in IPO_list:", len(self.IPO_list))
