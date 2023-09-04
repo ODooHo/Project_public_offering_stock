@@ -1,14 +1,15 @@
 import scrapy
 from scrapy import Spider
-
 from .. import items
 from pymongo import MongoClient
+from bs4 import BeautifulSoup
+
 
 #client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
 #db = client.test
 
 class StockSpider(Spider):
-    name = 'prac'
+    name = 'base'
     IPO_list = []
 
     def start_requests(self):
@@ -17,13 +18,14 @@ class StockSpider(Spider):
 
     def parse_start(self, response):
         # Find the total number of items and generate indices for the URLs
-        total = 30
+        #total = 30
 
         base_url = "http://www.38.co.kr"
         # for index in indices:
         #     # Generate the link xpath
-        for index in range(1,total+1):
-            link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
+        for index in range(1):
+            #link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
+            link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[1]/td[1]/a/@href'
             
 
             link = response.xpath(link_xpath).get()
@@ -36,7 +38,7 @@ class StockSpider(Spider):
 
 
     def parse_item(self, response):
-        item = items.StockItem()
+        item = items.BaseItem()
         item['ipo_Name'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
         item['ipo_code'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[4]/text()').get().strip()  
         item['market'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[2]/text()').get().strip()
@@ -52,7 +54,10 @@ class StockSpider(Spider):
         item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
         item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
 
+        html = response.text
+        soup = BeautifulSoup(html,'html.parser')
 
+        print(soup.find(string="공모주"))
         
         yield item
         #db.test.insert_one(dict(item))

@@ -6,7 +6,7 @@
 import scrapy
 
 
-class StockItem(scrapy.Item):
+class BaseItem(scrapy.Item):
     ipo_Name = scrapy.Field() # 공모주 명
     ipo_code = scrapy.Field() # 종목 코드   
     market = scrapy.Field() # 시장 구분
@@ -21,7 +21,15 @@ class StockItem(scrapy.Item):
     chief = scrapy.Field() #주간사
     compete = scrapy.Field() #기관 경쟁률
     commit = scrapy.Field() #의무 보유 확약
-    date = scrapy.Field()
+    date = scrapy.Field() #공모 날짜
+    
+
+
+class IPOItem(scrapy.Item):
+    ipo_Name = scrapy.Field() # 공모주 명
+    date = scrapy.Field() # 공모 날짜 
+    
+    
 
     
     
