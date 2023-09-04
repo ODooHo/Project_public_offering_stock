@@ -14,10 +14,10 @@ class IPOPipeline:
         self.item_count = 0
 
     def process_item(self, item, spider):
-        self.item_count+=1
-        self.IPO_list.append((self.item_count,item))
+        self.IPO_list.append(item)
         return item
 
     def close_spider(self, spider):
-        print("IPO_list:{}\n".format(self.IPO_list))
-        print("Total number of items in IPO_list:", len(self.IPO_list))
+        sorted_list = sorted(self.IPO_list, key=lambda x: x['date'], reverse=True)
+        print("IPO_list:{}\n".format(sorted_list))
+        print("Total number of items in IPO_list:", len(sorted_list))

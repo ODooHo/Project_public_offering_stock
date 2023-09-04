@@ -50,6 +50,7 @@ class StockSpider(Spider):
                 yield scrapy.Request(full_url, callback=self.parse_item)
          
 
+
     def parse_item(self, response):
         item = items.StockItem()
         item['ipo_Name'] = response.xpath('//*[@id="print"]/table//tr[3]/td/table//tr[5]/td/table//tr[2]/td/table//tr[1]/td[1]/text()').get().strip()

@@ -9,6 +9,7 @@ from pymongo import MongoClient
 
 class StockSpider(Spider):
     name = 'prac'
+    IPO_list = []
 
     def start_requests(self):
         url = "http://www.38.co.kr/html/fund/index.htm?o=k"
@@ -37,11 +38,21 @@ class StockSpider(Spider):
     def parse_item(self, response):
         item = items.StockItem()
         item['ipo_Name'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
+        item['ipo_code'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[4]/text()').get().strip()  
         item['market'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[2]/text()').get().strip()
-        item['code'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[4]/text()').get().strip()
         item['owner'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[4]/td[2]/text()').get().strip()
         item['locate'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[5]/td[2]/text()').get().strip()
+        item['seed'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[9]/td[4]/text()').get().strip()
+        item['business'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[3]/td[2]/text()').get().strip()
+        item['ipo_count'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[2]/text()').get().strip()
+        item['face_value'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[4]/text()').get().strip()
+        item['collusion'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[3]/td[2]/text()').get().strip()
+        item['chief'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[5]/td[2]/b/text()').get().strip()
+        item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
+        item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
+        item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
+
+
         
         yield item
-        print(item)
         #db.test.insert_one(dict(item))
