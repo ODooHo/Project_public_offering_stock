@@ -16,7 +16,4 @@ public class SignUpDto {
     private String userPhoneNumber;
     private String userProfile;
 
-
-
-
 }
