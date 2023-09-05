@@ -54,10 +54,6 @@ class StockSpider(Spider):
         item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
         item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
 
-        html = response.text
-        soup = BeautifulSoup(html,'html.parser')
-
-        print(soup.find(string="공모주"))
         
         yield item
         #db.test.insert_one(dict(item))

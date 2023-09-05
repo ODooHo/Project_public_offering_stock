@@ -28,6 +28,8 @@ class BaseItem(scrapy.Item):
 class IPOItem(scrapy.Item):
     ipo_Name = scrapy.Field() # 공모주 명
     date = scrapy.Field() # 공모 날짜 
+    seed = scrapy.Field() # 자본금 
+    holder = scrapy.Field() # 주주
     
     
 
