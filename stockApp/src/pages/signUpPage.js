@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-nat
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { signUpApi } from '../API/AuthApi';
-import signUpStyles from '../styleSheet/signUpStyles';
+import SignUpStyles from '../styleSheet/SignUpStyles';
 // import defaultProfileImage from '../assets/default.jpg';
 const defaultProfileImage = require('../assets/default.jpg');
 
@@ -226,50 +226,50 @@ const signUpPage = () => {
                     />
                 </View>
             </View>
-            {errorMessages.email && <Text style={signUpStyles.errorMessage}>{errorMessages.email}</Text>}
-            {errorMessages.customDomain && <Text style={signUpStyles.errorMessage}>{errorMessages.customDomain}</Text>}
+            {errorMessages.email && <Text style={SignUpStyles.errorMessage}>{errorMessages.email}</Text>}
+            {errorMessages.customDomain && <Text style={SignUpStyles.errorMessage}>{errorMessages.customDomain}</Text>}
             
             <TextInput
-                style={errorMessages.password ? [signUpStyles.input, {borderColor: 'red'}] : signUpStyles.input}
+                style={errorMessages.password ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
                 placeholder="Password"
                 value={userPassword}
                 onChangeText={setUserPassword}
                 secureTextEntry
                 onBlur={handleBlur('password')}
             />
-            {errorMessages.password && <Text style={signUpStyles.errorMessage}>{errorMessages.password}</Text>}
+            {errorMessages.password && <Text style={SignUpStyles.errorMessage}>{errorMessages.password}</Text>}
 
             <TextInput
-                style={errorMessages.passwordCheck ? [signUpStyles.input, {borderColor: 'red'}] : signUpStyles.input}
+                style={errorMessages.passwordCheck ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
                 placeholder="Confirm Password"
                 value={userPasswordCheck}
                 onChangeText={setUserPasswordCheck}
                 secureTextEntry
                 onBlur={handleBlur('passwordCheck')}
             />
-            {errorMessages.passwordCheck && <Text style={signUpStyles.errorMessage}>{errorMessages.passwordCheck}</Text>}
+            {errorMessages.passwordCheck && <Text style={SignUpStyles.errorMessage}>{errorMessages.passwordCheck}</Text>}
 
             <TextInput
-                style={errorMessages.nickname ? [signUpStyles.input, {borderColor: 'red'}] : signUpStyles.input}
+                style={errorMessages.nickname ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
                 placeholder="Nickname"
                 value={userNickname}
                 onChangeText={setUserNickname}
                 onBlur={handleBlur('nickname')}
             />
-            {errorMessages.nickname && <Text style={signUpStyles.errorMessage}>{errorMessages.nickname}</Text>}
+            {errorMessages.nickname && <Text style={SignUpStyles.errorMessage}>{errorMessages.nickname}</Text>}
 
             <TextInput
-                style={errorMessages.phoneNumber ? [signUpStyles.input, {borderColor: 'red'}] : signUpStyles.input}
+                style={errorMessages.phoneNumber ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
                 placeholder="Phone Number"
                 value={userPhoneNumber}
                 onChangeText={setUserPhoneNumber}
                 keyboardType="phone-pad"
                 onBlur={handleBlur('phoneNumber')}
             />
-            {errorMessages.phoneNumber && <Text style={signUpStyles.errorMessage}>{errorMessages.phoneNumber}</Text>}
+            {errorMessages.phoneNumber && <Text style={SignUpStyles.errorMessage}>{errorMessages.phoneNumber}</Text>}
 
-            <TouchableOpacity style={signUpStyles.button} onPress={handleSubmit}>
-                <Text style={signUpStyles.buttonText}>Sign Up</Text>
+            <TouchableOpacity style={SignUpStyles.button} onPress={handleSubmit}>
+                <Text style={SignUpStyles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
         </View>
     );
