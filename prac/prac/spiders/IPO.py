@@ -8,7 +8,7 @@ import copy
 #client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
 #db = client.test
 
-class StockSpider(Spider):
+class Spider(Spider):
     name = 'IPO'
 
     IPO_list = []
@@ -103,7 +103,6 @@ class StockSpider(Spider):
         #temp[6~8] : 당기순이익 
 
     
-
         item['seed'] = temp
         yield item
 
