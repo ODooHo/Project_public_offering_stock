@@ -23,7 +23,7 @@ const SERVER_URL = 'http://15.165.24.146:8080'; // 실제 API 서버의 기본 �
 //   }
 // }
 
-function makeRequest(method, endpoint, data = {}, token = null, isFile = false) {
+async function makeRequest(method, endpoint, data = {}, token = null, isFile = false) {
   try {
       const config = {
           method: method,
@@ -37,7 +37,7 @@ function makeRequest(method, endpoint, data = {}, token = null, isFile = false) 
       }
 
       if (token) {
-        config.headers.Authorization  = 'Beasrer ${token}';
+        config.headers.Authorization  = `Bearer ${token}`;
       }
 
       if (isFile) {
@@ -59,7 +59,6 @@ function makeRequest(method, endpoint, data = {}, token = null, isFile = false) 
       throw error;
   }
 }
-
 
 export const signUpApi = (data) => {
   return makeRequest('post', '/api/auth/signUp', data, null, true);
