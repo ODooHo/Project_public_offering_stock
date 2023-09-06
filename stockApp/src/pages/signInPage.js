@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import signInStyles from '../styleSheet/signInStyle';
+import signInStyles from '../styleSheet/SignInStyle';
+import { signInApi } from '../API/AuthApi';
 
 function signInPage({ navigation }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
 
-  const handleLogin = () => {
-    if (username === 'ham' && password === '0000') {
-      // 로그인 성공 알림
-      Alert.alert('로그인 성공', '환영합니다!', [
-      // 추가적으로 다른 화면으로 이동하는 코드를 여기에 추가할 수 있습니다.
-        { text: "OK", onPress: () => navigation.navigate('Main') }
-      ]);
-    } else {
-      // 로그인 실패 알림
-      Alert.alert('로그인 실패', '아이디 또는 비밀번호가 틀렸습니다.');
+  const handleLogin = async () => {
+    try {
+      const response = await signInApi({ userEmail, userPassword }); // 서버에 로그인 요청
+
+      if (response && response.token) {
+        // 로그인 성공 알림
+        Alert.alert('로그인 성공', '환영합니다!', [
+          { text: "OK", onPress: () => navigation.navigate('Main') }
+        ]);
+      } else {
+        // 로그인 실패 알림
+        Alert.alert('로그인 실패', '아이디 또는 비밀번호가 틀렸습니다.');
+      }
+    } catch (error) {
+      // 네트워크 오류 또는 서버 오류 시
+      Alert.alert('로그인 실패', '서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -24,16 +31,16 @@ function signInPage({ navigation }) {
       <Text style={signInStyles.title}>로그인</Text>
       <TextInput
         style={signInStyles.input}
-        placeholder="아이디"
-        onChangeText={setUsername}
-        value={username}
+        placeholder="이메일"
+        onChangeText={setUserEmail}
+        value={userEmail}
       />
       <TextInput
         style={signInStyles.input}
         placeholder="비밀번호"
         secureTextEntry
-        onChangeText={setPassword}
-        value={password}
+        onChangeText={setUserPassword}
+        value={userPassword}
       />
       <View style={signInStyles.buttonContainer}>
         <Button title="로그인" onPress={handleLogin} />
