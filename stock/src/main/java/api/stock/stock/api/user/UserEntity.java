@@ -10,7 +10,6 @@ import org.modelmapper.ModelMapper;
 @Getter
 @Setter
 @Builder
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name="user")

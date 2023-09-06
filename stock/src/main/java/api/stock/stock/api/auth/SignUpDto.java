@@ -6,7 +6,6 @@ import org.modelmapper.ModelMapper;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignUpDto {

@@ -32,9 +32,10 @@ public class WebSecuriyConfig {
                         -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorizeHttpRequests)
                         -> authorizeHttpRequests.requestMatchers("/", "/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/board/**").authenticated()
-                        .requestMatchers(HttpMethod.POST,"api/board/**").authenticated()
-                        .requestMatchers(HttpMethod.POST,"api/user/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/myPage/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH,"api/myPage/**").authenticated()
+                        .requestMatchers(HttpMethod.GET,"api/community/board/delete/**").authenticated()
+                        //.requestMatchers(HttpMethod.GET,"api/community/board/delete/**").authenticated()
                         .anyRequest().permitAll());
 
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
