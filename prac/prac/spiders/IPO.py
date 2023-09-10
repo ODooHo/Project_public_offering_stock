@@ -47,11 +47,9 @@ class Spider(Spider):
             if link:
                 if link.find('view_02') == 0:
                     full_url = f"{base_url}{link}"
-                    item = copy.deepcopy(item)
                     yield scrapy.Request(full_url, callback=self.parse_holder, meta={'item': item})
                 elif link.find('view_03') == 0:
                     full_url = f"{base_url}{link}"
-                    item = copy.deepcopy(item)
                     yield scrapy.Request(full_url, callback=self.parse_seed, meta={'item': item})
 
 
