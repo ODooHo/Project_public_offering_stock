@@ -17,7 +17,6 @@ public class IpoService {
         IpoEntity ipo = new IpoEntity();
         try{
             ipo = ipoRepository.findByIpoName(ipoName);
-            System.out.println(ipo);
         }catch (Exception e){
             e.printStackTrace();
 
