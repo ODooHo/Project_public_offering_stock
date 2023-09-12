@@ -1,7 +1,12 @@
 package api.stock.stock.api.ipo;
 
+import api.stock.stock.global.response.ResponseDto;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class IpoService {
@@ -13,15 +18,27 @@ public class IpoService {
         this.ipoRepository = ipoRepository;
     }
 
-    public String getIpo(String ipoName){
-        IpoEntity ipo = new IpoEntity();
+    public ResponseDto<IpoEntity> getIpo(String ipoName){
+        IpoEntity result = new IpoEntity();
         try{
-            ipo = ipoRepository.findByIpoName(ipoName);
+            result = ipoRepository.findByIpoName(ipoName);
         }catch (Exception e){
             e.printStackTrace();
-
+            return ResponseDto.setFailed("DataBase Error!");
         }
+    return ResponseDto.setSuccess("Success", result);
+    }
 
-    return ipo.getIpoName();
+
+    public ResponseDto<List<IpoEntity>> getIpoList(){
+        List<IpoEntity> result = new ArrayList<>();
+
+        try{
+            result = ipoRepository.findByOrderByDateDesc();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error!");
+        }
+        return ResponseDto.setSuccess("Success",result);
     }
 }

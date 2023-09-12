@@ -87,7 +87,7 @@ class AuthServiceTest {
         ResponseDto<UserEntity> response = authService.signUp(dto);
 
         // Assertions
-        assertThat(response.getMessage()).isEqualTo("Success!");
+        assertThat(response.getMessage()).isEqualTo("Success");
 
         UserEntity userEntity = response.getData();
         assertThat(userEntity).isNotNull();
@@ -107,7 +107,7 @@ class AuthServiceTest {
 
         ResponseDto<SignInResponseDto> response = authService.signIn(dto);
 
-        assertThat(response.getMessage()).isEqualTo("Success!");
+        assertThat(response.getMessage()).isEqualTo("Success");
 
         SignInResponseDto signInResponseDto = response.getData();
         log.info("User: {}",signInResponseDto.getUser());

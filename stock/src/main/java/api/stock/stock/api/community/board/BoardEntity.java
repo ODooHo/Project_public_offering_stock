@@ -19,11 +19,11 @@ public class BoardEntity {
     private Integer boardId;
     private String boardTitle;
     private String boardContent;
-    private String boardImage;
     private String boardWriterEmail;
     private String boardWriterProfile;
     private String boardWriterNickname;
     private LocalDate boardWriteDate;
+    private String boardImage;
     private int boardClickCount;
     private int boardLikeCount;
     private int boardCommentCount;

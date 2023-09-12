@@ -15,11 +15,11 @@ public class IpoController {
         this.ipoService = ipoService;
     }
 
-    @GetMapping
-    public String getIpo(){
-        String ipoName = "유투바이오";
-
-        String result = ipoService.getIpo(ipoName);
-        return result;
-    }
+//    @GetMapping
+//    public IpoEntity getIpo(){
+//        String ipoName = "유투바이오";
+//
+//        IpoEntity result = ipoService.getIpo(ipoName);
+//        return result;
+//    }
 }

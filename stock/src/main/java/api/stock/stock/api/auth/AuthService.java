@@ -57,7 +57,7 @@ public class AuthService {
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error!");
         }
-        return ResponseDto.setSuccess("Success!",userEntity);
+        return ResponseDto.setSuccess("Success",userEntity);
     }
 
     public ResponseDto<SignInResponseDto> signIn(SignInDto dto){
@@ -89,7 +89,7 @@ public class AuthService {
 
 
         SignInResponseDto signInResponseDto = new SignInResponseDto(token,exprTime,refreshToken,refreshExprTime,userEntity);
-        return ResponseDto.setSuccess("Success!",signInResponseDto);
+        return ResponseDto.setSuccess("Success",signInResponseDto);
     }
 
 

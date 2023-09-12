@@ -18,8 +18,8 @@ public class BoardController {
     }
 
     @PostMapping("/writeBoard")
-    public ResponseDto<BoardEntity> register(){
-        ResponseDto<BoardEntity> result = boardService.register();
+    public ResponseDto<BoardEntity> register(@RequestBody BoardDto requestBody){
+        ResponseDto<BoardEntity> result = boardService.register(requestBody);
         return result;
     }
 
