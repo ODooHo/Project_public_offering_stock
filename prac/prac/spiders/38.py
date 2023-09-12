@@ -36,28 +36,40 @@ class StockSpider(Spider):
 
     def parse_item(self, response):
         item = items.BaseItem()
-        item['ipoName'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
-        item['ipoCode'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[4]/text()').get().strip()  
-        item['owner'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[4]/td[2]/text()').get().strip()
-        item['locate'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[5]/td[2]/text()').get().strip()
-        item['seed'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[9]/td[4]/text()').get().strip()
-        item['business'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[3]/td[2]/text()').get().strip()
-        item['ipoQuantity'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[2]/text()').get().strip()
-        item['faceValue'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[4]/text()').get().strip()
-        item['collusion'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[3]/td[2]/text()').get().strip()
-        item['chief'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[5]/td[2]/b/text()').get().strip()
-        if item['ipoName'] == '두산로보틱스':
-            item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[7]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
-            item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[7]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
-            item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[7]//tr[2]/td[2]/text()').get().strip()
+        name = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
+        result = db.test.find({"ipoName" : name},{"compete" : ""})
+        if(result):
+            compete = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
+            db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
+            return
         else:
+            item['ipoName'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
+            item['ipoCode'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[4]/text()').get().strip()  
+            item['owner'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[4]/td[2]/text()').get().strip()
+            item['locate'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[5]/td[2]/text()').get().strip()
+            item['seed'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[9]/td[4]/text()').get().strip()
+            item['business'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[3]/td[2]/text()').get().strip()
+            item['ipoQuantity'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[2]/text()').get().strip()
+            item['faceValue'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[4]/text()').get().strip()
+            item['collusion'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[3]/td[2]/text()').get().strip()
+            item['chief'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[5]/td[2]/b/text()').get().strip()
             item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
             item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
             item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
 
-        url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all"
-        yield scrapy.Request(url, callback=self.parse_IPO_start, meta={'item': item})
-        
+
+            # if item['ipoName'] == '두산로보틱스':
+            #     item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[7]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
+            #     item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[7]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
+            #     item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[7]//tr[2]/td[2]/text()').get().strip()
+            # else:
+            #     item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
+            #     item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
+            #     item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
+
+            url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all"
+            yield scrapy.Request(url, callback=self.parse_IPO_start, meta={'item': item})
+            
 
 
     def parse_IPO_start(self,response):
@@ -83,6 +95,7 @@ class StockSpider(Spider):
         for index in range(1,5):
             xpath = f'//*[@id="print"]/table//tr[5]/td/table[1]//tr[1]/td[{index}]/a/@href'
             link = response.xpath(xpath).get()
+            print(link)
             if link:
                 if link.find('view_02') == 0:
                     full_url = f"{base_url}{link}"
@@ -114,7 +127,6 @@ class StockSpider(Spider):
         item['possible'] = contents[2]
         item['possiblePercent'] = contents[3]
         item['sharedQuantity'] = contents[4]
-         
 
     def parse_seed(self, response):
         # html = response.text

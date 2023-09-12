@@ -14,15 +14,13 @@ class IPOPipeline:
         self.item_count = 0
 
     def process_item(self, item, spider):
-        client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
-        db = client.test
         self.IPO_list.append(item)
-
-        db.test.insert_one(dict(item))
         return item
 
     def close_spider(self, spider):
         sorted_list = sorted(self.IPO_list, key=lambda x: x['date'], reverse=True)
+        if(len(self.IPO_list == 0)):
+            return
         client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
         db = client.test        
         db.test.insert_one(dict(sorted_list[0]))
