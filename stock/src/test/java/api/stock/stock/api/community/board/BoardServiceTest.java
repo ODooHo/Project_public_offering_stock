@@ -28,12 +28,13 @@ class BoardServiceTest {
         dto.setBoardWriterProfile("1");
         dto.setBoardWriterNickname("1");
         dto.setBoardWriteDate(LocalDate.parse("2023-09-12"));
-        dto.setBoardImage("default.jpg");
+        //dto.setBoardImage("default.jpg");
         dto.setBoardClickCount(1);
         dto.setBoardLikeCount(1);
         dto.setBoardCommentCount(1);
         // When
         ResponseDto<BoardEntity> response = boardService.register(dto);
+        log.info("board {}",response.getData());
         // Then
         assertThat(response.getMessage()).isEqualTo("Success");
         assertThat(response.getData()).isNotNull();

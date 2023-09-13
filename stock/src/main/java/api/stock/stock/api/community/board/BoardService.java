@@ -26,7 +26,7 @@ public class BoardService {
 
     public ResponseDto<BoardEntity> register(BoardDto dto) {
         String boardTitle = dto.getBoardTitle();
-        
+
         BoardEntity board = modelMapper.map(dto,BoardEntity.class);
         //board.setBoardImage(dto.getBoardImageBytes());
         try{
