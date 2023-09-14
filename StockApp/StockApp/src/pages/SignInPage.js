@@ -44,9 +44,9 @@ function SignInPage({ navigation }) {
       />
       <View style={SignInStyles.buttonContainer}>
         <Button title="로그인" onPress={handleLogin} />
-        <Button title="회원가입" onPress={() => navigation.navigate('signUp')} />
+        <Button title="회원가입" onPress={() => navigation.navigate('SignUp')} />
       </View>
-      <Button title="로그인 없이 이용하기" onPress={() => navigation.navigate('Main')} /> 
+      <Button title="로그인 없이 이용하기" onPress={() => navigation.navigate('MainStack')} /> 
     </View>
   );
 }
