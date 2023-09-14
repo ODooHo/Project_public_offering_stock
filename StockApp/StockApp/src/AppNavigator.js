@@ -9,6 +9,8 @@ import SignUpPage from './pages/SignUpPage';
 import MainPage from './pages/MainPage';
 import OtherPage from './pages/OtherPage'; 
 import CommunityPage from './pages/CommunityPage'
+import MyPage from './pages/MyPage';
+import { TradeDetail } from './pages/TradeDetail'
 import { BoardDetail } from './pages/BoardDetail';
 
 
@@ -22,6 +24,7 @@ function TabNavigator() {
       <Tab.Screen name="Other" component={OtherPage} />
       <Tab.Screen name="Main" component={MainPage} />
       <Tab.Screen name="Community" component={CommunityPage} />
+      <Tab.Screen name='My' component={MyPage}/>
       {/* 필요한 만큼 탭 추가 */}
     </Tab.Navigator>
   );
@@ -35,6 +38,7 @@ function AppNavigator() {
         <Stack.Screen name="SignUp" component={SignUpPage} options={{ headerShown: false }} />
         <Stack.Screen name="MainStack" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="BoardDetail" component={BoardDetail} />
+        <Stack.Screen name="TradeDetail" component={TradeDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );
