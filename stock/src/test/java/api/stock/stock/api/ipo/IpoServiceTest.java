@@ -43,6 +43,7 @@ class IpoServiceTest {
         ResponseDto<List<IpoEntity>> response = ipoService.getIpoList();
 
         //Then
+        log.info("List {}" , response.getData());
         assertThat(response.getMessage()).isEqualTo("Success");
 
     }
