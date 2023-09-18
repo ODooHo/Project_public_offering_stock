@@ -13,13 +13,14 @@ class StockSpider(Spider):
     IPO_list = []
 
     def start_requests(self):
-        url = "http://www.38.co.kr/html/fund/index.htm?o=k"
+        #url = "http://www.38.co.kr/html/fund/index.htm?o=k"
+        url = "http://www.38.co.kr/html/fund/index.htm?o=k&page=2"
         yield scrapy.Request(url, self.parse_start)
 
     def parse_start(self, response):
         # Find the total number of items and generate indices for the URLs
         total = 20
-        index = 1
+        index = 26
 
         base_url = "http://www.38.co.kr"
         #     # Generate the link xpath
@@ -38,7 +39,9 @@ class StockSpider(Spider):
         item = items.BaseItem()
         name = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
         result = db.test.find({"ipoName" : name},{"compete" : ""})
-        if(result):
+        a = list(result)
+        print(a)
+        if(len(a)!=0):
             compete = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
             db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
             return
@@ -67,16 +70,16 @@ class StockSpider(Spider):
             #     item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
             #     item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
 
-            url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all"
+            #url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all"
+            url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all&str3=&str4=&page=3"
             yield scrapy.Request(url, callback=self.parse_IPO_start, meta={'item': item})
-            
 
 
     def parse_IPO_start(self,response):
         total = 20 * 2
         base_url = "http://www.ipostock.co.kr"
         item = response.meta['item']
-        index = 1
+        index = 39
         #     # Generate the link xpath
         #for index in range(1,12,2):
         link_xpath = f'//*[@id="print"]/table[1]//tr[4]/td/table//tr[4]/td/table//tr[{index}]/td[3]/a/@href'        
@@ -127,6 +130,10 @@ class StockSpider(Spider):
         item['possible'] = contents[2]
         item['possiblePercent'] = contents[3]
         item['sharedQuantity'] = contents[4]
+        item['sale'] = []
+        item['profit'] = []
+        item['pureProfit'] = []
+        yield item
 
     def parse_seed(self, response):
         # html = response.text
