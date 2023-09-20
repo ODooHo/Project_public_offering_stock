@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Button,
-  FlatList,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
-import {
-  getMyPageApi,
-  updateMyPageApi,
-  createTradeEntryApi,
-} from '../API/MyPageApi';
-
+import { View,Text,Button,FlatList,StyleSheet,TextInput,TouchableOpacity,ActivityIndicator, } from 'react-native';
+import { getMyPageApi,updateMyPageApi,createTradeEntryApi, } from '../API/MyPageApi';
 import { useNavigation } from '@react-navigation/native';
 import TradeDetail from './TradeDetail';
 // MyPageDto 및 PatchUserDto와 관련된 DTO import
