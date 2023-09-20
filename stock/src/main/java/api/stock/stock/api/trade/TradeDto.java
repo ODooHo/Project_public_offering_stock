@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TradeDto {
-    private Integer tradeId;
+    private String userNickname;
     private LocalDate tradeDate;
     private String tradeName;
     private String tradeType;
