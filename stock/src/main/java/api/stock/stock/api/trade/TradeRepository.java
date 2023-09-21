@@ -11,5 +11,7 @@ public interface TradeRepository extends JpaRepository<TradeEntity, String> {
     List<TradeEntity> findByUserNickname(String userNickname);
     boolean existsByTradeName(String tradeName);
 
+    void deleteByTradeName(String tradeName);
+
 
 }

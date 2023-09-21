@@ -41,8 +41,15 @@ public class TradeService {
         return ResponseDto.setSuccess("Success",trade);
     }
 
-
-
+    ResponseDto<?> deleteTrade(String tradeName){
+        try{
+            tradeRepository.deleteByTradeName(tradeName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error");
+        }
+        return ResponseDto.setSuccess("Success",null);
+    }
 
     ResponseDto<List<TradeEntity>> getTradeList(String userNickname){
         List<TradeEntity> tradeList = new ArrayList<>();
