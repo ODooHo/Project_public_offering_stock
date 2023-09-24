@@ -1,7 +1,9 @@
 import axios from 'axios';
-import { getToken, setToken, removeToken } from '../tokenManager';
+import { getToken, setToken, removeToken, setRefreshToken } from '../tokenManager';
 
-const SERVER_URL = 'http://15.165.24.146:8080'; // 실제 API 서버의 기본 주소
+//const SERVER_URL = 'http://15.165.24.146:8080'; //실제 API 서버의 기본 주소
+// const SERVER_URL = 'http://localhost:4000'; //실제 API 서버의 기본 주소
+const SERVER_URL = 'http://15.165.24.146:8080'; //실제 API 서버의 기본 주소
 
 async function makeRequest(method, endpoint, data = {}, token = null, isFile = false, skipTokenFetch = false) {
     try {
@@ -40,8 +42,13 @@ async function makeRequest(method, endpoint, data = {}, token = null, isFile = f
     }
 }
 
-export const SignUpApi = (data) => {
-    return makeRequest('post', '/api/auth/signUp', data, null, true, true);
+export const SignUpApi = async (data) => {
+  try {
+    const response = await makeRequest('POST', '/api/auth/signUp', data, null, false, true);
+    return response;
+  } catch (error) {
+    throw new Error("Signup failed!");
+  }
 };
 
 export const SignInApi = async (data) => {
