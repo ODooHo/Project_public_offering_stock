@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SignUpApi } from '../API/AuthApi';
 import SignUpStyles from '../styleSheet/SignUpStyles';
@@ -120,6 +120,12 @@ const SignUpPage = () => {
 
     return (
         <View style={SignUpStyles.container}>
+            <View style={SignUpStyles.imageContainer}>
+                <Image
+                    source={require('../assets/default.jpg')} // 이미지 경로
+                    style={SignUpStyles.profileImage} // 스타일 적용 (동그라미 스타일)
+                />
+            </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TextInput
                     style={errorMessages.email ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}

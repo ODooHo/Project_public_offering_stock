@@ -42,8 +42,21 @@ const signUpStyles = StyleSheet.create({
     profileImage: {
         width: 100,
         height: 100,
-        borderRadius: 50, // 반지름을 width, height의 절반으로 설정하여 원형 모양으로 만듭니다.
+        borderRadius: 50,
         resizeMode: 'cover',
+    },
+    imageContainer: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        overflow: 'hidden', 
+        alignSelf: 'center',
+        justifyContent: 'center', 
+        marginBottom: 20,
+    },
+    profileImage: {
+        width: '100%',
+        height: '100%',
     },
 });
 
