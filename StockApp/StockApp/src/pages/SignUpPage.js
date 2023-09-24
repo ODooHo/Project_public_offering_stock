@@ -102,6 +102,7 @@ const SignUpPage = () => {
         formData.append('userPassword', userPassword);
         formData.append('userNickname', userNickname);
         formData.append('userPhoneNumber', userPhoneNumber);
+        formData.append('userProfile', 'default.jpg');
 
         try {
             const response = await SignUpApi(formData);
