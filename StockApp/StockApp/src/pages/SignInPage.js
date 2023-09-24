@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { setRefreshToken, setToken } from '../tokenManager';
+import { getAccessTokenApi } from '../API/AuthApi';
 
 const SignInPage = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState('');
@@ -9,7 +11,10 @@ const SignInPage = ({ navigation }) => {
     try {
       const response = await SignInApi({ userEmail, userPassword });
 
-      if (response && response.token) {
+      if (response && response.data && response.data.token) {
+        await setToken(response.data.token);
+        await setRefreshToken(response.data.refreshToken)
+
         Alert.alert('로그인 성공', '환영합니다!', [
           { text: "OK", onPress: () => navigation.navigate('Main') }
         ]);
@@ -24,6 +29,21 @@ const SignInPage = ({ navigation }) => {
   const handleSignUp = () => {
     navigation.navigate('SignUp');
   };
+
+  const fetchDataWithToken = async () => {
+    try {
+      const token = await getToken();
+      const response = await getAccessTokenApi(token);
+      if (response && response.data && response.data.token) {
+        await setToken(response.data.token);
+      }
+    } catch (error) {
+    }
+  };
+
+  useEffect(() => {
+    fetchDataWithToken();
+  }, []);
 
 
   return (
