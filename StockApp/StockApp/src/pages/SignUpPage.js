@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { SignUpApi } from '../API/AuthApi';
 import SignUpStyles from '../styleSheet/SignUpStyles';
-// import defaultProfileImage from '../assets/default.jpg';
-const defaultProfileImage = require('../assets/default.jpg');
-
+import SignInPage from './SignInPage';
 
 const SignUpPage = () => {
     const [userEmail, setUserEmail] = useState('');
@@ -14,16 +11,9 @@ const SignUpPage = () => {
     const [userPasswordCheck, setUserPasswordCheck] = useState('');
     const [userNickname, setUserNickname] = useState('');
     const [userPhoneNumber, setUserPhoneNumber] = useState('');
-    const [userProfile, setUserProfile] = useState(defaultProfileImage);
-    // const [userProfile, setUserProfile] = useState({
-    //     uri: defaultProfileImage,
-    //     type: null,
-    //     name: null
-    // });
-
     const [emailDomain, setEmailDomain] = useState('domain 선택');
     const [customDomain, setCustomDomain] = useState('');
-
+    const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
 
     useEffect(() => {
         if (emailDomain === 'custom') {
@@ -53,35 +43,35 @@ const SignUpPage = () => {
         switch(field) {
             case 'email':
                 if (!userEmail) {
-                    errors.email = "Email is required.";
+                    errors.email = "이메일을 입력하세요.";
                     if (emailDomain === 'custom' && !customDomain) {
-                        errors.customDomain = "Domain is required.";
+                        errors.customDomain = "도메인을 입력하세요.";
                     } else {
                         errors.customDomain = "";
                     }
                 } else {
-                    errors.email = ""; // Clear email error
+                    errors.email = ""; // 이메일 오류 제거
                     if (emailDomain === 'custom' && !customDomain) {
-                        errors.customDomain = "Domain is required.";
+                        errors.customDomain = "도메인을 입력하세요.";
                     } else {
                         errors.customDomain = "";
                     }
                 }
                 break;
             case 'password':
-                if (!userPassword) errors.password = "Password is required.";
+                if (!userPassword) errors.password = "비밀번호를 입력하세요.";
                 else errors.password = ""; 
                 break;
             case 'passwordCheck':
-                if (userPassword !== userPasswordCheck) errors.passwordCheck = "Passwords do not match!";
+                if (userPassword !== userPasswordCheck) errors.passwordCheck = "비밀번호가 일치하지 않습니다!";
                 else errors.passwordCheck = ""; 
                 break;
             case 'nickname':
-                if (!userNickname) errors.nickname = "Nickname is required.";
+                if (!userNickname) errors.nickname = "닉네임을 입력하세요.";
                 else errors.nickname = ""; 
                 break;
             case 'phoneNumber':
-                if (!userPhoneNumber) errors.phoneNumber = "Phone Number is required.";
+                if (!userPhoneNumber) errors.phoneNumber = "전화번호를 입력하세요.";
                 else errors.phoneNumber = ""; 
                 break;
             default:
@@ -94,84 +84,51 @@ const SignUpPage = () => {
     const handleSubmit = async () => {
         let errors = {};
 
-        // 이메일 주소 결합
         const fullEmail = `${userEmail}@${emailDomain === 'custom' ? customDomain : emailDomain}`;
     
-        // if (!fullEmail) errors.email = "Email is required.";
-        if (!fullEmail.includes('@') || !fullEmail.split('@')[1]) errors.email = "Complete email is required.";
-        if (!userPassword) errors.password = "Password is required.";
-        if (userPassword !== userPasswordCheck) errors.passwordCheck = "Passwords do not match!";
-        if (!userNickname) errors.nickname = "Nickname is required.";
-        if (!userPhoneNumber) errors.phoneNumber = "Phone Number is required.";
-
+        if (!fullEmail.includes('@') || !fullEmail.split('@')[1]) errors.email = "올바른 이메일을 입력하세요.";
+        if (!userPassword) errors.password = "비밀번호를 입력하세요.";
+        if (userPassword !== userPasswordCheck) errors.passwordCheck = "비밀번호가 일치하지 않습니다!";
+        if (!userNickname) errors.nickname = "닉네임을 입력하세요.";
+        if (!userPhoneNumber) errors.phoneNumber = "전화번호를 입력하세요.";
         
         setErrorMessages(errors);
 
         if (Object.keys(errors).length) return;
 
-        const data = {
-            userEmail,
-            userPassword,
-            userNickname,
-            userPhoneNumber,
-        };
+        const formData = new FormData();
 
-        if (userProfile.uri !== defaultProfileImage){
-            data.userProfile = {
-                uri: userProfile.uri,
-                type: userProfile.type,
-                name: userProfile.name
-            };
-        }
+        formData.append('userEmail', fullEmail);
+        formData.append('userPassword', userPassword);
+        formData.append('userNickname', userNickname);
+        formData.append('userPhoneNumber', userPhoneNumber);
 
         try {
-            const response = await SignUpApi(data);
+            const response = await SignUpApi(formData);
             console.log(response);
+
+            showSignUpSuccessPopup();
+            SignInPage.navigateToLoginPage();
         } catch (error) {
-            Alert.alert('Signup failed', error.message);
+            Alert.alert('회원가입 실패', error.message);
         }
     };
 
-    const handleImagePicker = () => {
-        launchImageLibrary({
-              mediaType: 'photo',
-              includeBase64: false,
-              maxHeight: 200,
-              maxWidth: 200,
-        }, (response) => {
-            if (!response.didCancel && !response.error) {
-                // setUserProfile(response);
-                // }
-                setUserProfile({
-                    uri: response.uri,
-                    type: response.type,
-                    name: response.fileName
-                });
-            }
-        });
+    const closeSignUpSuccessPopup = () => {
+        setIsSignUpSuccess(false);
     };
 
     return (
         <View style={SignUpStyles.container}>
-            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop:-30, marginBottom: 30 }}>
-                <TouchableOpacity onPress={handleImagePicker}>
-                    <Image
-                        source={typeof userProfile === 'number' ? userProfile : { uri: userProfile.uri }}
-                        style={SignUpStyles.profileImage}
-                    />
-                </TouchableOpacity>
-                <Text>Tap to change profile image</Text>
-            </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TextInput
                     style={errorMessages.email ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
-                    placeholder="Email       "
+                    placeholder="이메일"
                     value={userEmail}
                     onChangeText={text => {
                         const [name, domain] = text.split('@');
                         setUserEmail(name);
                     }}
-                    // onChangeText={setUserEmail}
                     keyboardType="email-address"
                     onBlur={handleBlur('email')}
                 />
@@ -182,23 +139,22 @@ const SignUpPage = () => {
                             style={{
                                 height: 40,
                                 width: 150,
-                                color: 'black', // 텍스트 색상을 검은색으로 설정
+                                color: 'black',
                                 borderColor: errorMessages.customDomain ? 'red' : 'gray',
-                                // borderColor: 'gray', // 테두리 색상 설정
-                                borderWidth: 1, // 테두리 두께 설정
-                                paddingHorizontal: 8, // 좌우 패딩 설정
+                                borderWidth: 1,
+                                paddingHorizontal: 8,
                             }}
                             placeholder="직접입력"
-                            placeholderTextColor="lightgray" // 플레이스홀더 글자 색상 설정
+                            placeholderTextColor="lightgray"
                             value={customDomain}
                             onChangeText={setCustomDomain}
-                            editable={true} // 텍스트 입력 가능하도록 설정
+                            editable={true}
                             onBlur={handleBlur('email')}
                         />
                     ) : (
                         <TextInput
                             style={{ height: 40, width: 150 }}
-                            placeholder="Domain"
+                            placeholder="도메인"
                             value={emailDomain}
                             editable={false}
                         />
@@ -219,8 +175,8 @@ const SignUpPage = () => {
                             }
                         }}
                         setItems={setItems}
-                        containerStyle={{ height: 10, width: 135, zIndex: 10000000000000000000000000}}
-                        placeholder="Select domain"
+                        containerStyle={{ height: 10, width: 135, zIndex: 1000}}
+                        placeholder="도메인 선택"
                         modal
                         dropDownDirection="TOP"
                     />
@@ -231,7 +187,7 @@ const SignUpPage = () => {
             
             <TextInput
                 style={errorMessages.password ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
-                placeholder="Password"
+                placeholder="비밀번호"
                 value={userPassword}
                 onChangeText={setUserPassword}
                 secureTextEntry
@@ -241,7 +197,7 @@ const SignUpPage = () => {
 
             <TextInput
                 style={errorMessages.passwordCheck ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
-                placeholder="Confirm Password"
+                placeholder="비밀번호 확인"
                 value={userPasswordCheck}
                 onChangeText={setUserPasswordCheck}
                 secureTextEntry
@@ -251,7 +207,7 @@ const SignUpPage = () => {
 
             <TextInput
                 style={errorMessages.nickname ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
-                placeholder="Nickname"
+                placeholder="닉네임"
                 value={userNickname}
                 onChangeText={setUserNickname}
                 onBlur={handleBlur('nickname')}
@@ -260,7 +216,7 @@ const SignUpPage = () => {
 
             <TextInput
                 style={errorMessages.phoneNumber ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
-                placeholder="Phone Number"
+                placeholder="전화번호"
                 value={userPhoneNumber}
                 onChangeText={setUserPhoneNumber}
                 keyboardType="phone-pad"
@@ -269,8 +225,15 @@ const SignUpPage = () => {
             {errorMessages.phoneNumber && <Text style={SignUpStyles.errorMessage}>{errorMessages.phoneNumber}</Text>}
 
             <TouchableOpacity style={SignUpStyles.button} onPress={handleSubmit}>
-                <Text style={SignUpStyles.buttonText}>Sign Up</Text>
+                <Text style={SignUpStyles.buttonText}>가입하기</Text>
             </TouchableOpacity>
+
+            {isSignUpSuccess && (
+                <SignUpSuccessPopup
+                    visible={isSignUpSuccess}
+                    onClose={closeSignUpSuccessPopup}
+                />
+            )}
         </View>
     );
 }
