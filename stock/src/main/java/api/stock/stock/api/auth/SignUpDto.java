@@ -1,8 +1,6 @@
 package api.stock.stock.api.auth;
 
-import api.stock.stock.api.user.UserEntity;
 import lombok.*;
-import org.modelmapper.ModelMapper;
 
 @Getter
 @Setter

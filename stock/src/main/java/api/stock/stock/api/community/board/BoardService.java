@@ -3,6 +3,7 @@ package api.stock.stock.api.community.board;
 import api.stock.stock.global.response.ResponseDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,7 +45,7 @@ public class BoardService {
             board = boardRepository.findByBoardId(boardId);
         }catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed("DataBase Error!");
+            return ResponseDto.setFailed("DataBase Error");
         }
         return ResponseDto.setSuccess("Success",board);
     }
@@ -55,10 +56,31 @@ public class BoardService {
             boardList = boardRepository.findByOrderByBoardWriteDateDescBoardIdDesc();
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseDto.setFailed("DataBase Error!");
+            return ResponseDto.setFailed("DataBase Error");
         }
 
         return ResponseDto.setSuccess("Success", boardList);
+    }
+
+    public ResponseDto<PatchBoardResponseDto> patchBoard(Integer boardId, PatchBoardDto dto){
+        BoardEntity board = boardRepository.findByBoardId(boardId);
+        String boardTitle = dto.getBoardTitle();
+        String boardContent = dto.getBoardContent();
+        LocalDate date = dto.getBoardWriteDate();
+
+        try{
+            board.setBoardTitle(boardTitle);
+            board.setBoardContent(boardContent);
+            board.setBoardWriteDate(date);
+            boardRepository.save(board);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error");
+        }
+        PatchBoardResponseDto response = new PatchBoardResponseDto(board);
+
+
+        return ResponseDto.setSuccess("Success",response);
     }
 
 
@@ -70,7 +92,7 @@ public class BoardService {
             boardRepository.save(boardEntity);
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseDto.setFailed("DataBase Error!");
+            return ResponseDto.setFailed("DataBase Error");
         }
         return ResponseDto.setSuccess("Success",null);
     }

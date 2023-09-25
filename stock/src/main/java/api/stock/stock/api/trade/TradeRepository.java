@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 @Repository
 @Transactional
-public interface TradeRepository extends JpaRepository<TradeEntity, String> {
+public interface TradeRepository extends JpaRepository<TradeEntity, Integer> {
     List<TradeEntity> findByUserNickname(String userNickname);
     boolean existsByTradeName(String tradeName);
 

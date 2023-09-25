@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface IpoRepository extends MongoRepository<IpoEntity,String> {
+public interface IpoRepository extends MongoRepository<IpoEntity,Integer> {
     IpoEntity findByIpoName(String ipoName);
     List<IpoEntity> findByOrderByDateDesc();
 

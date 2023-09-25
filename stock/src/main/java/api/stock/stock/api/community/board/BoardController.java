@@ -35,6 +35,12 @@ public class BoardController {
         return result;
     }
 
+    @PatchMapping("/{boardId}/edit")
+    public ResponseDto<PatchBoardResponseDto> patchBoard(@PathVariable Integer boardId, @RequestBody PatchBoardDto requestBody){
+        ResponseDto<PatchBoardResponseDto> result = boardService.patchBoard(boardId, requestBody);
+        return result;
+    }
+
 
 //    @GetMapping("/{boardId}")
 //    public ResponseDto<?>increaseView(@PathVariable Integer boardId){

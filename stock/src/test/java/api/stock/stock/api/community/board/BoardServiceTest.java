@@ -40,4 +40,21 @@ class BoardServiceTest {
         assertThat(response.getData()).isNotNull();
     }
 
+    @Test
+    public void patchBoard(){
+        //given
+        PatchBoardDto dto = new PatchBoardDto();
+        Integer boardId = 1;
+        dto.setBoardContent("patch");
+        dto.setBoardTitle("Patch");
+        dto.setBoardWriteDate(LocalDate.parse("2023-10-10"));
+        //when
+        ResponseDto<PatchBoardResponseDto> response = boardService.patchBoard(boardId,dto);
+        //then
+        log.info("board {}",response.getData());
+        assertThat(response.getMessage()).isEqualTo("Success");
+        assertThat(response.getData()).isNotNull();
+    }
+
+
 }
