@@ -3,6 +3,7 @@ import { View,Text,Button,FlatList,StyleSheet,TextInput,TouchableOpacity,Activit
 import { getMyPageApi,updateMyPageApi,createTradeEntryApi, } from '../API/MyPageApi';
 import { useNavigation } from '@react-navigation/native';
 import TradeDetail from './TradeDetail';
+import { removeToken } from '../tokenManager';
 // MyPageDto 및 PatchUserDto와 관련된 DTO import
 
 const MyPage = () => {
@@ -68,6 +69,16 @@ const MyPage = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await removeToken();
+      Alert.alert('로그아웃', '로그아웃되었습니다.');
+      navigation.navigate('SignIn');
+    } catch (error) {
+      Alert.alert('로그아웃 실패', '로그아웃을 실패했습니다.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       {loading ? (
@@ -81,7 +92,6 @@ const MyPage = () => {
           <Text style={styles.userInfo}>
             닉네임: {userProfile.userNickname}
           </Text>
-          {/* 기타 정보 표시 */}
         </View>
       )}
 
@@ -119,6 +129,14 @@ const MyPage = () => {
           </View>
         )}
       />
+
+      {/* 로그아웃 버튼 */}
+      <TouchableOpacity
+        onPress={handleLogout}
+        style={styles.actionButton}
+      >
+        <Text style={styles.actionButtonText}>로그아웃</Text>
+      </TouchableOpacity>
     </View>
   );
 };
