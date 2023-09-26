@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
 import MainPage from './pages/MainPage';
@@ -12,7 +11,7 @@ import CommunityPage from './pages/CommunityPage'
 import MyPage from './pages/MyPage';
 import { TradeDetail } from './pages/TradeDetail'
 import { BoardDetail } from './pages/BoardDetail';
-
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 const Stack = createStackNavigator();
@@ -25,7 +24,6 @@ function TabNavigator() {
       <Tab.Screen name="Main" component={MainPage} />
       <Tab.Screen name="Community" component={CommunityPage} />
       <Tab.Screen name='My' component={MyPage}/>
-      {/* 필요한 만큼 탭 추가 */}
     </Tab.Navigator>
   );
 }
@@ -35,7 +33,7 @@ function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="SignIn" component={SignInPage} options={{ headerShown: false }} />
-        <Stack.Screen name="SignUp" component={SignUpPage} options={{ headerShown: false }} />
+        <Stack.Screen name="SignUp" component={SignUpPage} options={{ headerShown: true}} />
         <Stack.Screen name="MainStack" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="BoardDetail" component={BoardDetail} />
         <Stack.Screen name="TradeDetail" component={TradeDetail} />
