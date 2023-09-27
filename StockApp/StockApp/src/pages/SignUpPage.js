@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-nat
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SignUpApi } from '../API/AuthApi';
 import SignUpStyles from '../styleSheet/SignUpStyles';
-import SignInPage from './SignInPage';
 
 const SignUpPage = ({ navigation }) => {
     const [userEmail, setUserEmail] = useState('');
@@ -13,7 +12,6 @@ const SignUpPage = ({ navigation }) => {
     const [userPhoneNumber, setUserPhoneNumber] = useState('');
     const [emailDomain, setEmailDomain] = useState('domain 선택');
     const [customDomain, setCustomDomain] = useState('');
-    const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
 
     useEffect(() => {
         if (emailDomain === 'custom') {
@@ -26,7 +24,7 @@ const SignUpPage = ({ navigation }) => {
         { label: 'gmail.com', value: 'gmail.com' },
         { label: 'naver.com', value: 'naver.com' },
         { label: 'daum.net', value: 'daum.net' },
-        { label: 'Custom...', value: 'custom' }
+        { label: '직접입력', value: 'custom' }
     ]);
 
     const [errorMessages, setErrorMessages] = useState({
@@ -113,16 +111,11 @@ const SignUpPage = ({ navigation }) => {
 
             Alert.alert('회원가입 성공', '회원가입이 성공적으로 완료되었습니다!', [{
                 text: '확인',
-                onPress: () => navigation.navigate('SignIn') //확인 버튼 누르면 로그인 페이지로 이동
+                onPress: () => navigation.navigate('SignIn')
             }]);
-            SignInPage.navigateToLoginPage();
         } catch (error) {
             Alert.alert('회원가입 실패', error.message);
         }
-    };
-
-    const closeSignUpSuccessPopup = () => {
-        setIsSignUpSuccess(false);
     };
 
     return (
@@ -135,7 +128,7 @@ const SignUpPage = ({ navigation }) => {
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TextInput
-                    style={errorMessages.email ? [SignUpStyles.input, {borderColor: 'red'}] : SignUpStyles.input}
+                    style={errorMessages.email ? [SignUpStyles.emailInput, {borderColor: 'red'}] : SignUpStyles.emailInput}
                     placeholder="이메일"
                     value={userEmail}
                     onChangeText={text => {
@@ -149,14 +142,14 @@ const SignUpPage = ({ navigation }) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     {emailDomain === 'custom' ? (
                         <TextInput
-                            style={{
-                                height: 40,
-                                width: 150,
-                                color: 'black',
-                                borderColor: errorMessages.customDomain ? 'red' : 'gray',
-                                borderWidth: 1,
-                                paddingHorizontal: 8,
-                            }}
+                            style={[
+                                SignUpStyles.input,
+                                {
+                                    borderColor:  errorMessages.customDomain ? 'red' : 'gray',
+                                    width: 95,
+                                    marginBottom: 10
+                                }
+                            ]}
                             placeholder="직접입력"
                             placeholderTextColor="lightgray"
                             value={customDomain}
@@ -166,14 +159,14 @@ const SignUpPage = ({ navigation }) => {
                         />
                     ) : (
                         <TextInput
-                            style={{ height: 40, width: 150 }}
+                            style={{ height: 40, width: 95 }}
                             placeholder="도메인"
                             value={emailDomain}
                             editable={false}
                         />
                     )}
                 </View>
-                <View style={{ marginLeft: -65, marginBottom: 50}}>
+                <View style={{ marginBottom: 10}}>
                     <DropDownPicker
                         open={open}
                         value={emailDomain}
@@ -188,10 +181,13 @@ const SignUpPage = ({ navigation }) => {
                             }
                         }}
                         setItems={setItems}
-                        containerStyle={{ height: 10, width: 135, zIndex: 1000}}
+                        containerStyle={{ width: 115, zIndex: 100, marginLeft: 5 }}
                         placeholder="도메인 선택"
                         modal
                         dropDownDirection="TOP"
+                        // style={{ width: 120 }}
+                        itemStyle={{ justifyContent: 'flex-start' }}
+                        labelStyle={{ fontSize: 13, textAlign: 'left', marginVertical: 5 }}
                     />
                 </View>
             </View>
@@ -240,13 +236,6 @@ const SignUpPage = ({ navigation }) => {
             <TouchableOpacity style={SignUpStyles.button} onPress={handleSubmit}>
                 <Text style={SignUpStyles.buttonText}>가입하기</Text>
             </TouchableOpacity>
-
-            {isSignUpSuccess && (
-                <SignUpSuccessPopup
-                    visible={isSignUpSuccess}
-                    onClose={closeSignUpSuccessPopup}
-                />
-            )}
         </View>
     );
 }
