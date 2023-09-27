@@ -5,8 +5,8 @@ from pymongo import MongoClient
 from bs4 import BeautifulSoup
 import copy
 
-#client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
-#db = client.test
+client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
+db = client.test
 
 class Spider(Spider):
     name = 'IPO'

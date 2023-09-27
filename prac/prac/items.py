@@ -16,7 +16,7 @@ class BaseItem(scrapy.Item):
     business = scrapy.Field() # 업종
     ipoQuantity = scrapy.Field() #공모주식수
     faceValue = scrapy.Field() #액면가
-    collusion = scrapy.Field() #공모가
+    collusion = scrapy.Field() #희망 공모가
     chief = scrapy.Field() #주간사
     compete = scrapy.Field() #기관 경쟁률
     commit = scrapy.Field() #의무 보유 확약
@@ -29,6 +29,7 @@ class BaseItem(scrapy.Item):
     sale = scrapy.Field() #매출액
     profit = scrapy.Field() #영업이익
     pureProfit = scrapy.Field() #순 이익
+    finalCollusion = scrapy.Field #확정 공모가
     
 
 

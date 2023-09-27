@@ -8,32 +8,37 @@ from bs4 import BeautifulSoup
 client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
 db = client.test
 
-class StockSpider(Spider):
-    name = 'base'
+class UpdateSpider(Spider):
+    name = 'update'
     IPO_list = []
 
     def start_requests(self):
-        url = "http://www.38.co.kr/html/fund/index.htm?o=k"
-        #url = "http://www.38.co.kr/html/fund/index.htm?o=k&page=2"
-        yield scrapy.Request(url, self.parse_start)
+        #url = "http://www.38.co.kr/html/fund/index.htm?o=k"
+        for index in range(1,4):
+            url = f"http://www.38.co.kr/html/fund/index.htm?o=k&page={index}"
+            print(url)
+            yield scrapy.Request(url, self.parse_start)
 
     def parse_start(self, response):
         # Find the total number of items and generate indices for the URLs
-        total = 20
+        total = 30
         index = 1
 
         base_url = "http://www.38.co.kr"
         #     # Generate the link xpath
-        #for index in range(1,6):
-        link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
-        #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a
-        link = response.xpath(link_xpath).get()
+        for index in range(1,total+1):
+            a = []
+            name = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/font/text()').get()
+            compete = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[5]/text()').get().strip()
+            collusion = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[3]/text()').get().strip()
+            print(name)
+            db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
+            db.test.update_one({"ipoName" : name} , {"$set":{"finalCollusion" : collusion}})
+            #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[5] 경쟁률
+            #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[3] 확정 공모가
+            #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/font 
 
 
-        if link:
-            # Create the full link URL by joining base_url and link
-            full_link_url = f"{base_url}{link}"
-            yield scrapy.Request(full_link_url, callback=self.parse_item)
 
     def parse_item(self, response):
         item = items.BaseItem()
