@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const SERVER_URL = 'http://15.165.24.146:8080';
+const SERVER_URL = 'http://localhost:4000'; //실제 API 서버의 기본 주소
+// const SERVER_URL = 'http://15.165.24.146:8080';
 
 export const getMyPageApi = async (token) => {
   try {
