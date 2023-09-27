@@ -13,7 +13,16 @@ const signUpStyles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 10,
-        borderRadius: 5
+        borderRadius: 5,
+    },
+    emailInput: {
+        padding: 12,
+        fontSize: 16,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        borderRadius: 5,
+        width: 100,
     },
     inputError: {
         borderColor: 'red'
@@ -40,20 +49,17 @@ const signUpStyles = StyleSheet.create({
         alignItems: 'center'
     },
     profileImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
         resizeMode: 'cover',
     },
     imageContainer: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 120,
+        height: 120,
+        borderRadius: 100,
         overflow: 'hidden', 
         alignSelf: 'center',
         justifyContent: 'center', 
-        marginBottom: 45,
-        marginTop: -55
+        marginBottom: 35,
+        marginTop: -45
     },
     profileImage: {
         width: '100%',

@@ -33,7 +33,7 @@ function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="SignIn" component={SignInPage} options={{ headerShown: false }} />
-        <Stack.Screen name="SignUp" component={SignUpPage} options={{ headerShown: true}} />
+        <Stack.Screen name="SignUp" component={SignUpPage} options={{ headerShown: true, headerTransparent: true, headerTitle: '', headerBackTitleVisible: false }} />
         <Stack.Screen name="MainStack" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="BoardDetail" component={BoardDetail} />
         <Stack.Screen name="TradeDetail" component={TradeDetail} />
