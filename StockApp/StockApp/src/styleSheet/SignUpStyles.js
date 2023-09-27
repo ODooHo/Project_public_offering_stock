@@ -12,7 +12,7 @@ const signUpStyles = StyleSheet.create({
         fontSize: 16,
         borderColor: 'gray',
         borderWidth: 1,
-        marginBottom: 8,
+        marginBottom: 10,
         borderRadius: 5
     },
     inputError: {
@@ -52,7 +52,8 @@ const signUpStyles = StyleSheet.create({
         overflow: 'hidden', 
         alignSelf: 'center',
         justifyContent: 'center', 
-        marginBottom: 20,
+        marginBottom: 45,
+        marginTop: -55
     },
     profileImage: {
         width: '100%',

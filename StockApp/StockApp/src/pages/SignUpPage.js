@@ -5,7 +5,7 @@ import { SignUpApi } from '../API/AuthApi';
 import SignUpStyles from '../styleSheet/SignUpStyles';
 import SignInPage from './SignInPage';
 
-const SignUpPage = () => {
+const SignUpPage = ({ navigation }) => {
     const [userEmail, setUserEmail] = useState('');
     const [userPassword, setUserPassword] = useState('');
     const [userPasswordCheck, setUserPasswordCheck] = useState('');
@@ -50,7 +50,7 @@ const SignUpPage = () => {
                         errors.customDomain = "";
                     }
                 } else {
-                    errors.email = ""; // 이메일 오류 제거
+                    errors.email = "";
                     if (emailDomain === 'custom' && !customDomain) {
                         errors.customDomain = "도메인을 입력하세요.";
                     } else {
@@ -84,6 +84,8 @@ const SignUpPage = () => {
     const handleSubmit = async () => {
         let errors = {};
 
+        if (emailDomain === 'domain 선택') {errors.email = "도메인을 선택하세요.";}
+        
         const fullEmail = `${userEmail}@${emailDomain === 'custom' ? customDomain : emailDomain}`;
     
         if (!fullEmail.includes('@') || !fullEmail.split('@')[1]) errors.email = "올바른 이메일을 입력하세요.";
@@ -96,19 +98,23 @@ const SignUpPage = () => {
 
         if (Object.keys(errors).length) return;
 
-        const formData = new FormData();
-
-        formData.append('userEmail', fullEmail);
-        formData.append('userPassword', userPassword);
-        formData.append('userNickname', userNickname);
-        formData.append('userPhoneNumber', userPhoneNumber);
-        formData.append('userProfile', 'default.jpg');
+        const jsonData = {
+            userEmail: fullEmail,
+            userPassword,
+            userNickname,
+            userPhoneNumber,
+            userProfile: "default.jpg"
+        };
+        console.log(jsonData)
 
         try {
-            const response = await SignUpApi(formData);
+            const response = await SignUpApi(jsonData);
             console.log(response);
 
-            showSignUpSuccessPopup();
+            Alert.alert('회원가입 성공', '회원가입이 성공적으로 완료되었습니다!', [{
+                text: '확인',
+                onPress: () => navigation.navigate('SignIn') //확인 버튼 누르면 로그인 페이지로 이동
+            }]);
             SignInPage.navigateToLoginPage();
         } catch (error) {
             Alert.alert('회원가입 실패', error.message);
@@ -123,8 +129,8 @@ const SignUpPage = () => {
         <View style={SignUpStyles.container}>
             <View style={SignUpStyles.imageContainer}>
                 <Image
-                    source={require('../assets/default.jpg')} // 이미지 경로
-                    style={SignUpStyles.profileImage} // 스타일 적용 (동그라미 스타일)
+                    source={require('../assets/default.jpg')}
+                    style={SignUpStyles.profileImage}
                 />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
