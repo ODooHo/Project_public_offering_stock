@@ -19,9 +19,6 @@ public class BoardDto {
     private String boardWriterNickname;
     private LocalDate boardWriteDate;
     private String boardImage;
-    private int boardClickCount;
-    private int boardLikeCount;
-    private int boardCommentCount;
 
 //    public byte[] getBoardImageBytes() {
 //        try {

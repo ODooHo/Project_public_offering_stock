@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder

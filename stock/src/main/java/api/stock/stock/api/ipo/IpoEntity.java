@@ -36,5 +36,5 @@ public class IpoEntity {
     private String possible;
     private String possiblePercent;
     private String sharedQuantity;
-
+    private String finalCollusion;
 }

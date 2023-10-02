@@ -36,6 +36,7 @@ dependencies {
 	// com.sun.xml.bind
 	implementation 'com.sun.xml.bind:jaxb-impl:4.0.1'
 	implementation 'com.sun.xml.bind:jaxb-core:4.0.1'
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
 
 

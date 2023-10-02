@@ -1,13 +1,16 @@
 package api.stock.stock.api.community.board;
 
+import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,21 +19,42 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final ModelMapper modelMapper;
+    private final FileService fileService;
 
     @Autowired
-    public BoardService(BoardRepository boardRepository, ModelMapper modelMapper) {
+    public BoardService(BoardRepository boardRepository, ModelMapper modelMapper, FileService fileService) {
         this.boardRepository = boardRepository;
         this.modelMapper = modelMapper;
+        this.fileService = fileService;
     }
 
 
 
-    public ResponseDto<BoardEntity> register(BoardDto dto) {
-        String boardTitle = dto.getBoardTitle();
+    public ResponseDto<BoardEntity> register(
+            String boardTitle,
+            String boardContent,
+            String boardWriterEmail,
+            String boardWriterProfile,
+            String boardWriterNickname,
+            String boardWriteDate,
+            MultipartFile boardImage) {
 
-        BoardEntity board = modelMapper.map(dto,BoardEntity.class);
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(boardWriteDate, formatter.withZone(ZoneId.of("UTC")));
+        LocalDate localDate =  zonedDateTime.toLocalDate();
+        //localDate = LocalDate.now();
+
+        BoardEntity board = new BoardEntity();
+        board.setBoardTitle(boardTitle);
+        board.setBoardContent(boardContent);
+        board.setBoardWriterEmail(boardWriterEmail);
+        board.setBoardWriterProfile(boardWriterProfile);
+        board.setBoardWriterNickname(boardWriterNickname);
+        board.setBoardWriteDate(localDate);
         //board.setBoardImage(dto.getBoardImageBytes());
+        boardRepository.save(board);
         try{
+            fileService.uploadImage(boardImage,board);
             boardRepository.save(board);
         }catch (Exception e){
             e.printStackTrace();
@@ -96,6 +120,5 @@ public class BoardService {
         }
         return ResponseDto.setSuccess("Success",null);
     }
-
 
 }

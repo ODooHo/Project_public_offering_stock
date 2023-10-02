@@ -3,6 +3,7 @@ package api.stock.stock.api.community.board;
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,8 +19,16 @@ public class BoardController {
     }
 
     @PostMapping("/writeBoard")
-    public ResponseDto<BoardEntity> register(@RequestBody BoardDto requestBody){
-        ResponseDto<BoardEntity> result = boardService.register(requestBody);
+    public ResponseDto<BoardEntity> register(
+            @RequestParam("boardTitle") String boardTitle,
+            @RequestParam("boardContent") String boardContent,
+            @RequestParam("boardWriterEmail") String boardWriterEmail,
+            @RequestParam("boardWriterProfile") String boardWriterProfile,
+            @RequestParam("boardWriterNickname") String boardWriterNickname,
+            @RequestParam("boardWriteDate") String boardWriteDate,
+            @RequestParam(value = "boardImage", required = false) MultipartFile boardImage){
+        ResponseDto<BoardEntity> result = boardService.register(boardTitle, boardContent,boardWriterEmail,boardWriterProfile,boardWriterNickname,boardWriteDate,
+                boardImage);
         return result;
     }
 
@@ -37,8 +46,8 @@ public class BoardController {
 
     @PatchMapping("/{boardId}/edit")
     public ResponseDto<PatchBoardResponseDto> patchBoard(@PathVariable Integer boardId, @RequestBody PatchBoardDto requestBody){
-        ResponseDto<PatchBoardResponseDto> result = boardService.patchBoard(boardId, requestBody);
-        return result;
+            ResponseDto<PatchBoardResponseDto> result = boardService.patchBoard(boardId, requestBody);
+            return result;
     }
 
 

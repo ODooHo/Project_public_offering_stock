@@ -4,6 +4,7 @@ import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.sound.midi.Patch;
 
@@ -25,8 +26,11 @@ public class UserController {
 
     }
     @PatchMapping("/patchUser")
-    public ResponseDto<PatchUserResponseDto> patchUser(@RequestBody PatchUserDto requestBody, @AuthenticationPrincipal String userEmail){
-        ResponseDto<PatchUserResponseDto> result = userService.patchUser(requestBody,userEmail);
+    public ResponseDto<PatchUserResponseDto> patchUser(
+            @RequestParam(value = "userNickname", required = false) String userNickname,
+            @RequestParam(value = "userProfile",required = false) MultipartFile userProfile,
+            @AuthenticationPrincipal String userEmail){
+        ResponseDto<PatchUserResponseDto> result = userService.patchUser(userNickname,userProfile,userEmail);
         return result;
     }
 
