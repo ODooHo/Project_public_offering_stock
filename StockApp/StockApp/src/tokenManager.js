@@ -28,7 +28,6 @@ export const removeToken = async () => {
     }
 }
 
-//리프레시 토큰
 export const setRefreshToken = async (token) => {
     try {
         await AsyncStorage.setItem(REFRESH_TOKEN_KEY, token);
