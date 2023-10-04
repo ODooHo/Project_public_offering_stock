@@ -13,11 +13,12 @@ const SignInPage = ({ navigation }) => {
       const response = await SignInApi({ userEmail, userPassword });
 
       if (response && response.data && response.data.token) {
+        // console.log("Received Token: ", response.data.token); //받은 토큰 값 출력
         await setToken(response.data.token);
         await setRefreshToken(response.data.refreshToken)
 
         Alert.alert('로그인 성공', '환영합니다!', [
-          { text: "OK", onPress: () => navigation.navigate('Main') }
+          { text: "OK", onPress: () => navigation.navigate('MainStack') }
         ]);
       } else {
         Alert.alert('로그인 실패', '아이디 또는 비밀번호가 틀렸습니다.');
@@ -34,6 +35,7 @@ const SignInPage = ({ navigation }) => {
   const fetchDataWithToken = async () => {
     try {
       const token = await getToken();
+      // console.log('Stored Token: ', token); //저장된 토큰 값 출력
       const response = await getAccessTokenApi(token);
       if (response && response.data && response.data.token) {
         await setToken(response.data.token);
@@ -68,7 +70,7 @@ const SignInPage = ({ navigation }) => {
         {/* <Button title="회원가입" onPress={() => navigation.navigate('SignUp')} color="#007AFF" /> */}
         <Button title="회원가입" onPress={handleSignUp} color="#007AFF" />
       </View>
-      <Button title="로그인 없이 이용하기" onPress={() => navigation.navigate('Main')} color="#007AFF" /> 
+      <Button title="로그인 없이 이용하기" onPress={() => navigation.navigate('MainStack')} color="#007AFF" /> 
     </View>
   );
 }
