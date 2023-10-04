@@ -150,7 +150,7 @@ const CommunityPage = ({ navigation }) => {
           </View>
         )}
       />
-      <Button title="게시글 작성" onPress={() => { /* 게시글 작성 화면으로 이동 */ }} style={styles.writeButton} />
+      <Button title="게시글 작성" onPress={() => navigation.navigate('WriteBoard')} style={styles.writeButton} />
     </View>
   );
 };
