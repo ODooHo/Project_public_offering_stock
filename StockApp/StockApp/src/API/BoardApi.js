@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { getToken } from '../tokenManager';
 
-const SERVER_URL = 'http://15.165.24.146:8080';
+const SERVER_URL = 'http://localhost:4000'; //실제 API 서버의 기본 주소
+// const SERVER_URL = 'http://15.165.24.146:8080';
 const USE_MOCK_DATA = true;  //이 값을 false로 설정하면 실제 API 호출
 
 const MOCK_DATA = {
@@ -137,7 +138,7 @@ export const fetchBoardDetail = (boardId) => {
     if (USE_MOCK_DATA) {
         const detail = MOCK_DATA.boardDetail.find(detail => detail.boardId === boardId);
         if (!detail.boardImage) {
-            detail.boardImage = convertImageName(detail.boardWriterEmail); // 이미지 이름 변환 로직 추가
+            detail.boardImage = convertImageName(detail.boardWriterEmail);
         }
         return Promise.resolve(detail);
     }
