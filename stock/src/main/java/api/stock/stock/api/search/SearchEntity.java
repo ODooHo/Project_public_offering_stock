@@ -1,20 +1,21 @@
-package api.stock.stock.api.community.liky;
+package api.stock.stock.api.search;
+
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
 @Setter
-@Builder
 @ToString
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "liky")
-@Table(name = "liky")
-public class LikyEntity {
+@Entity(name = "Search")
+@Table(name = "Search")
+public class SearchEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer likeId;
-    private Integer boardId;
+    private Integer searchId;
+    private String searchContent;
     private String userEmail;
 }

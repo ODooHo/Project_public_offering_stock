@@ -1,8 +1,6 @@
 package api.stock.stock.api.ipo;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -10,6 +8,8 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity(name = "favor")
+@Table(name = "favor")
 public class FavorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

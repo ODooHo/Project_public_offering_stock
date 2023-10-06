@@ -6,13 +6,20 @@ import api.stock.stock.api.user.UserEntity;
 import api.stock.stock.api.user.UserRepository;
 import api.stock.stock.global.response.ResponseDto;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -61,7 +68,7 @@ public class FileService {
         String fileName = user.getUserEmail() + "." + "jpg";
         try {
             // S3 버킷에 파일 업로드
-            uploadFileToS3(file, uploadDir + "img/"+fileName);
+            uploadFileToS3(file, uploadDir + "profile/"+fileName);
 
             user.setUserProfile(fileName);
             userRepository.save(user);
@@ -78,6 +85,37 @@ public class FileService {
         }
     }
 
+    public ResponseEntity<byte[]> getProfileImage(String imageName) throws IOException {
+        try {
+            String extension = getExtension("", imageName); // 확장자 추출 로직 그대로 사용
+            String fileName = imageName + extension;
+
+            S3Object s3Object = amazonS3.getObject(bucketName, uploadDir + "profile/"+ fileName);
+            S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
+            byte[] imageData = IOUtils.toByteArray(objectInputStream);
+
+            HttpHeaders headers = new HttpHeaders();
+            MediaType mediaType = MediaType.IMAGE_JPEG;
+
+            if (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".jpeg")) {
+                mediaType = MediaType.IMAGE_JPEG;
+            } else if (extension.equalsIgnoreCase(".png")) {
+                mediaType = MediaType.IMAGE_PNG;
+            }
+
+            headers.setContentType(mediaType);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(imageData);
+        } catch (AmazonS3Exception e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
     private void uploadFileToS3(MultipartFile file, String s3Key) {
         try {
@@ -88,6 +126,36 @@ public class FileService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String getExtension(String fileDirectory, String fileId) throws IOException {
+        File folder = new File(fileDirectory);
+
+        FilenameFilter filter = (dir, name) -> {
+            try{
+                return name.startsWith(fileId);
+            }catch(Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        };
+
+        String[] files = folder.list(filter);
+
+        if (files == null || files.length == 0) {
+            return "";
+        }
+
+        String fileName = files[0];
+
+        // 확장자 추출
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            return fileName.substring(dotIndex);
+        }
+        //파일이 없다면
+
+        return "";
     }
 
     private String setFileName(MultipartFile file, BoardEntity board) {

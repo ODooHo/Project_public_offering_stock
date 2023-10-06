@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardDto {
-    private int boardId;
+    private Integer boardId;
     private String boardTitle;
     private String boardContent;
     private String boardWriterEmail;

@@ -15,7 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class IpoServiceTest {
     @Autowired
+    private FavorRepository favorRepository;
+    @Autowired
     private IpoService ipoService;
+
     @Autowired
     private IpoRepository ipoRepository;
 
@@ -45,6 +48,20 @@ class IpoServiceTest {
         //Then
         log.info("List {}" , response.getData());
         assertThat(response.getMessage()).isEqualTo("Success");
+
+    }
+
+    @Test
+    void addFavor(){
+        //given
+        FavorDto dto = new FavorDto();
+        dto.setUserEmail("1");
+        dto.setIpoName("테스트");
+        //when
+        ResponseDto<FavorEntity> response = ipoService.addFavor(dto);
+        //then
+        assertThat(response.getMessage()).isEqualTo("Success");
+        log.info("FavorTest: {}",response.getData());
 
     }
 
