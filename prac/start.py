@@ -1,13 +1,10 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from prac.spiders import StockSpider  # 이 부분을 적절하게 수정해야 합니다.
+from scrapy.utils.project import get_project_settings
 
 # 스크래피 설정
-settings = {
-    'USER_AGENT': 'Your User Agent String',
-    # 필요한 다른 스크래피 설정을 추가하세요.
-}
-
+settings = get_project_settings()
 # 크롤러 프로세스 초기화
 process = CrawlerProcess(settings)
 
