@@ -15,7 +15,6 @@ class IPOPipeline:
 
     def process_item(self, item, spider):
         self.IPO_list.append(item)
-        print("aa")
         return item
 
     def close_spider(self, spider):
