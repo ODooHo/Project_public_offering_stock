@@ -71,7 +71,6 @@ public class AuthService {
             if(userEntity == null){
                 return ResponseDto.setFailed("Unknown User!");
             }
-
             if(!passwordEncoder.matches(userPassword,userEntity.getUserPassword())){
                 return ResponseDto.setFailed("Different Password!");
             }

@@ -8,6 +8,7 @@ import api.stock.stock.global.response.ResponseDto;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Service
+@Slf4j
 public class FileService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
@@ -45,6 +47,7 @@ public class FileService {
         try{
             if (boardImage != null){
                 String fileName = setFileName(boardImage,board);
+                board.setBoardImage(fileName);
                 String path = uploadDir + "img/" + fileName;
                 uploadFileToS3(boardImage,path);
             }else{
@@ -85,17 +88,35 @@ public class FileService {
         }
     }
 
-    public ResponseEntity<byte[]> getProfileImage(String imageName) throws IOException {
+    public ResponseEntity<byte[]> getProfileImage(String userEmail) throws IOException {
+        UserEntity user = new UserEntity();
+        user = userRepository.findByUserEmail(userEmail);
+
+        String imageName = user.getUserProfile();
+
+        return getImage(imageName,"profile/");
+    }
+
+    public ResponseEntity<byte[]> getBoardImage(Integer boardId) throws IOException {
+        BoardEntity board = new BoardEntity();
+        board = boardRepository.findByBoardId(boardId);
+        String imageName = board.getBoardImage();
+        return getImage(imageName,"img/");
+    }
+
+    private ResponseEntity<byte[]> getImage(String imageName, String path) {
         try {
             String extension = getExtension("", imageName); // 확장자 추출 로직 그대로 사용
             String fileName = imageName + extension;
 
-            S3Object s3Object = amazonS3.getObject(bucketName, uploadDir + "profile/"+ fileName);
+            S3Object s3Object = amazonS3.getObject(bucketName, uploadDir + path + fileName);
             S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
             byte[] imageData = IOUtils.toByteArray(objectInputStream);
 
+
             HttpHeaders headers = new HttpHeaders();
             MediaType mediaType = MediaType.IMAGE_JPEG;
+
 
             if (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".jpeg")) {
                 mediaType = MediaType.IMAGE_JPEG;

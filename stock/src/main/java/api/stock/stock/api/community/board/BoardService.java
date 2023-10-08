@@ -39,9 +39,9 @@ public class BoardService {
             String boardWriteDate,
             MultipartFile boardImage) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse(boardWriteDate, formatter.withZone(ZoneId.of("UTC")));
-        LocalDate localDate =  zonedDateTime.toLocalDate();
+//        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+//        ZonedDateTime zonedDateTime = ZonedDateTime.parse(boardWriteDate, formatter.withZone(ZoneId.of("UTC")));
+//        LocalDate localDate =  zonedDateTime.toLocalDate();
         //localDate = LocalDate.now();
 
         BoardEntity board = new BoardEntity();
@@ -50,7 +50,7 @@ public class BoardService {
         board.setBoardWriterEmail(boardWriterEmail);
         board.setBoardWriterProfile(boardWriterProfile);
         board.setBoardWriterNickname(boardWriterNickname);
-        board.setBoardWriteDate(localDate);
+        board.setBoardWriteDate(LocalDate.now());
         //board.setBoardImage(dto.getBoardImageBytes());
         boardRepository.save(board);
         try{
@@ -67,6 +67,9 @@ public class BoardService {
         BoardEntity board = new BoardEntity();
         try{
             board = boardRepository.findByBoardId(boardId);
+            Integer current = board.getBoardClickCount();
+            board.setBoardLikeCount(current + 1);
+            boardRepository.save(board);
         }catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");

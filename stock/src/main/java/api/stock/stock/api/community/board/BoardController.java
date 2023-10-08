@@ -1,10 +1,13 @@
 package api.stock.stock.api.community.board;
 
+import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -12,10 +15,12 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final FileService fileService;
 
     @Autowired
-    public BoardController(BoardService boardService) {
+    public BoardController(BoardService boardService, FileService fileService) {
         this.boardService = boardService;
+        this.fileService = fileService;
     }
 
     @PostMapping("/writeBoard")
@@ -41,6 +46,12 @@ public class BoardController {
     @GetMapping("/{boardId}")
     public ResponseDto<BoardEntity> getBoard(@PathVariable Integer boardId){
         ResponseDto<BoardEntity> result = boardService.getBoard(boardId);
+        return result;
+    }
+
+    @GetMapping("/{boardId}/image")
+    public ResponseEntity<byte[]> getBoardImage(@PathVariable Integer boardId) throws IOException {
+        ResponseEntity<byte[]> result = fileService.getBoardImage(boardId);
         return result;
     }
 
