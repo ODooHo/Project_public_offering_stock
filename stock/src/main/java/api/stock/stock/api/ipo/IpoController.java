@@ -36,8 +36,8 @@ public class IpoController {
     }
 
     @GetMapping("/{ipoName}/deleteFavor/{favorId}")
-    ResponseDto<?> deleteFavor(@PathVariable Integer favorId){
-        ResponseDto<?> result = ipoService.deleteFavor(favorId);
+    ResponseDto<String> deleteFavor(@PathVariable Integer favorId){
+        ResponseDto<String> result = ipoService.deleteFavor(favorId);
         return result;
     }
 

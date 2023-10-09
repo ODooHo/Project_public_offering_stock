@@ -10,4 +10,7 @@ import java.util.List;
 @Transactional
 public interface SearchRepository extends JpaRepository<SearchEntity,Integer> {
     List<SearchEntity> findByUserEmail(String userEmail);
+
+
+
 }

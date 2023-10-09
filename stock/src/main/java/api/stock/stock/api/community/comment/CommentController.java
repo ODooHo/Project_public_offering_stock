@@ -35,5 +35,14 @@ public class CommentController {
         return result;
     }
 
+    @DeleteMapping("/{boardId}/delete/{commentId}")
+    ResponseDto<String> deleteComment(@PathVariable Integer commentId){
+        ResponseDto<String> result = commentService.deleteComment(commentId);
+        return result;
+    }
+
+
+
+
 
 }

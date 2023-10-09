@@ -55,7 +55,13 @@ public class BoardController {
         return result;
     }
 
-    @PatchMapping("/{boardId}/edit")
+    @DeleteMapping("/delete/{boardId}")
+    public ResponseDto<String> deleteBoard(@PathVariable Integer boardId){
+        ResponseDto<String> result = boardService.deleteBoard(boardId);
+        return result;
+    }
+
+    @PatchMapping("/edit/{boardId}")
     public ResponseDto<PatchBoardResponseDto> patchBoard(@PathVariable Integer boardId, @RequestBody PatchBoardDto requestBody){
             ResponseDto<PatchBoardResponseDto> result = boardService.patchBoard(boardId, requestBody);
             return result;

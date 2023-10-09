@@ -8,5 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface FavorRepository extends JpaRepository<FavorEntity, Integer> {
     FavorEntity findByFavorId(Integer FavorId);
-    void deleteByFavorId(Integer FavorId);
+    void deleteFavorEntityByFavorId(Integer FavorId);
 }

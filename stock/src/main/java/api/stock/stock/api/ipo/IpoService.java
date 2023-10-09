@@ -58,14 +58,14 @@ public class IpoService {
     }
 
 
-    public ResponseDto<?> deleteFavor(Integer favorId){
+    public ResponseDto<String> deleteFavor(Integer favorId){
         try{
-            favorRepository.deleteByFavorId(favorId);
+            favorRepository.deleteFavorEntityByFavorId(favorId);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
         }
-        return ResponseDto.setSuccess("Success",null);
+        return ResponseDto.setSuccess("Success","Delete Completed");
     }
 
 }

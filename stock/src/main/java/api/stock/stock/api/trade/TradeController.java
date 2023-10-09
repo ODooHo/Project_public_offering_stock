@@ -30,7 +30,7 @@ public class TradeController {
     }
 
     @GetMapping("/deleteTrade/{tradeId}")
-    ResponseDto<?>deleteTrade(@PathVariable String tradeId){
+    ResponseDto<?>deleteTrade(@PathVariable Integer tradeId){
         ResponseDto<?> result = tradeService.deleteTrade(tradeId);
         return result;
     }

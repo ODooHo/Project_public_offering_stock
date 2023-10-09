@@ -21,8 +21,8 @@ public class LikyController {
     }
 
     @GetMapping("/{boardId}/liky/delete/{userEmail}")
-    ResponseDto<?> deleteLike(@PathVariable Integer boardId, @PathVariable String userEmail){
-        ResponseDto<?> result = likyService.deleteLike(boardId, userEmail);
+    ResponseDto<String> deleteLike(@PathVariable Integer boardId, @PathVariable String userEmail){
+        ResponseDto<String> result = likyService.deleteLike(boardId, userEmail);
         return result;
     }
 

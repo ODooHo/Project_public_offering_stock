@@ -38,10 +38,10 @@ public class LikyService {
         return ResponseDto.setSuccess("Success",likyEntity);
     }
 
-    public ResponseDto<?> deleteLike(Integer boardId, String userEmail) {
+    public ResponseDto<String> deleteLike(Integer boardId, String userEmail) {
         try{
             // 데이터베이스에서 사용자의 닉네임과 게시글 번호에 해당하는 좋아요 삭제
-            likyRepository.deleteByBoardIdAndUserEmail(boardId, userEmail);
+            likyRepository.deleteLikyEntityByBoardIdAndUserEmail(boardId, userEmail);
             // 해당 게시글의 좋아요 개수 감소
             BoardEntity board = boardRepository.findByBoardId(boardId);
             if (board != null) {
@@ -54,7 +54,7 @@ public class LikyService {
             return ResponseDto.setFailed("DataBase Error");
         }
 
-        return ResponseDto.setSuccess("Success",null);
+        return ResponseDto.setSuccess("Success","Delete Completed");
     }
 
 }

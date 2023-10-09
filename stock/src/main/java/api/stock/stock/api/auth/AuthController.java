@@ -21,6 +21,19 @@ public class AuthController {
         return result;
     }
 
+    @PostMapping("/signUp/emailCheck/{userEmail}")
+    public ResponseDto<String> emailCheck(@PathVariable String userEmail){
+        ResponseDto<String> result = authService.emailCheck(userEmail);
+        return result;
+    }
+
+    @PostMapping("/signUp/nicknameCheck/{userNickname}")
+    public ResponseDto<String> nicknameCheck(@PathVariable String userNickname){
+        ResponseDto<String> result = authService.nicknameCheck(userNickname);
+        return result;
+    }
+
+
     @PostMapping("/signIn")
     public ResponseDto<SignInResponseDto> signIn(@RequestBody SignInDto requestBody){
         ResponseDto<SignInResponseDto> result = authService.signIn(requestBody);

@@ -70,4 +70,17 @@ public class CommentService {
 
         return ResponseDto.setSuccess("Success" , response);
     }
+
+    public ResponseDto<String> deleteComment(Integer commentId){
+        try{
+            commentRepository.deleteCommentEntityByCommentId(commentId);
+        }catch (Exception e){
+            return ResponseDto.setFailed("DataBase Error");
+        }
+
+        return ResponseDto.setSuccess("Success","Delete Completed");
+
+    }
+
+
 }

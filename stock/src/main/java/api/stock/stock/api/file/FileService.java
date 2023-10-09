@@ -104,7 +104,15 @@ public class FileService {
         return getImage(imageName,"img/");
     }
 
+
     private ResponseEntity<byte[]> getImage(String imageName, String path) {
+        if (imageName == null){
+            HttpHeaders headers = new HttpHeaders();
+            MediaType mediaType = MediaType.ALL;
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(null);
+        }
         try {
             String extension = getExtension("", imageName); // 확장자 추출 로직 그대로 사용
             String fileName = imageName + extension;

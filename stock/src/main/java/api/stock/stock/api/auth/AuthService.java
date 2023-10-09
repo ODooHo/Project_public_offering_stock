@@ -60,6 +60,31 @@ public class AuthService {
         return ResponseDto.setSuccess("Success",userEntity);
     }
 
+    public ResponseDto<String> emailCheck(String userEmail){
+        try{
+            if (userRepository.existsById(userEmail)){
+                return ResponseDto.setFailed("Email already exist!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error!");
+        }
+        return ResponseDto.setSuccess("Success", "available Email");
+    }
+
+    public ResponseDto<String> nicknameCheck(String userNickname){
+        try{
+            if (userRepository.existsByUserNickname(userNickname)){
+                return ResponseDto.setFailed("Nickname already exist!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error!");
+        }
+        return ResponseDto.setSuccess("Success", "available Nickname");
+    }
+
+
     public ResponseDto<SignInResponseDto> signIn(SignInDto dto){
         String userEmail = dto.getUserEmail();
         String userPassword = dto.getUserPassword();

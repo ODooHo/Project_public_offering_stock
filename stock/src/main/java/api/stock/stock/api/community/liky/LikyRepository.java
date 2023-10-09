@@ -8,5 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface LikyRepository extends JpaRepository<LikyEntity, Integer> {
     Integer countByBoardId(Integer boardId);
-    void deleteByBoardIdAndUserEmail(Integer boardId, String userEmail);
+    void deleteLikyEntityByBoardIdAndUserEmail(Integer boardId, String userEmail);
 }

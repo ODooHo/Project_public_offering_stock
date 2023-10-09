@@ -110,18 +110,15 @@ public class BoardService {
         return ResponseDto.setSuccess("Success",response);
     }
 
-
-    public ResponseDto<?> increaseView(Integer boardId) {
-        BoardEntity boardEntity = boardRepository.findByBoardId(boardId);
-        Integer boardClick = boardEntity.getBoardClickCount();
+    public ResponseDto<String> deleteBoard(Integer boardId){
         try{
-            boardEntity.setBoardClickCount(boardClick + 1);
-            boardRepository.save(boardEntity);
+            boardRepository.deleteBoardEntityByBoardId(boardId);
         }catch (Exception e){
-            e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
         }
-        return ResponseDto.setSuccess("Success",null);
+        return ResponseDto.setSuccess("Success","Delete Completed");
     }
+
+
 
 }

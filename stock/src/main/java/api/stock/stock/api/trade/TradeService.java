@@ -41,14 +41,14 @@ public class TradeService {
         return ResponseDto.setSuccess("Success",trade);
     }
 
-    ResponseDto<?> deleteTrade(String tradeName){
+    ResponseDto<String> deleteTrade(Integer tradeId){
         try{
-            tradeRepository.deleteByTradeName(tradeName);
+            tradeRepository.deleteTradeEntityByTradeId(tradeId);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
         }
-        return ResponseDto.setSuccess("Success",null);
+        return ResponseDto.setSuccess("Success","Delete Completed");
     }
 
     ResponseDto<List<TradeEntity>> getTradeList(String userNickname){
