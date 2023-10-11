@@ -34,5 +34,11 @@ public class SearchController {
         return result;
     }
 
+    @DeleteMapping("{searchId}/delete")
+    public ResponseDto<String>deleteSearchWord(@PathVariable Integer searchId){
+        ResponseDto<String> result = searchService.deleteSearchWord(searchId);
+        return result;
+    }
+
 
 }
