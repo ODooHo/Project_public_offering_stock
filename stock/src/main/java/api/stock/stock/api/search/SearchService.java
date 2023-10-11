@@ -68,6 +68,17 @@ public class SearchService {
 
     }
 
+    public ResponseDto<String> deleteSearchWord(Integer searchId){
+        try{
+            searchRepository.deleteById(searchId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error");
+        }
+
+        return ResponseDto.setSuccess("Success","Delete Completed");
+    }
+
 
 
 
