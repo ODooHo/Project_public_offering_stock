@@ -19,10 +19,17 @@ class StockSpider(Spider):
 
     def parse_start(self, response):
         # Find the total number of items and generate indices for the URLs
-        total = 20
+        total = 30
         index = 1
 
         base_url = "http://www.38.co.kr"
+        for index in range(1,total+1):
+            a = []
+            name = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/font/text()').get()
+            compete = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[5]/text()').get().strip()
+            collusion = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[3]/text()').get().strip()
+            db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
+            db.test.update_one({"ipoName" : name} , {"$set":{"finalCollusion" : collusion}})
         #     # Generate the link xpath
         #for index in range(1,6):
         link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
@@ -41,9 +48,8 @@ class StockSpider(Spider):
         result = db.test.find({"ipoName" : name},{"compete" : ""})
         a = list(result)
         print(a)
+        total = 30
         if(len(a)!=0):
-            compete = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
-            db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
             return
         else:
             item['ipoName'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()

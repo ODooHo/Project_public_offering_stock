@@ -26,6 +26,8 @@ class Spider(Spider):
         base_url = "http://www.ipostock.co.kr"
         # for index in indices:
         #     # Generate the link xpath
+
+        
         for index in range(1,total,2):
             link_xpath = f'//*[@id="print"]/table[1]//tr[4]/td/table//tr[4]/td/table//tr[{index}]/td[3]/a/@href'
         
