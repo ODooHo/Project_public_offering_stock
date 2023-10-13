@@ -4,14 +4,18 @@ import api.stock.stock.api.user.UserEntity;
 import api.stock.stock.global.response.ResponseDto;
 import api.stock.stock.global.security.TokenProvider;
 import api.stock.stock.api.user.UserRepository;
+import com.fasterxml.jackson.core.JsonParser;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
+
 @Service
 @Slf4j
 public class AuthService {
@@ -20,13 +24,14 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final ModelMapper modelMapper;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    public AuthService(UserRepository userRepository, TokenProvider tokenProvider, ModelMapper modelMapper) {
+    public AuthService(UserRepository userRepository, TokenProvider tokenProvider, ModelMapper modelMapper, RedisTemplate<String, String> redisTemplate) {
         this.userRepository = userRepository;
         this.tokenProvider = tokenProvider;
         this.modelMapper = modelMapper;
-
+        this.redisTemplate = redisTemplate;
     }
 
     public ResponseDto<UserEntity> signUp(SignUpDto dto){
@@ -101,7 +106,7 @@ public class AuthService {
             }
         }catch (Exception e){
             e.printStackTrace();
-            ResponseDto.setFailed("DataBase Error!");
+            return ResponseDto.setFailed("DataBase Error!");
         }
         userEntity.setUserPassword("");
 
@@ -114,6 +119,20 @@ public class AuthService {
 
         SignInResponseDto signInResponseDto = new SignInResponseDto(token,exprTime,refreshToken,refreshExprTime,userEntity);
         return ResponseDto.setSuccess("Success",signInResponseDto);
+    }
+
+    public ResponseDto<String> logout(String token){
+        try{
+            Long expiration = tokenProvider.getExpiration(token);
+            redisTemplate.opsForValue().set(token,"logout",expiration, TimeUnit.MILLISECONDS);
+            redisTemplate.opsForSet().add("Blacklist",token);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error (Auth)");
+        }
+
+        return ResponseDto.setSuccess("Success","Logout Completed");
+
     }
 
 

@@ -40,4 +40,10 @@ public class AuthController {
         return result;
     }
 
+    @PostMapping("/logout")
+    public ResponseDto<String> logout(@RequestBody String token){
+        ResponseDto<String> result = authService.logout(token);
+        return result;
+    }
+
 }

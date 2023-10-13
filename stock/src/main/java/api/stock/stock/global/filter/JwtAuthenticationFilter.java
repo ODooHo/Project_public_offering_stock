@@ -6,14 +6,18 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,18 +29,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     private final TokenProvider tokenProvider;
+    private final RedisTemplate redisTemplate;
 
     @Autowired
-    public JwtAuthenticationFilter(TokenProvider tokenProvider) {
+    public JwtAuthenticationFilter(TokenProvider tokenProvider, RedisTemplate redisTemplate) {
         this.tokenProvider = tokenProvider;
+        this.redisTemplate = redisTemplate;
     }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        String token = parseBearerToken(request);
+        boolean isLogout = redisTemplate.opsForSet().isMember("Blacklist",token);
+        if(isLogout){
+            response.addHeader("data","Blacklist");
+            System.out.println("Logout Success");
+        }
         try {
-            String token = parseBearerToken(request);
-
             if (token != null && !token.equalsIgnoreCase("null")) {
                 // 토큰을 검증하여 payload의 userEmail 가져옴
                 String userEmail = tokenProvider.validate(token);
@@ -72,7 +82,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e){
-            e.printStackTrace();
+            if(isLogout){
+                response.addHeader("data","Blacklist");
+                System.out.println("Logout Success");
+            }
+            else{
+                e.printStackTrace();
+            }
         }
 
         filterChain.doFilter(request, response);

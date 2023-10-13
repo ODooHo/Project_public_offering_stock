@@ -34,10 +34,10 @@ public class WebSecurityConfig {
                         -> authorizeHttpRequests.requestMatchers("/", "/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/myPage/**").authenticated()
                         .requestMatchers(HttpMethod.PATCH,"api/myPage/**").authenticated()
-                        .requestMatchers(HttpMethod.GET,"api/community/board/delete/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH,"api/community/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"api/community/**").authenticated()
                         //.requestMatchers(HttpMethod.GET,"api/community/board/delete/**").authenticated()
                         .anyRequest().permitAll());
-
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
