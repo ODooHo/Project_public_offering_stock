@@ -121,7 +121,8 @@ public class AuthService {
         return ResponseDto.setSuccess("Success",signInResponseDto);
     }
 
-    public ResponseDto<String> logout(String token){
+    public ResponseDto<String> logout(LogoutDto dto){
+        String token = dto.getToken();
         try{
             Long expiration = tokenProvider.getExpiration(token);
             redisTemplate.opsForValue().set(token,"logout",expiration, TimeUnit.MILLISECONDS);

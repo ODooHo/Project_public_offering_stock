@@ -2,6 +2,7 @@ package api.stock.stock.api.community.board;
 
 import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

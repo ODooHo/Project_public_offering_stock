@@ -6,9 +6,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,13 +41,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = parseBearerToken(request);
-        boolean isLogout = redisTemplate.opsForSet().isMember("Blacklist",token);
-        if(isLogout){
-            response.addHeader("data","Blacklist");
-            System.out.println("Logout Success");
+        SetOperations<String,String> setOperations = redisTemplate.opsForSet();
+        boolean isLogout = false;
+
+        if (token != null && !token.equalsIgnoreCase("null")) {
+            isLogout = setOperations.isMember("Blacklist", token);
         }
+
         try {
-            if (token != null && !token.equalsIgnoreCase("null")) {
+            if(isLogout){
+                response.addHeader("data","Blacklist");
+            }
+            else if (token != null && !token.equalsIgnoreCase("null")) {
                 // 토큰을 검증하여 payload의 userEmail 가져옴
                 String userEmail = tokenProvider.validate(token);
 
@@ -84,7 +89,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e){
             if(isLogout){
                 response.addHeader("data","Blacklist");
-                System.out.println("Logout Success");
             }
             else{
                 e.printStackTrace();

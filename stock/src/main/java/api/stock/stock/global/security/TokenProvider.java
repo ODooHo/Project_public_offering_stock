@@ -64,14 +64,12 @@ public class TokenProvider {
     }
 
     public Long getExpiration(String accessToken) {
-        System.out.println("accessToken = " + accessToken);
         // accessToken 남은 유효시간
         try{
             Date expiration = Jwts.parser().setSigningKey(SECURITY_KEY).parseClaimsJws(accessToken).getBody().getExpiration();
             // 현재 시간
             Long now = new Date().getTime();
             return (expiration.getTime() - now);
-
         }catch (Exception e){
             e.printStackTrace();
             return null;
