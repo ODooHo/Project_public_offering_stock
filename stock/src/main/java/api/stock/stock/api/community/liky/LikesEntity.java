@@ -9,9 +9,9 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "liky")
-@Table(name = "liky")
-public class LikyEntity {
+@Entity(name = "likes")
+@Table(name = "likes")
+public class LikesEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer likeId;

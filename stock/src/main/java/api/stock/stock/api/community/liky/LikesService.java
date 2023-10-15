@@ -6,42 +6,41 @@ import api.stock.stock.global.response.ResponseDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
-public class LikyService {
-    private final LikyRepository likyRepository;
+public class LikesService {
+    private final LikesRepository likesRepository;
     private final BoardRepository boardRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public LikyService(LikyRepository likyRepository, BoardRepository boardRepository, ModelMapper modelMapper) {
-        this.likyRepository = likyRepository;
+    public LikesService(LikesRepository likesRepository, BoardRepository boardRepository, ModelMapper modelMapper) {
+        this.likesRepository = likesRepository;
         this.boardRepository = boardRepository;
         this.modelMapper = modelMapper;
     }
 
-    public ResponseDto<LikyEntity> addLike(LikyDto dto){
-        LikyEntity likyEntity = modelMapper.map(dto,LikyEntity.class);
+    public ResponseDto<LikesEntity> addLike(LikesDto dto){
+        LikesEntity likesEntity = modelMapper.map(dto, LikesEntity.class);
         try{
-            BoardEntity board = boardRepository.findByBoardId(likyEntity.getBoardId());
-            if(board != null){
+            BoardEntity board = boardRepository.findByBoardId(likesEntity.getBoardId());
+            if(board != null) {
                 board.setBoardLikeCount(board.getBoardClickCount() + 1);
                 boardRepository.save(board);
-                likyRepository.save(likyEntity);
+                likesRepository.save(likesEntity);
             }
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
         }
 
-        return ResponseDto.setSuccess("Success",likyEntity);
+        return ResponseDto.setSuccess("Success",likesEntity);
     }
 
     public ResponseDto<String> deleteLike(Integer boardId, String userEmail) {
         try{
             // 데이터베이스에서 사용자의 닉네임과 게시글 번호에 해당하는 좋아요 삭제
-            likyRepository.deleteLikyEntityByBoardIdAndUserEmail(boardId, userEmail);
+            likesRepository.deleteLikesEntityByBoardIdAndUserEmail(boardId, userEmail);
             // 해당 게시글의 좋아요 개수 감소
             BoardEntity board = boardRepository.findByBoardId(boardId);
             if (board != null) {

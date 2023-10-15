@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface LikyRepository extends JpaRepository<LikyEntity, Integer> {
+public interface LikesRepository extends JpaRepository<LikesEntity, Integer> {
     Integer countByBoardId(Integer boardId);
-    void deleteLikyEntityByBoardIdAndUserEmail(Integer boardId, String userEmail);
+    void deleteLikesEntityByBoardIdAndUserEmail(Integer boardId, String userEmail);
 }

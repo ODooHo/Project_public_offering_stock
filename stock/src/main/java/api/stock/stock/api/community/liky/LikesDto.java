@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikyDto{
+public class LikesDto{
     private Integer likeId;
     private Integer boardId;
     private String userEmail;

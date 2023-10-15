@@ -2,37 +2,36 @@ package api.stock.stock.api.community.liky;
 
 import api.stock.stock.global.response.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @Slf4j
-class LikyServiceTest {
+class LikesServiceTest {
 
     @Autowired
-    private LikyRepository likyRepository;
+    private LikesRepository likesRepository;
     @Autowired
-    private LikyService likyService;
+    private LikesService likesService;
 
     @Test
     void addLike() {
         //given
-        LikyDto dto = new LikyDto();
+        LikesDto dto = new LikesDto();
         dto.setBoardId(1);
         dto.setUserEmail("1");
 
         //when
-        ResponseDto<LikyEntity> response = likyService.addLike(dto);
+        ResponseDto<LikesEntity> response = likesService.addLike(dto);
 
 
         //then
         assertThat(response.getMessage()).isEqualTo("Success");
         assertThat(response.getData()).isNotNull();
 
-        log.info("LikyTest {}",response.getData());
+        log.info("LikesTest {}",response.getData());
     }
 }
