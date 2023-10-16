@@ -30,8 +30,6 @@ class CommentServiceTest {
         dto.setCommentContent("2");
         dto.setCommentWriteDate(LocalDate.parse("2023-09-25"));
         dto.setCommentWriterNickname("2");
-        dto.setCommentWriterProfile("2");
-
         // When
         ResponseDto<CommentEntity> response = commentService.writeComment(1,dto);
         // Then

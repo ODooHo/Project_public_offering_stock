@@ -12,9 +12,8 @@ import java.time.LocalDate;
 public class CommentDto {
     private Integer commentId;
     private Integer boardId;
-    private String userEmail;
+    private String commentWriterEmail;
     private String commentContent;
     private LocalDate commentWriteDate;
     private String commentWriterNickname;
-    private String commentWriterProfile;
 }
