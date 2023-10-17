@@ -30,9 +30,8 @@ public class BoardController {
             @RequestParam("boardWriterEmail") String boardWriterEmail,
             @RequestParam("boardWriterProfile") String boardWriterProfile,
             @RequestParam("boardWriterNickname") String boardWriterNickname,
-            @RequestParam("boardWriteDate") String boardWriteDate,
             @RequestParam(value = "boardImage", required = false) MultipartFile boardImage){
-        ResponseDto<BoardEntity> result = boardService.register(boardTitle, boardContent,boardWriterEmail,boardWriterProfile,boardWriterNickname,boardWriteDate,
+        ResponseDto<BoardEntity> result = boardService.register(boardTitle, boardContent,boardWriterEmail,boardWriterProfile,boardWriterNickname,
                 boardImage);
         return result;
     }

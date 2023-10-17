@@ -39,6 +39,7 @@ public class CommentService {
 
     public ResponseDto<CommentEntity> writeComment(Integer boardId, CommentDto dto) {
         CommentEntity comment = modelMapper.map(dto,CommentEntity.class);
+        comment.setCommentWriteDate(LocalDate.now());
         BoardEntity board = boardRepository.findByBoardId(boardId);
         Integer count = board.getBoardCommentCount() + 1;
         try{

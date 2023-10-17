@@ -37,7 +37,6 @@ public class BoardService {
             String boardWriterEmail,
             String boardWriterProfile,
             String boardWriterNickname,
-            String boardWriteDate,
             MultipartFile boardImage) {
 
 //        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;

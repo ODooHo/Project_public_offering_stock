@@ -14,6 +14,5 @@ public class CommentDto {
     private Integer boardId;
     private String commentWriterEmail;
     private String commentContent;
-    private LocalDate commentWriteDate;
     private String commentWriterNickname;
 }
