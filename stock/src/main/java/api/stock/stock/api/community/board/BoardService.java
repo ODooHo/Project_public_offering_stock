@@ -5,6 +5,7 @@ import api.stock.stock.global.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,7 +94,7 @@ public class BoardService {
         BoardEntity board = boardRepository.findByBoardId(boardId);
         String boardTitle = dto.getBoardTitle();
         String boardContent = dto.getBoardContent();
-        LocalDate date = dto.getBoardWriteDate();
+        LocalDate date = LocalDate.now();
 
         try{
             board.setBoardTitle(boardTitle);

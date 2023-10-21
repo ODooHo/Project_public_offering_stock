@@ -56,7 +56,7 @@ public class CommentService {
     public ResponseDto<PatchCommentResponseDto> patchComment(Integer boardId, PatchCommentDto dto){
         CommentEntity comment = commentRepository.findById(boardId).orElse(null);
         String commentContent = dto.getCommentContent();
-        LocalDate date = dto.getCommentWriteDate();
+        LocalDate date = LocalDate.now();
 
         try{
             comment.setCommentContent(commentContent);

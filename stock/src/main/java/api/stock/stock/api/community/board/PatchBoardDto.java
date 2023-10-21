@@ -12,5 +12,4 @@ import java.time.LocalDate;
 public class PatchBoardDto {
     private String boardTitle;
     private String boardContent;
-    private LocalDate boardWriteDate;
 }

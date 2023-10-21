@@ -11,5 +11,4 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class PatchCommentDto {
     private String commentContent;
-    private LocalDate commentWriteDate;
 }
