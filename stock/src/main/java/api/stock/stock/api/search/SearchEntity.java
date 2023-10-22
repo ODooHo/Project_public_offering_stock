@@ -18,4 +18,5 @@ public class SearchEntity {
     private Integer searchId;
     private String searchContent;
     private String userEmail;
+    private String category;
 }

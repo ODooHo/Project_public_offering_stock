@@ -16,9 +16,15 @@ public class SearchController {
         this.searchService = searchService;
     }
 
-    @GetMapping("/{userEmail}")
-    public ResponseDto<List<SearchEntity>>getRecentSearchWord(@PathVariable String userEmail){
-        ResponseDto<List<SearchEntity>> result = searchService.getRecentSearchWord(userEmail);
+    @GetMapping("/{userEmail}/community")
+    public ResponseDto<List<SearchEntity>>getRecentBoard(@PathVariable String userEmail){
+        ResponseDto<List<SearchEntity>> result = searchService.getRecentBoard(userEmail);
+        return result;
+    }
+
+    @GetMapping("/{userEmail}/stock")
+    public ResponseDto<List<SearchEntity>>getRecentIpo(@PathVariable String userEmail){
+        ResponseDto<List<SearchEntity>> result = searchService.getRecentIpo(userEmail);
         return result;
     }
 
@@ -34,7 +40,7 @@ public class SearchController {
         return result;
     }
 
-    @DeleteMapping("{searchId}/delete")
+    @DeleteMapping("/{searchId}/delete")
     public ResponseDto<String>deleteSearchWord(@PathVariable Integer searchId){
         ResponseDto<String> result = searchService.deleteSearchWord(searchId);
         return result;

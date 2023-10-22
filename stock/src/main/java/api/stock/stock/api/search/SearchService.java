@@ -27,10 +27,10 @@ public class SearchService {
         this.ipoRepository = ipoRepository;
     }
 
-    public ResponseDto<List<SearchEntity>>getRecentSearchWord(String userEmail){
+    public ResponseDto<List<SearchEntity>>getRecentBoard(String userEmail){
         List<SearchEntity> search = new ArrayList<>();
         try{
-            search = searchRepository.findByUserEmail(userEmail);
+            search = searchRepository.findByUserEmailAndCategoryAndSearchIdDesc(userEmail,"board");
         }catch (Exception e){
             e.printStackTrace();
             ResponseDto.setFailed("DataBase Error");
@@ -39,10 +39,24 @@ public class SearchService {
         return ResponseDto.setSuccess("Success",search);
     }
 
+    public ResponseDto<List<SearchEntity>>getRecentIpo(String userEmail){
+        List<SearchEntity> search = new ArrayList<>();
+        try{
+            search = searchRepository.findByUserEmailAndCategoryAndSearchIdDesc(userEmail,"ipo");
+        }catch (Exception e){
+            e.printStackTrace();
+            ResponseDto.setFailed("DataBase Error");
+        }
+
+        return ResponseDto.setSuccess("Success",search);
+    }
+
+
     public ResponseDto<List<BoardEntity>> searchBoard(SearchDto dto){
         SearchEntity search = modelMapper.map(dto,SearchEntity.class);
         List<BoardEntity> board = null;
         try{
+            search.setCategory("board");
             searchRepository.save(search);
             String searchWord = search.getSearchContent();
             board = boardRepository.findByBoardTitleContains(searchWord);
@@ -59,6 +73,7 @@ public class SearchService {
         SearchEntity search = modelMapper.map(dto,SearchEntity.class);
         List<IpoEntity> ipo = null;
         try {
+            search.setCategory("ipo");
             searchRepository.save(search);
             String searchWord = search.getSearchContent();
             ipo = ipoRepository.findByIpoNameContains(searchWord);
