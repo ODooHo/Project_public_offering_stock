@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchDto {
-    private String searchId;
+    private Integer searchId;
     private String searchContent;
     private String userEmail;
 }

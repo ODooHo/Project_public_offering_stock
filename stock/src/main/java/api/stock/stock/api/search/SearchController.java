@@ -22,13 +22,13 @@ public class SearchController {
         return result;
     }
 
-    @PostMapping("/stock/{searchContent}")
+    @PostMapping("/stock")
     public ResponseDto<List<IpoEntity>>searchIpo(@RequestBody SearchDto requestBody){
         ResponseDto<List<IpoEntity>> result = searchService.searchIpo(requestBody);
         return result;
     }
 
-    @PostMapping("/community/{searchContent}")
+    @PostMapping("/community")
     public ResponseDto<List<BoardEntity>>searchBoard(@RequestBody SearchDto requestBody){
         ResponseDto<List<BoardEntity>> result = searchService.searchBoard(requestBody);
         return result;

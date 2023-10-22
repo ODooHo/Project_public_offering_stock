@@ -50,6 +50,8 @@ public class SearchService {
             e.printStackTrace();
             ResponseDto.setFailed("DataBase Error");
         }
+
+
         return ResponseDto.setSuccess("Success",board);
     }
 
