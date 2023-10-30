@@ -46,6 +46,19 @@ public class IpoService {
         return ResponseDto.setSuccess("Success",result);
     }
 
+    public ResponseDto<List<IpoEntity>> getFavorList(String userEmail){
+        List<IpoEntity> result = new ArrayList<>();
+        List<String> ipo = favorRepository.findIpoNameByUserEmail(userEmail);
+        System.out.println("ipo = " + ipo);
+        try{
+            result = ipoRepository.findAllByIpoNameIn(ipo);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error");
+        }
+        return ResponseDto.setSuccess("Success",result);
+    }
+
     public ResponseDto<FavorEntity> addFavor(FavorDto dto){
         FavorEntity favor = modelMapper.map(dto,FavorEntity.class);
         try{

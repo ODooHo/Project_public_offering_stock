@@ -3,6 +3,7 @@ package api.stock.stock.api.community.comment;
 import api.stock.stock.global.response.ResponseDto;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,8 +37,8 @@ public class CommentController {
     }
 
     @DeleteMapping("/{boardId}/delete/{commentId}")
-    ResponseDto<String> deleteComment(@PathVariable Integer commentId){
-        ResponseDto<String> result = commentService.deleteComment(commentId);
+    ResponseDto<String> deleteComment(@AuthenticationPrincipal String userEmail, @PathVariable Integer commentId){
+        ResponseDto<String> result = commentService.deleteComment(userEmail, commentId);
         return result;
     }
 

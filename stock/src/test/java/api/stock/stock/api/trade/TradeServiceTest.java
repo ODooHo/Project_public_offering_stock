@@ -3,6 +3,7 @@ package api.stock.stock.api.trade;
 import api.stock.stock.global.response.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -20,15 +21,16 @@ class TradeServiceTest {
     @Autowired
     private TradeService tradeService;
 
-    void createTest(){
+    @Test
+    void createTrade(){
         //given
         TradeDto dto  = new TradeDto();
         dto.setTradeDate(LocalDate.now());
         dto.setTradeFee(10000);
-        dto.setMemo("테스트용 데이터");
-        dto.setTradeName("매매일지 테스트");
+        dto.setMemo("테스트용 데이터2");
+        dto.setTradeName("매매일지 테스트2");
         dto.setTradeQuantity(1);
-        dto.setUserNickname("테스터");
+        dto.setUserEmail("1");
         dto.setTradePrice(10000);
         dto.setTradeType("테스트 타입");
 
@@ -41,5 +43,17 @@ class TradeServiceTest {
         assertThat(response.getData()).isNotNull();
 
         log.info("테스트 결과 {}",response.getData());
+    }
+
+    @Test
+    void deleteTrade(){
+        //given
+        Integer tradeId = 2;
+        String userEmail = "1";
+
+        //when
+        ResponseDto<String> response = tradeService.deleteTrade(userEmail, tradeId);
+        //then
+        assertThat(response.getMessage()).isEqualTo("Success");
     }
 }

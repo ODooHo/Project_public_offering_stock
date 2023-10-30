@@ -99,7 +99,7 @@ public class FileService {
 
     public ResponseEntity<byte[]> getBoardImage(Integer boardId) throws IOException {
         BoardEntity board = new BoardEntity();
-        board = boardRepository.findByBoardId(boardId);
+        board = boardRepository.findById(boardId).orElse(null);
         String imageName = board.getBoardImage();
         return getImage(imageName,"img/");
     }

@@ -23,7 +23,7 @@ public class LikesService {
     public ResponseDto<LikesEntity> addLike(LikesDto dto){
         LikesEntity likesEntity = modelMapper.map(dto, LikesEntity.class);
         try{
-            BoardEntity board = boardRepository.findByBoardId(likesEntity.getBoardId());
+            BoardEntity board = boardRepository.findById(likesEntity.getBoardId()).orElse(null);
             if(board != null) {
                 board.setBoardLikeCount(board.getBoardClickCount() + 1);
                 boardRepository.save(board);
@@ -42,7 +42,7 @@ public class LikesService {
             // 데이터베이스에서 사용자의 닉네임과 게시글 번호에 해당하는 좋아요 삭제
             likesRepository.deleteLikesEntityByBoardIdAndUserEmail(boardId, userEmail);
             // 해당 게시글의 좋아요 개수 감소
-            BoardEntity board = boardRepository.findByBoardId(boardId);
+            BoardEntity board = boardRepository.findById(boardId).orElse(null);
             if (board != null) {
                 board.setBoardLikeCount(board.getBoardLikeCount() - 1);
                 boardRepository.save(board);

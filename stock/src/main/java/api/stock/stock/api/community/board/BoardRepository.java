@@ -17,7 +17,4 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
 
     void deleteBoardEntityByBoardId(Integer BoardId);
 
-
-    BoardEntity findByBoardId(Integer boardId);
-
 }

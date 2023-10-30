@@ -29,18 +29,25 @@ public class IpoController {
         return result;
     }
 
+    @GetMapping("/{userEmail}/getFavor")
+    ResponseDto<List<IpoEntity>> getFavorList(@PathVariable String userEmail){
+        ResponseDto<List<IpoEntity>> result = ipoService.getFavorList(userEmail);
+        return result;
+    }
+
+
+
     @PostMapping("/{ipoName}/addFavor")
     ResponseDto<FavorEntity> addFavor(@PathVariable String ipoName, @RequestBody FavorDto requestBody){
         ResponseDto<FavorEntity> result = ipoService.addFavor(requestBody);
         return result;
     }
 
-    @GetMapping("/{ipoName}/deleteFavor/{favorId}")
+    @DeleteMapping("/{ipoName}/deleteFavor/{favorId}")
     ResponseDto<String> deleteFavor(@PathVariable Integer favorId){
         ResponseDto<String> result = ipoService.deleteFavor(favorId);
         return result;
     }
-
 
 
 

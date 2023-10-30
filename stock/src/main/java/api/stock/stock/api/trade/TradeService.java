@@ -41,7 +41,14 @@ public class TradeService {
         return ResponseDto.setSuccess("Success",trade);
     }
 
-    ResponseDto<String> deleteTrade(Integer tradeId){
+    ResponseDto<String> deleteTrade(String userEmail, Integer tradeId){
+        TradeEntity trade = tradeRepository.findById(tradeId).orElse(null);
+        String tradeUserEmail = trade.getUserEmail();
+
+        if(!userEmail.equals(tradeUserEmail)){
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+        }
+
         try{
             tradeRepository.deleteTradeEntityByTradeId(tradeId);
         }catch (Exception e){
@@ -51,11 +58,11 @@ public class TradeService {
         return ResponseDto.setSuccess("Success","Delete Completed");
     }
 
-    ResponseDto<List<TradeEntity>> getTradeList(String userNickname){
+    ResponseDto<List<TradeEntity>> getTradeList(String userEmail){
         List<TradeEntity> tradeList = new ArrayList<>();
 
         try{
-            tradeList = tradeRepository.findByUserNickname(userNickname);
+            tradeList = tradeRepository.findByUserEmail(userEmail);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");

@@ -17,7 +17,7 @@ public class TradeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tradeId;
-    private String userNickname;
+    private String userEmail;
     private LocalDate tradeDate;
     private String tradeName;
     private String tradeType;

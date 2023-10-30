@@ -67,7 +67,7 @@ public class BoardService {
     public ResponseDto<BoardEntity> getBoard(Integer boardId) {
         BoardEntity board = new BoardEntity();
         try{
-            board = boardRepository.findByBoardId(boardId);
+            board = boardRepository.findById(boardId).orElse(null);
             Integer current = board.getBoardClickCount();
             board.setBoardLikeCount(current + 1);
             boardRepository.save(board);
@@ -91,7 +91,7 @@ public class BoardService {
     }
 
     public ResponseDto<PatchBoardResponseDto> patchBoard(Integer boardId, PatchBoardDto dto){
-        BoardEntity board = boardRepository.findByBoardId(boardId);
+        BoardEntity board = boardRepository.findById(boardId).orElse(null);
         String boardTitle = dto.getBoardTitle();
         String boardContent = dto.getBoardContent();
         LocalDate date = LocalDate.now();
@@ -111,7 +111,13 @@ public class BoardService {
         return ResponseDto.setSuccess("Success",response);
     }
 
-    public ResponseDto<String> deleteBoard(Integer boardId){
+    public ResponseDto<String> deleteBoard(String userEmail, Integer boardId){
+        BoardEntity board = boardRepository.findById(boardId).orElse(null);
+        String boardWriterEmail = board.getBoardWriterEmail();
+        if(!userEmail.equals(boardWriterEmail)){
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+        }
+
         try{
             boardRepository.deleteBoardEntityByBoardId(boardId);
         }catch (Exception e){

@@ -26,7 +26,7 @@ class CommentServiceTest {
         // Given
         CommentDto dto = new CommentDto();
         dto.setBoardId(1);
-        dto.setCommentWriterNickname("1");
+        dto.setCommentWriterEmail("1");
         dto.setCommentContent("2");
         dto.setCommentWriterNickname("1");
         // When
@@ -55,11 +55,24 @@ class CommentServiceTest {
         Integer boardId = 1;
         PatchCommentDto dto = new PatchCommentDto();
         dto.setCommentContent("patch");
-        dto.setCommentWriteDate(LocalDate.parse("2023-10-10"));
         //when
         ResponseDto<PatchCommentResponseDto> response = commentService.patchComment(boardId,dto);
         //then
         log.info("PatchComment {}",response.getData());
+        assertThat(response.getMessage()).isEqualTo("Success");
+        assertThat(response.getData()).isNotNull();
+    }
+
+
+    @Test
+    public void deleteComment(){
+        //given
+        String userEmail = "1";
+        Integer commentId = 2;
+        //when
+        ResponseDto<String> response = commentService.deleteComment(userEmail,commentId);
+        //then
+        log.info("DeleteComment {}",response.getData());
         assertThat(response.getMessage()).isEqualTo("Success");
         assertThat(response.getData()).isNotNull();
     }

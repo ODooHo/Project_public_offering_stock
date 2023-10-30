@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 @Transactional
 public interface TradeRepository extends JpaRepository<TradeEntity, Integer> {
-    List<TradeEntity> findByUserNickname(String userNickname);
+    List<TradeEntity> findByUserEmail(String userEmail);
     boolean existsByTradeName(String tradeName);
 
     void deleteTradeEntityByTradeId(Integer tradeId);

@@ -40,7 +40,7 @@ public class CommentService {
     public ResponseDto<CommentEntity> writeComment(Integer boardId, CommentDto dto) {
         CommentEntity comment = modelMapper.map(dto,CommentEntity.class);
         comment.setCommentWriteDate(LocalDate.now());
-        BoardEntity board = boardRepository.findByBoardId(boardId);
+        BoardEntity board = boardRepository.findById(boardId).orElse(null);
         Integer count = board.getBoardCommentCount() + 1;
         try{
             board.setBoardCommentCount(count);
@@ -72,10 +72,18 @@ public class CommentService {
         return ResponseDto.setSuccess("Success" , response);
     }
 
-    public ResponseDto<String> deleteComment(Integer commentId){
+    public ResponseDto<String> deleteComment(String userEmail, Integer commentId){
+        CommentEntity comment = commentRepository.findById(commentId).orElse(null);
+        String commentWriterEmail = comment.getCommentWriterEmail();
+
+        if (!commentWriterEmail.equals(userEmail)){
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+        }
+
         try{
             commentRepository.deleteCommentEntityByCommentId(commentId);
         }catch (Exception e){
+            e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
         }
 

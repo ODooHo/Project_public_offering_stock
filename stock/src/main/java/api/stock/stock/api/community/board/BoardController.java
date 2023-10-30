@@ -4,6 +4,7 @@ import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,8 +56,8 @@ public class BoardController {
     }
 
     @DeleteMapping("/delete/{boardId}")
-    public ResponseDto<String> deleteBoard(@PathVariable Integer boardId){
-        ResponseDto<String> result = boardService.deleteBoard(boardId);
+    public ResponseDto<String> deleteBoard(@AuthenticationPrincipal String userEmail, @PathVariable Integer boardId){
+        ResponseDto<String> result = boardService.deleteBoard(userEmail,boardId);
         return result;
     }
 

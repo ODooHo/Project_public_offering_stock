@@ -2,6 +2,7 @@ package api.stock.stock.api.trade;
 
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +31,8 @@ public class TradeController {
     }
 
     @GetMapping("/deleteTrade/{tradeId}")
-    ResponseDto<?>deleteTrade(@PathVariable Integer tradeId){
-        ResponseDto<?> result = tradeService.deleteTrade(tradeId);
+    ResponseDto<?>deleteTrade(@AuthenticationPrincipal String userEmail, @PathVariable Integer tradeId){
+        ResponseDto<?> result = tradeService.deleteTrade(userEmail, tradeId);
         return result;
     }
 

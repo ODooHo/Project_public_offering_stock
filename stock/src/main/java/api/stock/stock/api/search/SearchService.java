@@ -30,7 +30,7 @@ public class SearchService {
     public ResponseDto<List<SearchEntity>>getRecentBoard(String userEmail){
         List<SearchEntity> search = new ArrayList<>();
         try{
-            search = searchRepository.findByUserEmailAndCategoryAndSearchIdDesc(userEmail,"board");
+            search = searchRepository.findByUserEmailAndCategoryOrderBySearchIdDesc(userEmail,"board");
         }catch (Exception e){
             e.printStackTrace();
             ResponseDto.setFailed("DataBase Error");
@@ -42,7 +42,7 @@ public class SearchService {
     public ResponseDto<List<SearchEntity>>getRecentIpo(String userEmail){
         List<SearchEntity> search = new ArrayList<>();
         try{
-            search = searchRepository.findByUserEmailAndCategoryAndSearchIdDesc(userEmail,"ipo");
+            search = searchRepository.findByUserEmailAndCategoryOrderBySearchIdDesc(userEmail,"ipo");
         }catch (Exception e){
             e.printStackTrace();
             ResponseDto.setFailed("DataBase Error");
@@ -54,12 +54,16 @@ public class SearchService {
 
     public ResponseDto<List<BoardEntity>> searchBoard(SearchDto dto){
         SearchEntity search = modelMapper.map(dto,SearchEntity.class);
+        String userEmail = search.getUserEmail();
+        String searchContent = search.getSearchContent();
         List<BoardEntity> board = null;
         try{
             search.setCategory("board");
-            searchRepository.save(search);
             String searchWord = search.getSearchContent();
             board = boardRepository.findByBoardTitleContains(searchWord);
+            if (!searchRepository.existsByUserEmailAndSearchContent(userEmail,searchContent)){
+                searchRepository.save(search);
+            }
         }catch (Exception e){
             e.printStackTrace();
             ResponseDto.setFailed("DataBase Error");
