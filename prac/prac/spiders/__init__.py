@@ -21,6 +21,7 @@ class StockSpider(Spider):
         # Find the total number of items and generate indices for the URLs
         total = 30
         index = 1
+        check = []
 
         base_url = "http://www.38.co.kr"
         for index in range(1,total+1):
@@ -28,11 +29,19 @@ class StockSpider(Spider):
             name = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/font/text()').get()
             compete = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[5]/text()').get().strip()
             collusion = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[3]/text()').get().strip()
+            flag = db.test.find_one({"ipoName" : name})
+            
+            if flag is None:
+                check.append(index)
+
+
             db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
             db.test.update_one({"ipoName" : name} , {"$set":{"finalCollusion" : collusion}})
+
+        print(check)
         #     # Generate the link xpath
         #for index in range(1,6):
-        link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
+        link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{check[0]}]/td[1]/a/@href'
         #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a
         link = response.xpath(link_xpath).get()
 
@@ -76,7 +85,7 @@ class StockSpider(Spider):
             #     item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
             #     item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
 
-            url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all"
+            url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all&str3=&str4=&page=2"
             #url = "http://www.ipostock.co.kr/sub03/ipo04.asp?str1=2023&str2=all&str3=&str4=&page=3"
             yield scrapy.Request(url, callback=self.parse_IPO_start, meta={'item': item})
 
@@ -85,7 +94,7 @@ class StockSpider(Spider):
         total = 20 * 2
         base_url = "http://www.ipostock.co.kr"
         item = response.meta['item']
-        index = 1
+        index = 15
         #     # Generate the link xpath
         #for index in range(1,12,2):
         link_xpath = f'//*[@id="print"]/table[1]//tr[4]/td/table//tr[4]/td/table//tr[{index}]/td[3]/a/@href'        
