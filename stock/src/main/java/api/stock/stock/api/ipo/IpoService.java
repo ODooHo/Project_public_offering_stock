@@ -49,7 +49,6 @@ public class IpoService {
     public ResponseDto<List<IpoEntity>> getFavorList(String userEmail){
         List<IpoEntity> result = new ArrayList<>();
         List<String> ipo = favorRepository.findIpoNameByUserEmail(userEmail);
-        System.out.println("ipo = " + ipo);
         try{
             result = ipoRepository.findAllByIpoNameIn(ipo);
         }catch (Exception e){
@@ -71,9 +70,16 @@ public class IpoService {
     }
 
 
-    public ResponseDto<String> deleteFavor(Integer favorId){
+    public ResponseDto<String> deleteFavor(String userEmail, String ipoName){
+        FavorEntity favor = favorRepository.findByIpoNameAndUserEmail(ipoName,userEmail);
+        String favorUserEmail = favor.getUserEmail();
+
+        if(!userEmail.equals(favorUserEmail)){
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+        }
+
         try{
-            favorRepository.deleteFavorEntityByFavorId(favorId);
+            favorRepository.deleteFavorEntityByIpoName(ipoName);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");

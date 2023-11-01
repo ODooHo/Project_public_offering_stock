@@ -52,8 +52,8 @@ class IpoServiceTest {
     void addFavor(){
         //given
         FavorDto dto = new FavorDto();
-        dto.setUserEmail("1");
-        dto.setIpoName("퓨릿(구.신디프)");
+        dto.setUserEmail("engh0205@naver.com");
+        dto.setIpoName("블루엠텍");
         //when
         ResponseDto<FavorEntity> response = ipoService.addFavor(dto);
         //then
@@ -76,9 +76,10 @@ class IpoServiceTest {
     @Test
     void deleteFavor(){
         //given
-        Integer favorId = 9;
+        String userEmail = "1";
+        String ipoName = "와이바이오로직스";
         //when
-        ResponseDto<String> response = ipoService.deleteFavor(favorId);
+        ResponseDto<String> response = ipoService.deleteFavor(userEmail,ipoName);
         //then
         assertThat(response.getMessage()).isEqualTo("Success");
     }

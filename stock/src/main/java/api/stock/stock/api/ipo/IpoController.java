@@ -2,6 +2,7 @@ package api.stock.stock.api.ipo;
 
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,9 +44,9 @@ public class IpoController {
         return result;
     }
 
-    @DeleteMapping("/{ipoName}/deleteFavor/{favorId}")
-    ResponseDto<String> deleteFavor(@PathVariable Integer favorId){
-        ResponseDto<String> result = ipoService.deleteFavor(favorId);
+    @DeleteMapping("/{ipoName}/deleteFavor")
+    ResponseDto<String> deleteFavor(@AuthenticationPrincipal String userEmail, @PathVariable String ipoName){
+        ResponseDto<String> result = ipoService.deleteFavor(userEmail,ipoName);
         return result;
     }
 

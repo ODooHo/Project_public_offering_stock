@@ -69,7 +69,7 @@ public class BoardService {
         try{
             board = boardRepository.findById(boardId).orElse(null);
             Integer current = board.getBoardClickCount();
-            board.setBoardLikeCount(current + 1);
+            board.setBoardClickCount(current + 1);
             boardRepository.save(board);
         }catch (Exception e) {
             e.printStackTrace();

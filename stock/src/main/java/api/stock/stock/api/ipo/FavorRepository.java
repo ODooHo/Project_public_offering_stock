@@ -15,6 +15,10 @@ public interface FavorRepository extends JpaRepository<FavorEntity, Integer> {
     @Query("SELECT f.ipoName FROM favor f WHERE f.userEmail = :user_email")
     List<String> findIpoNameByUserEmail(@Param("user_email") String userEmail);
 
+    FavorEntity findByIpoNameAndUserEmail(String ipoName,String userEmail);
 
-    void deleteFavorEntityByFavorId(Integer FavorId);
+
+    void deleteFavorEntityByIpoName(String ipoName);
+
+
 }
