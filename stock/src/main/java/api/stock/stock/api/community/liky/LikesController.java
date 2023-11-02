@@ -26,4 +26,11 @@ public class LikesController {
         return result;
     }
 
+
+    @GetMapping("/{boardId}/likes/get/count")
+    ResponseDto<Integer> getLikeCount(@PathVariable Integer boardId){
+        ResponseDto<Integer> result = likesService.getLikesCount(boardId);
+        return result;
+    }
+
 }

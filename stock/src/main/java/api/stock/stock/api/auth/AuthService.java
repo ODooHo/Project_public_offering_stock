@@ -136,6 +136,21 @@ public class AuthService {
 
     }
 
+    public ResponseDto<RefreshResponseDto> getAccess(String refreshToken) {
+        try {
+            String accessToken = tokenProvider.createAccessTokenFromRefreshToken(refreshToken);
+
+            Integer exprTime = 1800000;
+
+            RefreshResponseDto refreshResponseDto = new RefreshResponseDto(accessToken, exprTime);
+
+            return ResponseDto.setSuccess("Success", refreshResponseDto);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error!");
+        }
+    }
+
 
 
 

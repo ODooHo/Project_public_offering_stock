@@ -25,7 +25,7 @@ public class LikesService {
         try{
             BoardEntity board = boardRepository.findById(likesEntity.getBoardId()).orElse(null);
             if(board != null) {
-                board.setBoardLikeCount(board.getBoardClickCount() + 1);
+                board.setBoardLikeCount(board.getBoardLikeCount() + 1);
                 boardRepository.save(board);
                 likesRepository.save(likesEntity);
             }
@@ -54,6 +54,24 @@ public class LikesService {
         }
 
         return ResponseDto.setSuccess("Success","Delete Completed");
+    }
+
+    public ResponseDto<Integer> getLikesCount(Integer boardId){
+        Integer count = 0;
+        BoardEntity board = null;
+        try{
+            board = boardRepository.findById(boardId).orElse(null);
+            count = likesRepository.countByBoardId(boardId);
+            if(!count.equals(board.getBoardLikeCount())){
+                board.setBoardLikeCount(count);
+                boardRepository.save(board);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error");
+        }
+
+        return ResponseDto.setSuccess("Success",count);
     }
 
 }

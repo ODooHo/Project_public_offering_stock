@@ -46,4 +46,10 @@ public class AuthController {
         return result;
     }
 
+    @PostMapping("/getAccess")
+    public ResponseDto<RefreshResponseDto> getAccess(@RequestBody String refreshToken){
+        ResponseDto<RefreshResponseDto> result = authService.getAccess(refreshToken);
+        return result;
+    }
+
 }
