@@ -62,8 +62,8 @@ public class BoardController {
     }
 
     @PatchMapping("/edit/{boardId}")
-    public ResponseDto<PatchBoardResponseDto> patchBoard(@PathVariable Integer boardId, @RequestBody PatchBoardDto requestBody){
-            ResponseDto<PatchBoardResponseDto> result = boardService.patchBoard(boardId, requestBody);
+    public ResponseDto<PatchBoardResponseDto> patchBoard(@AuthenticationPrincipal String userEmail, @PathVariable Integer boardId, @RequestBody PatchBoardDto requestBody){
+            ResponseDto<PatchBoardResponseDto> result = boardService.patchBoard(userEmail, boardId, requestBody);
             return result;
     }
 

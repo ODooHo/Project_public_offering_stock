@@ -31,8 +31,8 @@ public class CommentController {
     }
 
     @PatchMapping("/{boardId}/edit/{commentId}")
-    ResponseDto<PatchCommentResponseDto> patchComment(@PathVariable Integer commentId, @RequestBody PatchCommentDto requestBody){
-        ResponseDto<PatchCommentResponseDto> result = commentService.patchComment(commentId, requestBody);
+    ResponseDto<PatchCommentResponseDto> patchComment(@AuthenticationPrincipal String userEmail,@PathVariable Integer commentId, @RequestBody PatchCommentDto requestBody){
+        ResponseDto<PatchCommentResponseDto> result = commentService.patchComment(userEmail,commentId, requestBody);
         return result;
     }
 

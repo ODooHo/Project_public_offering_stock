@@ -52,11 +52,12 @@ class CommentServiceTest {
     @Test
     public void patchComment(){
         //given
-        Integer boardId = 1;
+        String userEmail = "1";
+        Integer commentId = 1;
         PatchCommentDto dto = new PatchCommentDto();
         dto.setCommentContent("patch");
         //when
-        ResponseDto<PatchCommentResponseDto> response = commentService.patchComment(boardId,dto);
+        ResponseDto<PatchCommentResponseDto> response = commentService.patchComment(userEmail,commentId,dto);
         //then
         log.info("PatchComment {}",response.getData());
         assertThat(response.getMessage()).isEqualTo("Success");

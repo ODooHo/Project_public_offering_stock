@@ -75,7 +75,7 @@ public class IpoService {
         String favorUserEmail = favor.getUserEmail();
 
         if(!userEmail.equals(favorUserEmail)){
-            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
         }
 
         try{

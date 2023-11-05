@@ -53,8 +53,15 @@ public class CommentService {
         return ResponseDto.setSuccess("Success", comment);
     }
 
-    public ResponseDto<PatchCommentResponseDto> patchComment(Integer boardId, PatchCommentDto dto){
-        CommentEntity comment = commentRepository.findById(boardId).orElse(null);
+    public ResponseDto<PatchCommentResponseDto> patchComment(String userEmail,Integer commentId, PatchCommentDto dto){
+        CommentEntity comment = commentRepository.findById(commentId).orElse(null);
+        String commentUserEmail = comment.getCommentWriterEmail();
+        System.out.println("userEmail = " + userEmail);
+        if(!userEmail.equals(commentUserEmail)){
+            System.out.println("commentUserEmail = " + commentUserEmail);
+            ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
+        }
+
         String commentContent = dto.getCommentContent();
         LocalDate date = LocalDate.now();
 
@@ -77,7 +84,7 @@ public class CommentService {
         String commentWriterEmail = comment.getCommentWriterEmail();
 
         if (!commentWriterEmail.equals(userEmail)){
-            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
         }
 
         try{

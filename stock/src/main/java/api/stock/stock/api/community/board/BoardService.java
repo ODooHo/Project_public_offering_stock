@@ -90,8 +90,12 @@ public class BoardService {
         return ResponseDto.setSuccess("Success", boardList);
     }
 
-    public ResponseDto<PatchBoardResponseDto> patchBoard(Integer boardId, PatchBoardDto dto){
+    public ResponseDto<PatchBoardResponseDto> patchBoard(String userEmail, Integer boardId, PatchBoardDto dto){
         BoardEntity board = boardRepository.findById(boardId).orElse(null);
+        String boardUserEmail = board.getBoardWriterEmail();
+        if(!userEmail.equals(boardUserEmail)){
+            ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
+        }
         String boardTitle = dto.getBoardTitle();
         String boardContent = dto.getBoardContent();
         LocalDate date = LocalDate.now();
@@ -115,7 +119,7 @@ public class BoardService {
         BoardEntity board = boardRepository.findById(boardId).orElse(null);
         String boardWriterEmail = board.getBoardWriterEmail();
         if(!userEmail.equals(boardWriterEmail)){
-            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
         }
 
         try{

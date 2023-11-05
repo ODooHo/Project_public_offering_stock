@@ -46,7 +46,7 @@ public class TradeService {
         String tradeUserEmail = trade.getUserEmail();
 
         if(!userEmail.equals(tradeUserEmail)){
-            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match");
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
         }
 
         try{
