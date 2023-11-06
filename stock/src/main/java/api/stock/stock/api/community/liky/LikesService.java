@@ -23,6 +23,12 @@ public class LikesService {
     public ResponseDto<LikesEntity> addLike(LikesDto dto){
         LikesEntity likesEntity = modelMapper.map(dto, LikesEntity.class);
         try{
+            boolean isLiked = likesRepository.existsByUserEmailAndBoardId(likesEntity.getUserEmail(), likesEntity.getBoardId());
+            if (isLiked) {
+                return ResponseDto.setFailed("Already Liked");
+            }
+
+
             BoardEntity board = boardRepository.findById(likesEntity.getBoardId()).orElse(null);
             if(board != null) {
                 board.setBoardLikeCount(board.getBoardLikeCount() + 1);

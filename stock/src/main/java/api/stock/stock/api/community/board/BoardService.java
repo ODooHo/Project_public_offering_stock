@@ -94,7 +94,7 @@ public class BoardService {
         BoardEntity board = boardRepository.findById(boardId).orElse(null);
         String boardUserEmail = board.getBoardWriterEmail();
         if(!userEmail.equals(boardUserEmail)){
-            ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
+            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
         }
         String boardTitle = dto.getBoardTitle();
         String boardContent = dto.getBoardContent();
