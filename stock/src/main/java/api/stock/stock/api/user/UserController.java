@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseDto<MyPageDto> myPage(@AuthenticationPrincipal String userEmail){
+    public ResponseDto<MyPageDto> myPage(@AuthenticationPrincipal String userEmail) throws IOException {
         ResponseDto<MyPageDto> result = userService.myPage(userEmail);
         return result;
     }

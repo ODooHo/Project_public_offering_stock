@@ -3,6 +3,7 @@ package api.stock.stock.api.search;
 import api.stock.stock.api.community.board.BoardEntity;
 import api.stock.stock.api.ipo.IpoEntity;
 import api.stock.stock.global.response.ResponseDto;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,14 +17,14 @@ public class SearchController {
         this.searchService = searchService;
     }
 
-    @GetMapping("/{userEmail}/community")
-    public ResponseDto<List<SearchEntity>>getRecentBoard(@PathVariable String userEmail){
+    @GetMapping("/community")
+    public ResponseDto<List<SearchEntity>>getRecentBoard(@AuthenticationPrincipal String userEmail){
         ResponseDto<List<SearchEntity>> result = searchService.getRecentBoard(userEmail);
         return result;
     }
 
-    @GetMapping("/{userEmail}/stock")
-    public ResponseDto<List<SearchEntity>>getRecentIpo(@PathVariable String userEmail){
+    @GetMapping("/stock")
+    public ResponseDto<List<SearchEntity>>getRecentIpo(@AuthenticationPrincipal String userEmail){
         ResponseDto<List<SearchEntity>> result = searchService.getRecentIpo(userEmail);
         return result;
     }

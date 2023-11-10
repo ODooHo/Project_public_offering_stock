@@ -30,8 +30,8 @@ public class IpoController {
         return result;
     }
 
-    @GetMapping("/{userEmail}/getFavor")
-    ResponseDto<List<IpoEntity>> getFavorList(@PathVariable String userEmail){
+    @GetMapping("/getFavor")
+    ResponseDto<List<IpoEntity>> getFavorList(@AuthenticationPrincipal String userEmail){
         ResponseDto<List<IpoEntity>> result = ipoService.getFavorList(userEmail);
         return result;
     }

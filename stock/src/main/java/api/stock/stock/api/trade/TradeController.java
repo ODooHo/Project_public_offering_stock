@@ -31,8 +31,8 @@ public class TradeController {
     }
 
     @GetMapping("/deleteTrade/{tradeId}")
-    ResponseDto<?>deleteTrade(@AuthenticationPrincipal String userEmail, @PathVariable Integer tradeId){
-        ResponseDto<?> result = tradeService.deleteTrade(userEmail, tradeId);
+    ResponseDto<String>deleteTrade(@AuthenticationPrincipal String userEmail, @PathVariable Integer tradeId){
+        ResponseDto<String> result = tradeService.deleteTrade(userEmail, tradeId);
         return result;
     }
 
