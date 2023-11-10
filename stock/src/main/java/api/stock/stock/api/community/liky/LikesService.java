@@ -27,9 +27,8 @@ public class LikesService {
             if (isLiked) {
                 return ResponseDto.setFailed("Already Liked");
             }
-
-
-            BoardEntity board = boardRepository.findById(likesEntity.getBoardId()).orElse(null);
+            Integer likedBoard = likesEntity.getBoardId();
+            BoardEntity board = boardRepository.findById(likedBoard).orElse(null);
             if(board != null) {
                 board.setBoardLikeCount(board.getBoardLikeCount() + 1);
                 boardRepository.save(board);

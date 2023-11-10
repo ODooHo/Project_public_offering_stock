@@ -2,6 +2,7 @@ package api.stock.stock.api.community.liky;
 
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,15 +21,15 @@ public class LikesController {
         return result;
     }
 
-    @GetMapping("/{boardId}/likes/delete/{userEmail}")
-    ResponseDto<String> deleteLike(@PathVariable Integer boardId, @PathVariable String userEmail){
+    @DeleteMapping("/{boardId}/likes/delete")
+    ResponseDto<String> deleteLike(@PathVariable Integer boardId, @AuthenticationPrincipal String userEmail){
         ResponseDto<String> result = likesService.deleteLike(boardId, userEmail);
         return result;
     }
 
 
     @GetMapping("/{boardId}/likes/get/count")
-    ResponseDto<Integer> getLikeCount(@PathVariable Integer boardId){
+    ResponseDto<Integer> getLikesCount(@PathVariable Integer boardId){
         ResponseDto<Integer> result = likesService.getLikesCount(boardId);
         return result;
     }
