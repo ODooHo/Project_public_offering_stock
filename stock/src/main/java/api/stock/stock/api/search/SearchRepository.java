@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 @Transactional
 public interface SearchRepository extends JpaRepository<SearchEntity,Integer> {
-    List<SearchEntity> findByUserEmailAndCategoryOrderBySearchIdDesc(String userEmail,String category);
+    List<SearchEntity> findTop5ByUserEmailAndCategoryOrderBySearchIdDesc(String userEmail,String category);
 
 
     boolean existsByUserEmailAndSearchContent(String userEmail, String searchContent);

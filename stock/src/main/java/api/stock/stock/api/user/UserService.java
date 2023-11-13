@@ -49,23 +49,6 @@ public class UserService {
         return ResponseDto.setSuccess("Success",patchUserResponseDto);
     }
 
-    public ResponseDto<MyPageDto> myPage(String userEmail) {
-        UserEntity user = null;
-
-        try{
-            user = userRepository.findByUserEmail(userEmail);
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResponseDto.setFailed("DataBase Error!");
-        }
-        MyPageDto result = new MyPageDto();
-        result.setUserNickname(user.getUserNickname());
-        result.setUserEmail(user.getUserEmail());
-        result.setUserProfile(user.getUserProfile());
-
-        return ResponseDto.setSuccess("Success",result);
-    }
-
     public ResponseDto<String> withDraw(String userEmail){
         try{
             userRepository.deleteById(userEmail);

@@ -23,11 +23,6 @@ public class UserController {
         this.fileService = fileService;
     }
 
-    @GetMapping
-    public ResponseDto<MyPageDto> myPage(@AuthenticationPrincipal String userEmail) throws IOException {
-        ResponseDto<MyPageDto> result = userService.myPage(userEmail);
-        return result;
-    }
 
     @GetMapping("/profile")
     public ResponseEntity<byte[]> getProfile(@AuthenticationPrincipal String userEmail) throws IOException {
