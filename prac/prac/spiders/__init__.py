@@ -33,17 +33,15 @@ class StockSpider(Spider):
             
             if flag is None:
                 check.append(index)
-
             
             db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
             db.test.update_one({"ipoName" : name} , {"$set":{"finalCollusion" : collusion}})
         if len(check)<=0:
-            return
-        print(check)
-        #     # Generate the link xpath
-        #for index in range(1,6):
-        link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{check[0]}]/td[1]/a/@href'
-        #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a
+            link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
+        else:
+            print(check)
+            link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{check[0]}]/td[1]/a/@href'
+        
         link = response.xpath(link_xpath).get()
 
 

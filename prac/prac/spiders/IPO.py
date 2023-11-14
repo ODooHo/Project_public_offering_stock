@@ -3,6 +3,7 @@ from scrapy import Spider
 from .. import items
 from pymongo import MongoClient
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 
 client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
@@ -52,9 +53,28 @@ class StockSpider(Spider):
     def parse_item(self, response):
         item = items.BaseItem()
         name = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
-        public = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[6]/td[2]/text()').get().strip()
-        print(name,public)
-        db.test.update_one({"ipoName" : name},{"$set" : {"public" : public}})
+        
+        result = db.test.find_one({'ipoName': name}, {'date': 1})
+        if result:
+            public_value = result['date']
+            temp = public_value.split('~')
+            date_format = '%Y.%m.%d'
+            temp = temp[0].strip()
+            date_object = datetime.strptime(temp, date_format)
+            a = datetime.now()
+            
+            flag = date_object - a
+
+            if(flag.days <=3):
+                check = db.test.find_one({'ipoName' : name} , {'public' : ""})
+                if check is None:
+                    pass
+                else:
+                    public = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[6]/td[2]/text()').get().strip()
+                    db.test.update_one(({"ipoName" : name} , {"$set": {"public" : public}}))
+        else:
+            print(f"No document found with ipoName: {name}")
+
         # result = db.test.find({"ipoName" : name},{"compete" : ""})
         # a = list(result)
         # print(a)
