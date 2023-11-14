@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from bs4 import BeautifulSoup
 
 
-client = MongoClient('')
+client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
 db = client.test
 
 class StockSpider(Spider):
@@ -34,10 +34,11 @@ class StockSpider(Spider):
             if flag is None:
                 check.append(index)
 
-
+            
             db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
             db.test.update_one({"ipoName" : name} , {"$set":{"finalCollusion" : collusion}})
-
+        if len(check)<=0:
+            return
         print(check)
         #     # Generate the link xpath
         #for index in range(1,6):
@@ -54,6 +55,8 @@ class StockSpider(Spider):
     def parse_item(self, response):
         item = items.BaseItem()
         name = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
+        public = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[6]/td[2]').get.strip()
+        db.test.update_one({"ipoName" : name},{"$set" : {"public" : public}})
         result = db.test.find({"ipoName" : name},{"compete" : ""})
         a = list(result)
         print(a)
@@ -74,7 +77,8 @@ class StockSpider(Spider):
             item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
             item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
             item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
-
+            item['public'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[6]/td[2]').get.strip()
+            
 
             # if item['ipoName'] == '두산로보틱스':
             #     item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[7]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()

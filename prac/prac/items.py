@@ -21,6 +21,7 @@ class BaseItem(scrapy.Item):
     compete = scrapy.Field() #기관 경쟁률
     commit = scrapy.Field() #의무 보유 확약
     date = scrapy.Field() #공모 날짜
+    public = scrapy.Field()
     protect = scrapy.Field() #보호 예수 물량
     protectPercent = scrapy.Field() #보호 예수 비율
     possible = scrapy.Field() #유통 가능 물량
