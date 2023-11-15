@@ -1,10 +1,15 @@
 import React from 'react';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import SignInPage from './pages/SignInPage';
-import SignUpPage from './pages/SignUpPage';
+import SignUpPage from './pages/SignUp/SignUpPage';
 import MainPage from './pages/MainPage';
 import CalendarPage from './pages/CalendarPage'; 
 import CommunityPage from './pages/CommunityPage'
@@ -12,9 +17,12 @@ import MyPage from './pages/MyPage';
 import { BoardDetail } from './pages/BoardDetail';
 import { EditProfile } from './pages/EditProfile';
 import { TradeDetail } from './pages/TradeDetail';
+import WriteBoardPage from './pages/WriteBoardPage';
+import IpoDetail from './pages/IpoDetail';
+
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from 'react-native';
-import WriteBoardPage from './pages/WriteBoardPage';
+
 
 
 const Stack = createStackNavigator();
@@ -23,11 +31,11 @@ const ModalStack = createStackNavigator();
 
 function TabNavigator() {
   return (
-    <Tab.Navigator initialRouteName='Main'>
-      <Tab.Screen name="Calendar" component={CalendarPage} />
-      <Tab.Screen name="Main" component={MainPage} />
-      <Tab.Screen name="Community" component={CommunityPage} />
-      <Tab.Screen name='MyPage' component={MyPage}/>
+    <Tab.Navigator initialRouteName='Main' screenOptions={{ tabBarStyle: { height: 50}, tabBarLabel: () => null }}>
+      <Tab.Screen name="Calendar" component={CalendarPage} options={{ headerShown: false, tabBarIcon: ({ color, size }) => (<Icon name="calendar-outline" color={color} size={size} />), }}/>
+      <Tab.Screen name="Main" component={MainPage} options={{ headerShown: false, tabBarIcon: ({ color, size }) => (<AntDesign name="home" color={color} size={size} />), }}/>
+      <Tab.Screen name="Community" component={CommunityPage} options={{ headerShown: true, headerTitle: "커뮤니티", tabBarIcon: ({ color, size }) => (<Feather name="users" color={color} size={size} />), }} />
+      <Tab.Screen name='MyPage' component={MyPage} options={{ tabBarIcon: ({ color, size }) => (<Icon name="person-circle-outline" color={color} size={35} />), }}/>
     </Tab.Navigator>
   );
 }
@@ -40,6 +48,7 @@ function MainStack() {
       <Stack.Screen name="MainStack" component={TabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="BoardDetail" component={BoardDetail} />
       <Stack.Screen name="TradeDetail" component={TradeDetail} />
+      <Stack.Screen name="IpoDetail" component={IpoDetail} />
     </Stack.Navigator>
   );
 }
@@ -47,7 +56,7 @@ function MainStack() {
 function AppNavigator() {
   return (
     <NavigationContainer>
-      <ModalStack.Navigator screenOptions={{ prsentation: 'modal', headerShown: false }}>
+      <ModalStack.Navigator screenOptions={{ presentation: 'modal', headerShown: false }}>
         <ModalStack.Screen name="Main" component={MainStack} />
         <ModalStack.Screen name="EditProfile" component={EditProfile} 
           options={({ navigation, route }) => ({ 
@@ -67,36 +76,17 @@ function AppNavigator() {
         <ModalStack.Screen name="WriteBoard" component={WriteBoardPage}
           options={({ navigation, route }) => ({
             headerShown: true,
+            headerTitle: route.params?.board ? "게시글 수정" : "게시글 작성",
             headerLeft: () => (
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Text>    취소</Text>
               </TouchableOpacity>
             ),
-            // headerRight: () => (
-            //   <TouchableOpacity onPress={() => route.params?.handleSubmit?.()}>
-            //     <Text>작성    </Text>
-            //   </TouchableOpacity>
-            // )
           })}
         />
       </ModalStack.Navigator>
     </NavigationContainer>
   );
 }
-
-// function AppNavigator() {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator initialRouteName="Login">
-//         <Stack.Screen name="SignIn" component={SignInPage} options={{ headerShown: false }} />
-//         <Stack.Screen name="SignUp" component={SignUpPage} options={{ headerShown: true, headerTransparent: true, headerTitle: '', headerBackTitleVisible: false }} />
-//         <Stack.Screen name="MainStack" component={TabNavigator} options={{ headerShown: false }} />
-//         <Stack.Screen name="BoardDetail" component={BoardDetail} />
-//         <Stack.Screen name="EditProfile" component={EditProfile} />
-//         <Stack.Screen name="TradeDetail" component={TradeDetail} />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// }
 
 export default AppNavigator;

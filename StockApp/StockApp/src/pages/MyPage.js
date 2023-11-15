@@ -1,44 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { View,Text,Button,FlatList,StyleSheet,TextInput,TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
-import { getMyPageApi,updateMyPageApi,createTradeEntryApi, } from '../API/MyPageApi';
+import { getProfileImageApi,createTradeEntryApi, } from '../API/MyPageApi';
 import { useNavigation } from '@react-navigation/native';
+import useUserStore from '../UserInfo/UserStore';
 
 import EditProfile from './EditProfile';
 import TradeDetail from './TradeDetail';
-import { getToken, removeToken } from '../tokenManager';
+
+const SERVER_URL = 'http://15.165.24.146:8080';
 
 const MyPage = () => {
-  const [userProfile, setUserProfile] = useState({});
+  const userStore = useUserStore();
+  const { user, setUser } = userStore;
+  // const userProfileInfo = userStore.user;
+  const [userProfileImage, setUserProfileImage] = useState({});
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
+  console.log("정보확인:", user);
+
+  useEffect(() => {
+    if (user) {
+      setUserProfileImage(user.userProfile); // 이미지 URL 업데이트
+    }
+  }, [user]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = await getToken();
-
-        //마이페이지 정보 불러오기
-        const myPageData = await getMyPageApi(token);
-        setUserProfile(myPageData);
-
-        //사용자 매매일지 불러오기
-        //getUserTradesApi()와 관련된 코드 추가
-
+        const imageUrl = await getProfileImageApi();
+        console.log("가져온 이미지 url확인:", imageUrl);
+        if (imageUrl) {
+          setUserProfileImage(imageUrl);
+        } else {
+          console.log("유효한 이미지 URL이 없습니다.")
+        }
+        // setUserProfileImage(imageUrl);
+        // 사용자 매매일지 불러오기
+        // getUserTradesApi()와 관련된 코드 추가
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch MyPage data!', error);
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
   const handleUpdateProfile = () => {
+    if (!user || !user.userNickname) {
+      Alert.alert('오류', '필요한 프로필 정보가 없습니다.');
+      return;
+    }
     navigation.navigate('EditProfile', {
-      userProfile,
-      onUpdate: (updatedProfile) => setUserProfile(updatedProfile)
+      userProfile: user,
+      userProfileImage,
+      onUpdate: (updatedProfileInfo) => {
+        setUser(updatedProfileInfo);
+      }
     });
   };
 
@@ -76,12 +96,19 @@ const MyPage = () => {
       ) : (
         <View style={styles.profileSection}>
           <View style={styles.imageContainer}>
-            <Image source={userProfile.image ? { uri: userProfile.image } : require('../assets/default.jpg')} style={styles.profileImage} />
-            {/* <Image source={{ uri: userProfile.image || 'default.jpg' }} style={styles.profileImage} /> */}
+            {userProfileImage ? (
+              <Image source={{ uri: userProfileImage }} style={styles.profileImage} />
+            ) : (
+              <Text>프로필 이미지가 없습니다.</Text>
+            )}
           </View>
           <View style={styles.userInfoContainer}>
-            <Text style={styles.userNickname}>닉네임 {userProfile.userNickname}</Text>
-            <Text style={styles.userEmail}>이메일 : {userProfile.userEmail}</Text> 
+            {user && (
+              <>
+                <Text style={styles.userNickname}>{user.userNickname}</Text>
+                <Text style={styles.userEmail}>{user.userEmail}</Text> 
+              </>
+            )}
           </View>
         </View>
       )}

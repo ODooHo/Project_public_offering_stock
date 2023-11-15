@@ -54,16 +54,17 @@ const signUpStyles = StyleSheet.create({
     imageContainer: {
         width: 120,
         height: 120,
-        borderRadius: 100,
+        borderRadius: 80,
         overflow: 'hidden', 
         alignSelf: 'center',
         justifyContent: 'center', 
         marginBottom: 35,
-        marginTop: -45
+        marginTop: -250,
     },
     profileImage: {
         width: '100%',
         height: '100%',
+        resizeMode: 'cover',
     },
 });
 

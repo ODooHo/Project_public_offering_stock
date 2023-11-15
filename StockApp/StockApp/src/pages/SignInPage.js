@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { setRefreshToken, setToken, getToken } from '../tokenManager';
 import { SignInApi, getAccessTokenApi } from '../API/AuthApi';
 import SignInStyles  from '../styleSheet/SignInStyle';
+import useUserStore from '../UserInfo/UserStore';
 
 const SignInPage = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState('');
@@ -11,20 +12,39 @@ const SignInPage = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const response = await SignInApi({ userEmail, userPassword });
-
-      if (response && response.data && response.data.token) {
-        // console.log("Received Token: ", response.data.token); //받은 토큰 값 출력
-        await setToken(response.data.token);
-        await setRefreshToken(response.data.refreshToken)
-
-        Alert.alert('로그인 성공', '환영합니다!', [
-          { text: "OK", onPress: () => navigation.navigate('MainStack') }
-        ]);
+  
+      if (response && response.data) {
+        const { token, refreshToken, user } = response.data;
+  
+        if (token) {
+          console.log("Received Token: ", token); // 받은 토큰 값 출력
+          await setToken(token);
+          await setRefreshToken(refreshToken);
+  
+          // 사용자 상태 설정
+          useUserStore.getState().setUser(user);
+  
+          Alert.alert('로그인 성공', '환영합니다!', [
+            { text: "OK", onPress: () => navigation.navigate('MainStack') }
+          ]);
+        } else {
+          // 응답에 token이 없을 경우
+          console.log('Unexpected response:', response);
+          Alert.alert('로그인 실패', '아이디 또는 비밀번호가 틀렸습니다.');
+        }
       } else {
-        Alert.alert('로그인 실패', '아이디 또는 비밀번호가 틀렸습니다.');
+        // response가 null이거나 data 속성이 없을 경우
+        console.log('Invalid response object:', response);
+        Alert.alert('로그인 실패', '서버 응답이 올바르지 않습니다.');
       }
     } catch (error) {
-      Alert.alert('로그인 실패', '서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      if (error.response){
+        console.log(error.response.data);
+      } else if (error.request) {
+        console.log('The request was made but no response was received');
+      } else {
+        console.log('Error', error.message);
+      }
     }
   };
 
