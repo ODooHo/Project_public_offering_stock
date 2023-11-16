@@ -20,5 +20,7 @@ public interface FavorRepository extends JpaRepository<FavorEntity, Integer> {
 
     void deleteFavorEntityByIpoName(String ipoName);
 
+    boolean existsByIpoNameAndUserEmail(String ipoName, String userEmail);
+
 
 }

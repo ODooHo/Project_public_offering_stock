@@ -38,8 +38,8 @@ public class IpoController {
 
 
 
-    @PostMapping("/{ipoName}/addFavor")
-    ResponseDto<FavorEntity> addFavor(@PathVariable String ipoName, @RequestBody FavorDto requestBody){
+    @PostMapping("/addFavor")
+    ResponseDto<FavorEntity> addFavor(@RequestBody FavorDto requestBody){
         ResponseDto<FavorEntity> result = ipoService.addFavor(requestBody);
         return result;
     }

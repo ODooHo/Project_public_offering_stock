@@ -9,6 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class FavorDto {
     private Integer favorId;
-    private String ipoName;
     private String userEmail;
 }

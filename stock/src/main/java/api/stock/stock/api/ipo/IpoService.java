@@ -61,6 +61,12 @@ public class IpoService {
     public ResponseDto<FavorEntity> addFavor(FavorDto dto){
         FavorEntity favor = modelMapper.map(dto,FavorEntity.class);
         try{
+            String ipoName = favor.getIpoName();
+            String userEmail = favor.getUserEmail();
+            boolean isDuplicate = favorRepository.existsByIpoNameAndUserEmail(ipoName,userEmail);
+            if (isDuplicate){
+                return ResponseDto.setFailed("Already Favor");
+            }
             favorRepository.save(favor);
         }catch (Exception e){
             e.printStackTrace();
