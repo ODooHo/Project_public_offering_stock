@@ -28,6 +28,7 @@ public class IpoEntity {
     private String compete;
     private String commit;
     private String date;
+    private String publicDate;
     private List<String> sale;
     private List<String> profit;
     private List<String> pureProfit;
