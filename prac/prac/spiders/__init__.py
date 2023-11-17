@@ -96,7 +96,7 @@ class StockSpider(Spider):
         total = 20 * 2
         base_url = "http://www.ipostock.co.kr"
         item = response.meta['item']
-        index = 1
+        index = 3
         #     # Generate the link xpath
         #for index in range(1,12,2):
         link_xpath = f'//*[@id="print"]/table[1]//tr[4]/td/table//tr[4]/td/table//tr[{index}]/td[3]/a/@href'        
@@ -201,21 +201,6 @@ class UpdateSpider(Spider):
         check = []
 
         base_url = "http://www.38.co.kr"
-        # for index in range(1,total+1):
-        #     a = []
-        #     name = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/font/text()').get()
-        #     compete = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[5]/text()').get().strip()
-        #     collusion = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[3]/text()').get().strip()
-        #     flag = db.test.find_one({"ipoName" : name})
-            
-        #     if flag is None:
-        #         check.append(index)
-
-            
-        #     db.test.update_one({"ipoName" : name} , {"$set": {"compete" : compete}})
-        #     db.test.update_one({"ipoName" : name} , {"$set":{"finalCollusion" : collusion}})
-        #     # Generate the link xpath
-        #for index in range(1,6):
         for index in range(1,30):
             link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
             #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a
