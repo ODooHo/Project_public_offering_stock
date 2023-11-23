@@ -1,4 +1,4 @@
-package api.stock.stock.api.community.liky;
+package api.stock.stock.api.community.likes;
 
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;

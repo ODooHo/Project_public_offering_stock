@@ -1,4 +1,4 @@
-package api.stock.stock.api.community.liky;
+package api.stock.stock.api.community.likes;
 
 import api.stock.stock.api.community.board.BoardEntity;
 import api.stock.stock.api.community.board.BoardRepository;

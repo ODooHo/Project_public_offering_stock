@@ -1,4 +1,4 @@
-package api.stock.stock.api.community.liky;
+package api.stock.stock.api.community.likes;
 
 import lombok.*;
 
