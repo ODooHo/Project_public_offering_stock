@@ -2,7 +2,6 @@ package api.stock.stock.api.community.board;
 
 import api.stock.stock.global.response.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,24 +16,23 @@ class BoardServiceTest {
     @Autowired
     private BoardService boardService;
 
-//    @Test
-//    public void testRegister() {
-//        // Given
-//        String boardTitle = "TestBoard";
-//        String boardContent = "Test";
-//        String boardWriterEmail = "1";
-//        String boardWriterProfile = "default.jpg";
-//        String boardWriterNickname = "1";
-//        String boardWriteDate = "";
-//        //dto.setBoardImage("default.jpg");
-//        // When
-//        ResponseDto<BoardEntity> response = boardService.register(boardTitle,boardContent,boardWriterEmail,boardWriterProfile,boardWriterNickname,boardWriteDate,null);
-//        log.info("board {}",response.getData());
-//        // Then
-//        assertThat(response.getMessage()).isEqualTo("Success");
-//        assertThat(response.getData()).isNotNull();
-//    }
-
+    @Test
+    public void testRegister() {
+        // Given
+        String boardTitle = "TestBoard";
+        String boardContent = "Test";
+        String boardWriterEmail = "1";
+        String boardWriterProfile = "default.jpg";
+        String boardWriterNickname = "1";
+        String boardWriteDate = "";
+        //dto.setBoardImage("default.jpg");
+        // When
+        ResponseDto<BoardEntity> response = boardService.register(boardTitle,boardContent,boardWriterEmail,boardWriterProfile,boardWriterNickname,null);
+        log.info("board {}",response.getData());
+        // Then
+        assertThat(response.getMessage()).isEqualTo("Success");
+        assertThat(response.getData()).isNotNull();
+    }
 //    @Test
 //    public void patchBoard(){
 //        //given

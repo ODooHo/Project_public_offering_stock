@@ -64,7 +64,7 @@ public class FileService {
     }
 
     public ResponseDto<String> setProfile(MultipartFile file, String userEmail) {
-        UserEntity user = userRepository.findByUserEmail(userEmail);
+        UserEntity user = userRepository.findById(userEmail).orElse(null);
 
         List<BoardEntity> boardEntity = boardRepository.findByBoardWriterEmail(userEmail);
 
@@ -90,7 +90,7 @@ public class FileService {
 
     public ResponseEntity<byte[]> getProfileImage(String userEmail) throws IOException {
         UserEntity user = new UserEntity();
-        user = userRepository.findByUserEmail(userEmail);
+        user = userRepository.findById(userEmail).orElse(null);
 
         String imageName = user.getUserProfile();
 

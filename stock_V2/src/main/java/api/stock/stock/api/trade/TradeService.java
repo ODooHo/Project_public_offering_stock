@@ -50,7 +50,7 @@ public class TradeService {
         }
 
         try{
-            tradeRepository.deleteTradeEntityByTradeId(tradeId);
+            tradeRepository.deleteById(tradeId);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");

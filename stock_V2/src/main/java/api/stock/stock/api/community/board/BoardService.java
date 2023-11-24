@@ -113,7 +113,7 @@ public class BoardService {
         }
 
         try{
-            boardRepository.deleteByBoardId(boardId);
+            boardRepository.deleteById(boardId);
         }catch (Exception e){
             return ResponseDto.setFailed("DataBase Error");
         }

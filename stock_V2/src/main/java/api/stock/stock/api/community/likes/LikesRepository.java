@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface LikesRepository extends JpaRepository<LikesEntity, Integer> {
     Integer countByBoardId(Integer boardId);
-    void deleteLikesEntityByBoardIdAndUserEmail(Integer boardId, String userEmail);
+    void deleteByBoardIdAndUserEmail(Integer boardId, String userEmail);
 
     boolean existsByUserEmailAndBoardId(String userEmail, Integer BoardId);
 }

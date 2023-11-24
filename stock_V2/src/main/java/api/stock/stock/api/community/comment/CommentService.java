@@ -86,7 +86,7 @@ public class CommentService {
         }
 
         try{
-            commentRepository.deleteCommentEntityByCommentId(commentId);
+            commentRepository.deleteById(commentId);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");

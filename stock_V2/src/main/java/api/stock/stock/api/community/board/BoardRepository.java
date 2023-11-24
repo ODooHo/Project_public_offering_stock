@@ -13,6 +13,5 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer>,Boa
     List<BoardEntity> findByBoardWriterEmail(String userEmail);
 
 
-    void deleteByBoardId(Integer BoardId);
 
 }

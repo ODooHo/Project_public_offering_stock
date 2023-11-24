@@ -97,7 +97,7 @@ public class AuthService {
         UserEntity userEntity = null;
 
         try{
-            userEntity = userRepository.findByUserEmail(userEmail);
+            userEntity = userRepository.findById(userEmail).orElse(null);
             if(userEntity == null){
                 return ResponseDto.setFailed("Unknown User!");
             }

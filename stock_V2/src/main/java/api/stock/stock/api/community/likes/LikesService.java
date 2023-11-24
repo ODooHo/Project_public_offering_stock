@@ -45,7 +45,7 @@ public class LikesService {
     public ResponseDto<String> deleteLike(Integer boardId, String userEmail) {
         try{
             // 데이터베이스에서 사용자의 닉네임과 게시글 번호에 해당하는 좋아요 삭제
-            likesRepository.deleteLikesEntityByBoardIdAndUserEmail(boardId, userEmail);
+            likesRepository.deleteByBoardIdAndUserEmail(boardId, userEmail);
             // 해당 게시글의 좋아요 개수 감소
             BoardEntity board = boardRepository.findById(boardId).orElse(null);
             if (board != null) {

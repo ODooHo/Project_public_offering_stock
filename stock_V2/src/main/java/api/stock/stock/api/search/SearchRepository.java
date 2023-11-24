@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 @Transactional
 public interface SearchRepository extends JpaRepository<SearchEntity,Integer>,SearchQueryDslRepository{
-
     boolean existsByUserEmailAndSearchContent(String userEmail, String searchContent);
 }
