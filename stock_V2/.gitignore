@@ -176,7 +176,7 @@ Temporary Items
 *.icloud
 
 ###QClass###
-!**/src/main/generated/**
+src/main/generated/**
 
 
 # End of https://www.toptal.com/developers/gitignore/api/java,macos,intellij
