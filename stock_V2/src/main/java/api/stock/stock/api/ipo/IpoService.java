@@ -85,7 +85,7 @@ public class IpoService {
         }
 
         try{
-            favorRepository.deleteByIpoName(ipoName);
+            favorRepository.deleteB yIpoName(ipoName);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");

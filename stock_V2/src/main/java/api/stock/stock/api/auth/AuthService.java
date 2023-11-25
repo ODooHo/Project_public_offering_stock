@@ -4,8 +4,6 @@ import api.stock.stock.api.user.UserEntity;
 import api.stock.stock.global.response.ResponseDto;
 import api.stock.stock.global.security.TokenProvider;
 import api.stock.stock.api.user.UserRepository;
-import com.fasterxml.jackson.core.JsonParser;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
