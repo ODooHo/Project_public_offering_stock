@@ -2,6 +2,7 @@ package api.stock.stock.global.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,7 +18,8 @@ import java.util.Date;
 @Service
 public class TokenProvider {
     //Jwt 생성 및 검증을 위한 키
-    private static final String SECURITY_KEY = "wbifpqwhjfmj!@!";
+    @Value("{secretKey}")
+    private String SECURITY_KEY;
     //jwt 생성하는 메서드
     public String createAccessToken(String userEmail){
         Date exprTime = Date.from(Instant.now().plus(30, ChronoUnit.MINUTES));
