@@ -19,6 +19,7 @@ import { EditProfile } from './pages/EditProfile';
 import { TradeDetail } from './pages/TradeDetail';
 import WriteBoardPage from './pages/WriteBoardPage';
 import IpoDetail from './pages/IpoDetail';
+import SearchPage from './pages/SearchPage';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from 'react-native';
@@ -33,8 +34,29 @@ function TabNavigator() {
   return (
     <Tab.Navigator initialRouteName='Main' screenOptions={{ tabBarStyle: { height: 50}, tabBarLabel: () => null }}>
       <Tab.Screen name="Calendar" component={CalendarPage} options={{ headerShown: false, tabBarIcon: ({ color, size }) => (<Icon name="calendar-outline" color={color} size={size} />), }}/>
-      <Tab.Screen name="Main" component={MainPage} options={{ headerShown: false, tabBarIcon: ({ color, size }) => (<AntDesign name="home" color={color} size={size} />), }}/>
-      <Tab.Screen name="Community" component={CommunityPage} options={{ headerShown: true, headerTitle: "커뮤니티", tabBarIcon: ({ color, size }) => (<Feather name="users" color={color} size={size} />), }} />
+      <Tab.Screen name="Main" component={MainPage}
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerTransparent: true,
+          headerTitle: '',
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('SearchPage', { searchType: 'ipo' })} style={{ marginRight: 12 }}>
+              <Icon name="search" size={25} color="#000" />
+            </TouchableOpacity>
+          ),
+          tabBarIcon: ({ color, size }) => (<AntDesign name="home" color={color} size={size} />),
+        })}/>
+      <Tab.Screen name="Community" component={CommunityPage}
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerTitle: "커뮤니티",
+          tabBarIcon: ({ color, size }) => (<Feather name="users" color={color} size={size} />), 
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('SearchPage', { searchType: 'community' })} style={{ marginRight: 12 }}>
+              <Icon name="search" size={25} color="#000" />
+            </TouchableOpacity>
+          ),
+        })}/>
       <Tab.Screen name='MyPage' component={MyPage} options={{ tabBarIcon: ({ color, size }) => (<Icon name="person-circle-outline" color={color} size={35} />), }}/>
     </Tab.Navigator>
   );
@@ -49,6 +71,7 @@ function MainStack() {
       <Stack.Screen name="BoardDetail" component={BoardDetail} />
       <Stack.Screen name="TradeDetail" component={TradeDetail} />
       <Stack.Screen name="IpoDetail" component={IpoDetail} />
+      <Stack.Screen name="SearchPage" component={SearchPage} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
