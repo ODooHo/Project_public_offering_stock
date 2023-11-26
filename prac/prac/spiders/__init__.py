@@ -54,7 +54,7 @@ class StockSpider(Spider):
         item = items.BaseItem()
         name = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
         public = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[6]/td[2]/text()').get().strip()
-        db.test.update_one({"ipoName" : name},{"$set" : {"public" : public}})
+        db.test.update_one({"ipoName" : name},{"$set" : {"publicDate" : public}})
         result = db.test.find({"ipoName" : name},{"compete" : ""})
         a = list(result)
         print(a)
