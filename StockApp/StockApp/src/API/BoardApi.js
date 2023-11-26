@@ -132,7 +132,7 @@ export const fetchRecentSearches = async () => {
         const authToken = await getAuthToken();
         const response = await axios.get(`${SERVER_URL}/api/search/community`, {
             headers: {
-                Authorization: authToken,
+                'Authorization': authToken,
             },
         });
         console.log("최근 검색어(커뮤니티):", response.data);

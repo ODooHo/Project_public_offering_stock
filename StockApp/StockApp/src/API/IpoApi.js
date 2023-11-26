@@ -15,6 +15,7 @@ const getAuthToken = async () => {
 export const fetchIpoList = async () => {
   try {
     const response = await axios.get(`${SERVER_URL}/api/stock/list`);
+    console.log("공모주정보", response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetchin IPO list:', error);
@@ -36,13 +37,16 @@ export async function fetchIpoDetail(ipoName) {
 };
 
 //관심
-export const addFavoriteIpo = async (ipoName) => {
+export const addFavoriteIpo = async (ipoName, userEmail) => {
   try {
     console.log("Add IPO with name(API):", ipoName);
-    // const token = await getAuthToken();
-    const response = await axios.post(`${SERVER_URL}/api/stock/${ipoName}/addFavor`, {
+    const token = await getAuthToken();
+    const response = await axios.post(`${SERVER_URL}/api/stock/addFavor`, {
+      ipoName,
+      userEmail
+    }, {
       headers: {
-        'Authorization': await getAuthToken()
+        'Authorization': token
       }
     });
     console.log(response.data);
@@ -99,10 +103,10 @@ export const searchIpo = async (searchDto) => {
 
 export const fetchRecentSearches = async () => {
   try {
-    const token = await getAuthToken();
+    const autoken = await getAuthToken();
     const response = await axios.get(`${SERVER_URL}/api/search/stock`, {
       headers: {
-        'Authorization': token
+        'Authorization': autoken
       }
     });
     console.log("최근 검색어(공모주):", response.data);

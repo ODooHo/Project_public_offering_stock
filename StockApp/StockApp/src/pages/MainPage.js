@@ -1,64 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, TextInput, Button } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { addWhitelistedNativeProps } from 'react-native-reanimated/lib/typescript/ConfigHelper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { fetchIpoList, searchIpo, fetchRecentSearches } from '../API/IpoApi';
-import { deleteSearchesTerm } from '../API/BoardApi';
+import { fetchIpoList } from '../API/IpoApi';
 import useUserStore from '../UserInfo/UserStore';
 
 function MainPage({ navigation }) {
   const [ipoList, setIpoList] = useState([]);
   const [ongoingIpoList, setOngoingIpoList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [showRecentSearches, setShowRecentSearches] = useState(false);
-
   const userInfo = useUserStore((state) => state.user);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getIpoList();
-      getRecentSearches();
     });
-
     return unsubscribe;
   }, [navigation]);
-
-  const onSearch = async () => {
-    if (!searchTerm) return;
-    try {
-      const searchDto = {
-        searchContent: searchTerm,
-      };
-      const response = await searchIpo(searchDto);
-      setIpoList(response.data);
-      setShowRecentSearches(false);
-      await getRecentSearches();
-    } catch (error) {
-      console.error('Error searching IPOs:', error);
-    }
-  };
-
-  const getRecentSearches = async () => {
-    try {
-      const response = await fetchRecentSearches();
-      console.log('서버 응답:', response);
-      setRecentSearches(response.data);
-    } catch (error) {
-      console.log('Error fetching recent searches:', error);
-    }
-  };
-
-  const onRecentSearchTermClick = (term) => {
-    setSearchTerm(term.searchContent);
-    onSearch();
-  };
 
   const getIpoList = async () => {
     try {
       const response = await fetchIpoList();
       const allIpos = response.data;
       const ongoingIpos = allIpos.filter(ipo => isOngoingIpo(ipo));
-
       setOngoingIpoList(ongoingIpos);
       setIpoList(allIpos);
     } catch (error) {
@@ -66,35 +29,37 @@ function MainPage({ navigation }) {
     }
   };
 
-  const deleteRecentSearch = async (searchId) => {
-    try {
-      await deleteSearchesTerm(searchId);
-      getRecentSearches();
-    } catch (error) {
-      console.error('Error deleting recent search:', error);
-    }
-  };
-
-  const onSearchInputFocus = () => {
-    setShowRecentSearches(true);
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.listItem}
-      onPress={() => navigation.navigate('IpoDetail', { ipoName: item.ipoName })}
-    >
-      <Text style={styles.ipoName}>{item.ipoName}</Text>
-      <Text style={styles.dateText}>{item.date}</Text>
-    </TouchableOpacity>
-  );
+  // const getIpoList = async () => {
+  //   try {
+  //     const response = await fetchIpoList();
+  //     const sortedIpos = response.data
+  //       .filter(ipo => ipo.date)  // Ensure we only process IPOs with a date field
+  //       .map(ipo => {
+  //         const dateRange = ipo.date.split(' ~ ');
+  //         return {
+  //           ...ipo,
+  //           startDate: new Date(dateRange[0].trim().replace(/\./g, '-')),
+  //           endDate: new Date(dateRange[1].trim().replace(/\./g, '-'))
+  //         };
+  //       })
+  //       .sort((a, b) => a.startDate - b.startDate);
   
+  //     setIpoList(sortedIpos);
+  //   } catch (error) {
+  //     console.error('Error fetching IPO list:', error);
+  //   }
+  // };
+  const displayCollusionPrice = (ipo) => {
+    return ipo.finalCollusion && ipo.finalCollusion !== '-' 
+           ? `${ipo.finalCollusion} 원`
+           : ipo.collusion;
+  };
+
   const isOngoingIpo = (ipo) => {
-    // const koreanTime = getKoreanTime();
     const today = new Date();
     const kstTime = new Date(today.getTime() + (9 * 60 * 60 * 1000)); 
     const dateRange = ipo.date.split('  ~  ');
-  
+
     if (dateRange.length === 2) {
       const startDate = new Date(dateRange[0].trim().replace(/\./g, '-'));
       const endDate = new Date(dateRange[1].trim().replace(/\./g, '-'));
@@ -110,56 +75,33 @@ function MainPage({ navigation }) {
   
       return isOngoing;
     } else {
-      // 날짜 형식이 잘못된 경우 처리
       console.error('Invalid date format:', ipo.date);
       return false;
     }
   };
 
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('IpoDetail', { ipoName: item.ipoName })}
+    >
+      <Text style={styles.ipoTitle}>{item.ipoName}</Text>
+      <Text style={styles.ipoDate}>{item.date}</Text>
+      <Text style={styles.ipoPrice}>공모가: {displayCollusionPrice(item)}</Text>
+      <Text style={styles.ipoChief} numberOfLines={1} ellipsizeMode='tail'>주관사: {item.chief}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          placeholder="Search IPOs"
-          value={searchTerm}
-          onChangeText={(text) => setSearchTerm(text)}
-          onFocus={onSearchInputFocus}
-          style={styles.searchInput}
-        />
-        <TouchableOpacity onPress={onSearch} style={styles.searchButton}>
-          <Icon name="search" size={25} color="white" />
-        </TouchableOpacity>
-        {/* <Button title="Search" onPress={onSearch} /> */}
-      </View>
-      {showRecentSearches && recentSearches.length > 0 && (
-        <View style={styles.recentSearchesContainer}>
-          {recentSearches.map((term) => (
-            <View key={term.searchId} style={styles.recentSearchItem}>
-              <Text onPress={() => onRecentSearchTermClick(term)}>
-                {term.searchContent}
-              </Text>
-              <Button title="삭제" onPress={() => deleteRecentSearch(term.searchId)} />
-            </View>
-          ))}
-          {/* {recentSearches.map((term, index) => (
-            <View key={index} style={styles.recentSearchItem}>
-              <Text onPress={() => onRecentSearchTermClick(term)}>
-                {term.searchContent}
-              </Text>
-              <Button title="삭제" onPress={() => deleteRecentSearch(term.searchId)} />
-            </View>
-          ))} */}
-        </View>
-      )}
-
       {/* 공모기간 중인 IPO 목록 표시 */}
       <Text style={styles.sectionTitle}>공모기간 중인 IPO</Text>
       <FlatList
         data={ongoingIpoList}
         renderItem={renderItem}
         keyExtractor={(item) => item.ipoName + '_ongoing'}
+        contentContainerStyle={{ padding: 10, minHeight: 230 }}
       />
-
       {/* 전체 IPO 목록 표시 */}
       <Text style={styles.sectionTitle}>전체 IPO 목록</Text>
       <FlatList
@@ -167,7 +109,6 @@ function MainPage({ navigation }) {
         renderItem={renderItem}
         keyExtractor={(item) => item.ipoName}
       />
-
       {/* <FlatList
         data={ipoList}
         renderItem={renderItem}
@@ -180,85 +121,48 @@ function MainPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
+    // backgroundColor: '#f8f8f8',
+    backgroundColor: '#fff',
     padding: 10,
+    marginTop: 10,
   },
-  searchContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
+  header:{
+
   },
-  searchInput: {
-    flex: 1,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: 'gray',
-    marginRight: 10,
-  },
-  listItem: {
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 8,
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    marginBottom: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    shadowOpacity: 1,
+    elevation: 3,
   },
-  ipoName: {
-    fontSize: 16,
+  ipoTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 4,
   },
-  // ongoingText: {
-  //   color: 'green', 
-  // },
-  recentSearchesContainer: {
-    marginBottom: 15,
+  ipoDate: {
+    fontSize: 14,
+    color: 'grey',
+    marginBottom: 4,
   },
-  recentSearchItem: {
-    flexDirection: 'row',
-    alignContent: 'center',
-    justifyContent: 'space-between',
+  ipoPrice: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  ipoChief: {
+    fontSize: 14,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 15,
-    marginBottom: 8,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
-    padding: 5,
-    backgroundColor: '#fff',
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  searchInput: {
-    flex: 1,
-    padding: 8,
-    marginRight: 10,
-    fontSize: 16,
-  },
-  searchButton: {
-    padding: 8,
-    backgroundColor: '#007bff',
-    borderRadius: 25,
-  },
-  listItem: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginVertical: 5,
-  },
-  ipoName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  dateText: {
-    color: 'gray',
+    marginTop: 20,
+    marginBottom: 5,
   },
 });
 

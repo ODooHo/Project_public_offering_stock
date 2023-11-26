@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
       marginBottom: 20,
   },
   button: {
-      backgroundColor: 'white',
+      backgroundColor: 'skyblue',
       padding: 10,
       borderRadius: 10,
       alignItems: 'center',
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
       height: 35,
   },
   buttonText: {
-      color: 'black',
+      color: 'white',
       fontWeight: '300',
       fontSize: 15,
   }

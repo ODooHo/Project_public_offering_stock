@@ -70,7 +70,7 @@ function MainStack() {
       <Stack.Screen name="MainStack" component={TabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="BoardDetail" component={BoardDetail} />
       <Stack.Screen name="TradeDetail" component={TradeDetail} />
-      <Stack.Screen name="IpoDetail" component={IpoDetail} />
+      <Stack.Screen name="IpoDetail" component={IpoDetail} options={{ headerShown: true, headerTitle: '공모주 상세정보', headerBackTitleVisible: false }}/>
       <Stack.Screen name="SearchPage" component={SearchPage} options={{ headerShown: false }} />
     </Stack.Navigator>
   );

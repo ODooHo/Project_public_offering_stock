@@ -20,8 +20,14 @@ export const BoardDetail = ({ route }) => {
   const [currentUserEmail, setCurrentUserEmail] = useState(user?.userEmail || "");
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
   const navigation = useNavigation();
+
+  const toggleOptionsMenu = () => {
+    setShowOptionsMenu(!showOptionsMenu);
+  };
+  
 
   useEffect(() => {
     setCurrentUserEmail(user?.userEmail || "");
@@ -183,6 +189,10 @@ export const BoardDetail = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={toggleOptionsMenu} style={styles.optionsButton}>
+        <FontAwesome5 name="ellipsis-h" size={20} />
+      </TouchableOpacity>
+
       {board && (
         <View style={styles.boardContainer}>
           <Text style={styles.boardTitle}>{board.boardTitle}</Text>
@@ -285,7 +295,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#F9F9F9',
   },
   boardContainer: {
     marginBottom: 20,
@@ -328,7 +338,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   commentButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'skyblue',
     padding: 10,
     borderRadius: 5,
   },
@@ -360,5 +370,27 @@ const styles = StyleSheet.create({
   },
   commentActions: {
     flexDirection: 'row',
+  },
+  optionsButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  optionsMenu: {
+    position: 'absolute',
+    right: 10,
+    top: 40,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
+    shadowColor: 'black',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  optionsText: {
+    fontSize: 18,
+    marginVertical: 10,
   },
 });
