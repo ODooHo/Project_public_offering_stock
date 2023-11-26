@@ -1,52 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, ActivityIndicator, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+// import Icon from 'react-native-vector-icons/MaterialIcons';
 import useUserStore from '../UserInfo/UserStore';
-import { fetchBoardList, searchBoards, fetchRecentSearches, deleteSearchesTerm } from '../API/BoardApi';
+import { fetchBoardList } from '../API/BoardApi';
 
 const CommunityPage = ({ navigation }) => {
   const [boards, setBoards] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [showRecentSearches, setShowRecentSearches] = useState(false);
-
   const userInfo = useUserStore((state) => state.user);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getBoardList();
-      getRecentSearches();
     });
-
     return unsubscribe;
   }, [navigation]);
-
-  const onSearch = async () => {
-    if (!searchTerm) return;
-    try {
-      const searchDto = { searchContent: searchTerm };
-      const response = await searchBoards(searchDto);
-      setBoards(response.data);
-      setShowRecentSearches(false);
-      await getRecentSearches();
-    } catch (error) {
-      console.error('Error searching boards:', error);
-    }
-  };
-
-  const getRecentSearches = async () => {
-    try {
-      const response = await fetchRecentSearches();
-      setRecentSearches(response.data);
-    } catch (error) {
-      console.error('Error fetching recent searches:', error);
-    }
-  };
-
-  const onRecentSearchTermClick = async (term) => {
-    setSearchTerm(term.searchContent);
-    onSearch();
-  };
 
   const getBoardList = async () => {
     try {
@@ -57,22 +25,15 @@ const CommunityPage = ({ navigation }) => {
     }
   };
 
-  const deleteRecentSearch = async (searchId) => {
-    try {
-      await deleteSearchesTerm(searchId);
-      getRecentSearches();
-    } catch (error) {
-      console.error('Error deleting recent search:', error);
-    }
-  };
-
-  const onSearchInputFocus = () => {
-    setShowRecentSearches(true);
-  };
-
   const handleCreateBoard = () => {
     navigation.navigate('WriteBoard');
   };
+
+  // const navigateToSearch = () => {
+  //   navigation.navigate('SearchPage', {
+  //     searchType: 'community',
+  //   });
+  // };
 
   function renderItem({ item }) {
     return (
@@ -81,7 +42,6 @@ const CommunityPage = ({ navigation }) => {
           <Text style={styles.boardWriter}>{item.boardWriterNickname}</Text>
           <Text style={styles.boardTitle} numberOfLines={1} ellipsizeMode='tail'>{item.boardTitle}</Text>
           <Text style={styles.boardPreview} numberOfLines={1} ellipsizeMode='tail'>{item.boardContent}</Text>
-          {/* <Text style={styles.boardInfo}>Click{item.boardClickCount} Like{item.boardLikeCount} Comment{item.boardCommentCount} {item.boardWriteDate}</Text> */}
           <View style={styles.boardInfo}>
             <FontAwesome5 name="eye" style={styles.icon}/>
             <Text style={styles.boardInfoText}>{item.boardClickCount}</Text>
@@ -97,10 +57,7 @@ const CommunityPage = ({ navigation }) => {
 
   const CreateBoardButton = () => {
     return (
-      <TouchableOpacity
-        style={styles.createBoardButton}
-        onPress={handleCreateBoard}
-      >
+      <TouchableOpacity style={styles.createBoardButton} onPress={handleCreateBoard}>
         <Text style={styles.createBoardButtonText}>+</Text>
       </TouchableOpacity>
     );
@@ -108,31 +65,11 @@ const CommunityPage = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="검색..."
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          onFocus={onSearchInputFocus}
-        />
-        <TouchableOpacity style={styles.searchButton} onPress={onSearch}>
-          <Text style={styles.searchButtonText}>검색</Text>
+      {/* <View style={styles.header}>
+        <TouchableOpacity onPress={navigateToSearch} style={styles.searchIcon}>
+          <Icon name="search" size={25} color="#000" />
         </TouchableOpacity>
-      </View>
-      {showRecentSearches && recentSearches.length > 0 && (
-        <View style={styles.recentSearchesContainer}>
-          {recentSearches.map((term, index) => (
-            <View key={index} style={styles.recentSearchItem}>
-                <Text style={{flex: 1}} onPress={() => onRecentSearchTermClick(term)}>{term.searchContent}</Text>
-                <TouchableOpacity onPress={() => deleteRecentSearch(term.searchId)}>
-                  <Text style={styles.deleteButtonText}>삭제</Text>
-                </TouchableOpacity>
-                {/* <Button title="삭제" onPress={() => deleteRecentSearch(term.searchId)} /> */}
-            </View>
-          ))}
-        </View>
-      )}
+      </View> */}
       <FlatList
         data={boards}
         renderItem={renderItem}
@@ -149,11 +86,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 15
-  },
   listItem: {
     backgroundColor: 'white',
     borderBottomWidth: 1.5,
@@ -166,13 +98,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-
   },
   boardContent: {
     flex: 1,
   },
   boardWriter: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '500',
     marginBottom: 8,
   },
@@ -209,17 +140,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  searchContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-    justifyContent: 'space-between',
-  },
-  recentSearchItem: {
-    flexDirection: 'row',
-    alignContent: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#f0f0f0',
-  },
   createBoardButton: {
     position: 'absolute',
     bottom: 20,
@@ -227,10 +147,10 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 30,
-    backgroundColor: 'skyblue', // 노란색
+    backgroundColor: 'skyblue', 
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000', // iOS용 그림자
+    shadowColor: '#000', 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -240,23 +160,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
   },
-  searchButton:{
-    padding: 6,
-    backgroundColor: 'skyblue',
-    borderRadius: 5,
-    marginLeft: 5,
-  },
-  searchButtonText: {
-    color: 'white',
-    fontWeight: '400',
-  },
-  deleteButtonText: {
-    color: 'red', // 삭제 버튼 텍스트 색상
-    fontWeight: 'bold', // 글씨 굵기
-    padding: 5, // 삭제 텍스트 주변 패딩
-    color: '#FF0000',
-  },
-  
 });
 
 export default CommunityPage;
