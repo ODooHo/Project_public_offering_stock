@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, TextInput, TouchableOpacity, Image, Alert, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 import { fetchBoardDetail, fetchBoardImage, fetchBoardComments, createComment, deleteBoard, deleteComment, editComment, addLike, deleteLike, getLikeCount } from '../API/BoardApi';
@@ -21,13 +22,47 @@ export const BoardDetail = ({ route }) => {
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const navigation = useNavigation();
 
-  const toggleOptionsMenu = () => {
-    setShowOptionsMenu(!showOptionsMenu);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
   };
-  
+
+  const handleEditInModal = () => {
+    if(board.boardWriterEmail === currentUserEmail) {
+      navigation.navigate('WriteBoard', { board: board });
+    } else {
+      Alert.alert("알림", "자신이 작성한 게시글만 수정할 수 있습니다.");
+    }
+    toggleModal();
+  };
+
+  const handleDeleteInModal = () => {
+    if (board && board.boardWriterEmail === currentUserEmail) {
+      Alert.alert(
+        "삭제 확인",
+        "게시글을 삭제하시겠습니까?",
+        [
+          { text: "취소", style: "cancel" },
+          {
+            text: "삭제", onPress: async () => {
+              await deleteBoard(boardId);
+              navigation.goBack();
+            }
+          }
+        ]
+      );
+    } else {
+      Alert.alert("알림", "본인이 작성한 게시글만 삭제할 수 있습니다.");
+    }
+    toggleModal();
+  };
+
+  const handleCancelInModal = () => {
+    toggleModal();
+  };
 
   useEffect(() => {
     setCurrentUserEmail(user?.userEmail || "");
@@ -140,61 +175,60 @@ export const BoardDetail = ({ route }) => {
     }
   };
 
-  const handleDeleteBoard = async () => {
-    if (board.boardWriterEmail !== currentUserEmail) {
-      Alert.alert("알림", "자신이 작성한 게시글만 삭제할 수 있습니다.");
-      return;
-    }
-    try {
-      await deleteBoard(boardId);
-      navigation.goBack();
-    } catch (error) {
-      console.error("게시글 삭제 중 오류 발생:", error);
-      Alert.alert("Error", "게시글 삭제 중 오류 발생");
-    }
-  };
-
-  const handleLike = () => {
+  // 좋아요 상태를 토글하는 함수
+  const toggleLike = async () => {
     const likeDto = {
       boardId: boardId,
       userEmail: currentUserEmail
     };
-
-    if (!liked) {
-      addLike(likeDto)
-        .then(response => {
-          setLikeCount(prevCount => prevCount + 1);
-          setLiked(true);
-          Alert.alert("알림", "좋아요!");
-        })
-        .catch(error => {
-          console.error("좋아요 추가 중 오류 발생!", error);
-        });
+    
+    if (liked) {
+      // 이미 좋아요가 되어 있을 경우, 좋아요 취소 로직
+      await deleteLike(boardId, currentUserEmail);
+      setLiked(false);
+      setLikeCount(prevCount => prevCount - 1);
     } else {
-      handleUnlike();
+      // 좋아요가 되어 있지 않을 경우, 좋아요 로직
+      await addLike(likeDto);
+      setLiked(true);
+      setLikeCount(prevCount => prevCount + 1);
     }
-  };
-
-  const handleUnlike = () => {
-    deleteLike(boardId, currentUserEmail)
-      .then(response => {
-          setLikeCount(prevCount => prevCount - 1);
-          setLiked(false);
-          Alert.alert("알림", "좋아요 취소!");
-        })
-        .catch(error => {
-          console.error("좋아요 취소 중 오류 발생!", error);
-        });
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={toggleOptionsMenu} style={styles.optionsButton}>
-        <FontAwesome5 name="ellipsis-h" size={20} />
-      </TouchableOpacity>
-
       {board && (
         <View style={styles.boardContainer}>
+          <View style={styles.headerContainer}>
+            <Image source={{ uri: boardImageUrl }} style={styles.profileImage} />
+            <View style={styles.authorInfo}>
+              <Text style={styles.authorName}>{board.boardWriterNickname}</Text>
+              <Text style={styles.postDate}>{board.boardWriteDate}</Text>
+            </View>
+            <TouchableOpacity onPress={toggleModal} style={styles.optionsButton} activeOpacity={0.7}>
+              <FontAwesome5 name="ellipsis-h" size={20} color="grey"/>
+            </TouchableOpacity>
+          </View>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isModalVisible}
+            onRequestClose={toggleModal}
+          >
+            <View style={updatedStyles.modalContainer}>
+              <View style={updatedStyles.modal}>
+                <TouchableOpacity style={updatedStyles.modalOption} onPress={handleEditInModal}>
+                  <Text style={updatedStyles.modalOptionText}>수정</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={updatedStyles.modalOption} onPress={handleDeleteInModal}>
+                  <Text style={updatedStyles.modalOptionText}>삭제</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={updatedStyles.modalOption} onPress={handleCancelInModal}>
+                  <Text style={updatedStyles.modalOptionText}>취소</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
           <Text style={styles.boardTitle}>{board.boardTitle}</Text>
           <Text style={styles.boardContent}>{board.boardContent}</Text>
           {boardImageUrl && (
@@ -203,35 +237,27 @@ export const BoardDetail = ({ route }) => {
               style={{ width: '100%', height: 200, resizeMode: 'contain' }}
             />
           )}
-          <Text style={styles.boardInfo}>작성자: {board.boardWriterNickname}</Text>
-          <Text style={styles.boardInfo}>작성일: {board.boardWriteDate}</Text>
-          <Text style={styles.boardInfo}>조회수: {board.boardClickCount}</Text>
           <View style={styles.iconInfoContainer}>
-            <FontAwesome5 name="heart" style={styles.icon}/>
-            <Text style={styles.iconInfoText}>{likeCount}</Text>
-            <TouchableOpacity onPress={handleLike}>
-              <Text style={styles.smallText}>{liked ? "좋아요취소" : "좋아요"}</Text>
+            <FontAwesome5 name="eye" style={styles.icon}/>
+            <Text style={styles.iconInfoText}>{board.boardClickCount}    </Text>
+          {/* </View>
+          <View style={styles.iconInfoContainer}> */}
+            {/* <FontAwesome5 name="heart" style={styles.icon}/> */}
+            <TouchableOpacity onPress={toggleLike} style={styles.icon}>
+              <Icon
+                name={liked ? 'heart' : 'heart-o'}
+                size={14}
+                color={liked ? 'red' : 'grey'}
+              />
             </TouchableOpacity>
-          </View>
-          {/* <Text style={styles.boardInfo}>좋아요: {board.boardLikeCount}</Text> */}
-          <View style={styles.iconInfoContainer}>
+            <Text style={styles.iconInfoText}>{likeCount}    </Text>
+          {/* </View>
+          <View style={styles.iconInfoContainer}> */}
             <FontAwesome5 name="comment" style={styles.icon}/>
             <Text style={styles.iconInfoText}>{board.boardCommentCount}</Text>
           </View>
-          {/* <Text style={styles.boardInfo}>댓글 수: {board.boardCommentCount}</Text> */}
-          {board.boardWriterEmail === currentUserEmail && (
-            <>
-              <TouchableOpacity onPress={() => navigation.navigate('WriteBoard', { board })}>
-                <Text>수정</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleDeleteBoard}>  
-                <Text>삭제</Text>
-              </TouchableOpacity>
-            </>
-           )}  
         </View>
       )}
-
       <FlatList
         data={comments.data}
         keyExtractor={comment => comment.commentId.toString()}
@@ -291,11 +317,63 @@ export const BoardDetail = ({ route }) => {
   );
 };
 
+const updatedStyles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modal: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalOption: {
+    padding: 16,
+    flexDirection: 'row',
+  },
+  modalOptionText: {
+    marginLeft: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
     backgroundColor: '#F9F9F9',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  profileImage: {
+    width: 50, // 프로필 이미지 크기 조정
+    height: 50,
+    borderRadius: 25, // 원형 이미지
+    marginRight: 10,
+  },
+  authorInfo: {
+    justifyContent: 'center',
+  },
+  authorName: {
+    fontWeight: 'bold',
+  },
+  postDate: {
+    fontSize: 12,
+    color: '#888',
   },
   boardContainer: {
     marginBottom: 20,
@@ -328,7 +406,8 @@ const styles = StyleSheet.create({
   },
   commentInputContainer: {
     flexDirection: 'row',
-    marginTop: 10,
+    // marginTop: 10,
+    marginBottom: 10,
   },
   commentInput: {
     flex: 1,
@@ -357,7 +436,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: 'grey',
-    marginRight: 2,
+    marginRight: 1,
+  },
+  favoriteIconContainer: {
+    // 스타일을 여기에 추가하십시오.
+    padding: 10, // 아이콘 주변의 터치 영역 확장
   },
   smallText: {
     fontSize: 12,
@@ -381,6 +464,8 @@ const styles = StyleSheet.create({
     right: 10,
     top: 40,
     backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'black',
     borderRadius: 5,
     padding: 10,
     shadowColor: 'black',
@@ -390,7 +475,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   optionsText: {
-    fontSize: 18,
-    marginVertical: 10,
+    fontSize: 15,
+    marginVertical: 5,
   },
 });

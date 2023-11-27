@@ -167,7 +167,12 @@ export const addLike = async (likeDto) => {
 
 export const deleteLike = async (boardId, userEmail) => {
     try {
-        const response = await axios.delete(`${SERVER_URL}/api/community/board/${boardId}/likes/delete/${userEmail}`);
+        const authToken = await getAuthToken();
+        const response = await axios.delete(`${SERVER_URL}/api/community/board/${boardId}/likes/delete`, {
+            headers: {
+                'Authorization': authToken,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error deleting like:', error);
