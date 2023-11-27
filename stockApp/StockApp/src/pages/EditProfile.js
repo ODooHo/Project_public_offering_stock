@@ -1,23 +1,25 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Button, Alert } from 'react-native';
-import ImagePicker from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 import Style from '../styleSheet/EditProfileStyle'
+import { updateMyPageApi } from '../API/MyPageApi';
 import { getToken } from '../tokenManager';
+import useUserStore from '../UserInfo/UserStore';
 
 export const EditProfile = ({ route, navigation }) => {
-  const { userProfile, onUpdate } = route.params;
+  const { userProfile, userProfileImage, onUpdate } = route.params;
   
   const [nickname, setNickname] = useState(userProfile.userNickname);
   const [email, setEmail] = useState(userProfile.userEmail);
-  const [image, setImage] = useState(userProfile.image);
+  const [image, setImage] = useState(userProfileImage);
 
   useLayoutEffect(() => {
       navigation.setParams({ handleSubmit });
   }, [navigation, nickname, image]);
 
   const handleImagePick = () => {
-      ImagePicker.showImagePicker({}, (response) => {
+      launchImageLibrary({}, (response) => {
           if (response.didCancel) {
               console.log('User cancelled image picker');
             } else if (response.error) {
@@ -29,52 +31,37 @@ export const EditProfile = ({ route, navigation }) => {
         });
     };
 
+    // const handleSubmit = async () => {
+    //     try {
+    //         await updateMyPageApi(nickname, image?.uri);
+    //         if (onUpdate) {
+    //             onUpdate({ ...userProfile, userNickname: nickname, userProfile: image?.uri });
+    //         }
+    //         navigation.goBack();
+    //     } catch (error) {
+    //         console.error('Failed to update profile:', error);
+    //         Alert.alert('Error', 'Try again.');
+    //     }
+    // };
+
     const handleSubmit = async () => {
         try {
-            const token = await getToken();
-            let formData = new FormData();
-
-            // if (image.uri) {
-            //     formData.append("userProfile", {
-            //         uri: image.uri,
-            //         type: "image/jpeg",
-            //         name: "profile.jpg",
-            //     });
-            // }
-
-            if (image && image.uri) {
-                formData.append("userProfile", {
-                    uri: image.uri,
-                    type: "image/jpeg",
-                    name: "profile.jpg",
-                });
+            const updatedUserInfo = await updateMyPageApi(nickname, image?.uri);
+            if (onUpdate) {
+                onUpdate(updatedUserInfo);
+                useUserStore.getState().setUser(updatedUserInfo);
             }
-
-            formData.append("userNickname", nickname);
-      
-            const response = await axios.patch('/api/myPage/patchUser', formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-      
-            if (response.data) {
-                onUpdate(response.data.user);
-                navigation.goBack();
-            } else {
-                Alert.alert('Error', ' Try again.');
-            }
+            navigation.goBack();
         } catch (error) {
             console.error('Failed to update profile:', error);
             Alert.alert('Error', 'Try again.');
         }
     };
-
+      
     return (
         <View style={Style.container}>
             <TouchableOpacity onPress={handleImagePick}>
-                <Image source={image ? { uri: image } : require('../assets/default.jpg')} style={Style.image} />
+                <Image source={{ uri: image }} style={Style.image} />
             </TouchableOpacity>
             <Text style={Style.label}>Nickname</Text>
             <TextInput 

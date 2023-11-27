@@ -1,156 +1,81 @@
-
-// import React, { useState, useEffect } from 'react';
-// import { View, Text, FlatList, Button, StyleSheet, ActivityIndicator } from 'react-native';
-// import { fetchBoardList } from '../API/BoardApi';
-
-// const MOCK_DATA = [
-//   {
-//     boardId: 1,
-//     boardTitle: "Sample Title 1",
-//     author: "John Doe",
-//     date: "2023-09-11"
-//   },
-//   // ... (다른 모의 데이터 추가 가능)
-// ];
-
-// const CommunityPage = ({ navigation }) => {
-//   const [boards, setBoards] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-// //   서버 열었을 때 사용
-// //   useEffect(() => {
-// //     fetchBoardList()
-// //       .then(response => {
-// //         setBoards(response);
-// //       })
-// //       .catch(error => {
-// //         console.error("There was an error fetching the board list!", error);
-// //       });
-// //   }, []);
-
-//   useEffect(() => {
-//     fetchBoardList()
-//       .then(response => {
-//         setBoards(response);
-//         setLoading(false);
-//       })
-//       .catch(error => {
-//         console.error("There was an error fetching the board list!", error);
-//         //서버 응답 모방을 위한 mock data 사용
-//         setBoards(MOCK_DATA);
-//         setLoading(false);
-//       });
-//   }, []);
-
-//   if (loading) {
-//     return <ActivityIndicator size="large" color="#0000ff" />;
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.header}>커뮤니티 게시판</Text>
-//       <FlatList
-//         data={boards}
-//         keyExtractor={item => item.boardId.toString()}
-//         renderItem={({ item }) => (
-//           <View style={styles.listItem}>
-//             <View>
-//               <Text style={styles.boardTitle}>{item.boardTitle}</Text>
-//               <Text style={styles.boardInfo}>{item.author} | {item.date}</Text>
-//             </View>
-//             <Button 
-//               title="상세보기" 
-//               onPress={() => navigation.navigate('BoardDetail', { boardId: item.boardId })}
-//             />
-//           </View>
-//         )}
-//       />
-//       <Button title="게시글 작성" onPress={() => { /* 게시글 작성 화면으로 이동 */ }} style={styles.writeButton} />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#f5f5f5',
-//     padding: 10,
-//   },
-//   header: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     marginBottom: 15
-//   },
-//   listItem: {
-//     backgroundColor: 'white',
-//     padding: 15,
-//     marginVertical: 5,
-//     borderRadius: 10,
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between'
-//   },
-//   boardTitle: {
-//     fontSize: 16,
-//     fontWeight: '600'
-//   },
-//   boardInfo: {
-//     color: 'grey'
-//   },
-//   writeButton: {
-//     marginVertical: 15,
-//     alignSelf: 'center',
-//   }
-// });
-
-// export default CommunityPage;
-
-
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+// import Icon from 'react-native-vector-icons/MaterialIcons';
+import useUserStore from '../UserInfo/UserStore';
 import { fetchBoardList } from '../API/BoardApi';
 
 const CommunityPage = ({ navigation }) => {
   const [boards, setBoards] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const userInfo = useUserStore((state) => state.user);
 
   useEffect(() => {
-    fetchBoardList()
-      .then(response => {
-        setBoards(response);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the board list!", error);
-        setLoading(false);
-      });
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getBoardList();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+  const getBoardList = async () => {
+    try {
+      const response = await fetchBoardList();
+      setBoards(response.data);
+    } catch (error) {
+      console.error('Error fetching board list:', error);
+    }
+  };
+
+  const handleCreateBoard = () => {
+    navigation.navigate('WriteBoard');
+  };
+
+  // const navigateToSearch = () => {
+  //   navigation.navigate('SearchPage', {
+  //     searchType: 'community',
+  //   });
+  // };
+
+  function renderItem({ item }) {
+    return (
+      <TouchableOpacity style={styles.listItem} onPress={() => navigation.navigate('BoardDetail', { boardId: item.boardId })}>
+        <View style={styles.boardContent}>
+          <Text style={styles.boardWriter}>{item.boardWriterNickname}</Text>
+          <Text style={styles.boardTitle} numberOfLines={1} ellipsizeMode='tail'>{item.boardTitle}</Text>
+          <Text style={styles.boardPreview} numberOfLines={1} ellipsizeMode='tail'>{item.boardContent}</Text>
+          <View style={styles.boardInfo}>
+            <FontAwesome5 name="eye" style={styles.icon}/>
+            <Text style={styles.boardInfoText}>{item.boardClickCount}</Text>
+            <FontAwesome5 name="heart" style={styles.icon} />
+            <Text style={styles.boardInfoText}>{item.boardLikeCount}</Text>
+            <FontAwesome5 name="comment" style={styles.icon}/>
+            <Text style={styles.boardInfoText}>{item.boardCommentCount}   {item.boardWriteDate}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  const CreateBoardButton = () => {
+    return (
+      <TouchableOpacity style={styles.createBoardButton} onPress={handleCreateBoard}>
+        <Text style={styles.createBoardButtonText}>+</Text>
+      </TouchableOpacity>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>커뮤니티 게시판</Text>
+      {/* <View style={styles.header}>
+        <TouchableOpacity onPress={navigateToSearch} style={styles.searchIcon}>
+          <Icon name="search" size={25} color="#000" />
+        </TouchableOpacity>
+      </View> */}
       <FlatList
         data={boards}
-        keyExtractor={item => item.boardId.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <View>
-              <Text style={styles.boardTitle}>{item.boardTitle}</Text>
-              <Text style={styles.boardInfo}>{item.author} | {item.date}</Text>
-            </View>
-            <Button 
-              title="상세보기" 
-              onPress={() => navigation.navigate('BoardDetail', { boardId: item.boardId })}
-            />
-          </View>
-        )}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.boardId.toString()}
       />
-      <Button title="게시글 작성" onPress={() => navigation.navigate('WriteBoard')} style={styles.writeButton} />
+      <CreateBoardButton />
     </View>
   );
 };
@@ -158,34 +83,83 @@ const CommunityPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'white',
     padding: 10,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 15
   },
   listItem: {
     backgroundColor: 'white',
-    padding: 15,
-    marginVertical: 5,
-    borderRadius: 10,
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#e1e1e1',
+    // paddingVertical: 8,
+    paddingHorizontal: 20,
+    padding: 13,
+    // marginVertical: 0,
+    // borderRadius: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+  },
+  boardContent: {
+    flex: 1,
+  },
+  boardWriter: {
+    fontSize: 11,
+    fontWeight: '500',
+    marginBottom: 8,
   },
   boardTitle: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  boardPreview: {
+    fontSize: 13,
+    fontWeight: '300',
+    marginBottom: 10,
   },
   boardInfo: {
-    color: 'grey'
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: -5,
+  },
+  boardInfoText:{
+    fontSize: 12,
+    color: 'grey',
+    marginRight: 15,
+  },
+  icon: {
+    color: 'grey',
+    marginRight: 2,
   },
   writeButton: {
     marginVertical: 15,
     alignSelf: 'center',
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  createBoardButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 30,
+    backgroundColor: 'skyblue', 
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  createBoardButtonText: {
+    color: 'white',
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
 });
 
 export default CommunityPage;
