@@ -63,6 +63,19 @@ public class TokenProvider {
 
     }
 
+    public Long getExpiration(String accessToken) {
+        // accessToken 남은 유효시간
+        try{
+            Date expiration = Jwts.parser().setSigningKey(SECURITY_KEY).parseClaimsJws(accessToken).getBody().getExpiration();
+            // 현재 시간
+            Long now = new Date().getTime();
+            return (expiration.getTime() - now);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //jwt 검증
     public String validate(String token){
         Claims claims = null;
@@ -78,4 +91,6 @@ public class TokenProvider {
         //디코딩된 payload에서 제목을 가져옴
         return claims.getSubject();
     }
+
+
 }

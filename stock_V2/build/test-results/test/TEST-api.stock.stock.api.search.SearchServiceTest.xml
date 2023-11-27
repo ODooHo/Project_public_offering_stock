@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="api.stock.stock.api.search.SearchServiceTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2023-11-23T12:44:46" hostname="oduhoui-MacBookAir.local" time="0.383">
+  <properties/>
+  <testcase name="searchBoard()" classname="api.stock.stock.api.search.SearchServiceTest" time="0.17"/>
+  <testcase name="searchIpo()" classname="api.stock.stock.api.search.SearchServiceTest" time="0.212"/>
+  <system-out><![CDATA[2023-11-23T21:44:46.395+09:00  INFO 76955 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [api.stock.stock.api.search.SearchServiceTest]: SearchServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2023-11-23T21:44:46.399+09:00  INFO 76955 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration api.stock.stock.StockApplication for test class api.stock.stock.api.search.SearchServiceTest
+2023-11-23T21:44:46.566+09:00  INFO 76955 --- [    Test worker] a.s.stock.api.search.SearchServiceTest   : SearchBoardTest [BoardEntity(boardId=1, boardTitle=Patch, boardContent=patch, boardWriterEmail=1, boardWriterProfile=1.jpg, boardWriterNickname=1, boardWriteDate=2023-10-10, boardImage=null, boardClickCount=14, boardLikeCount=1, boardCommentCount=6)]
+2023-11-23T21:44:46.782+09:00  INFO 76955 --- [    Test worker] a.s.stock.api.search.SearchServiceTest   : SearchIpoTest [IpoEntity(id=64fff73ab35a1ce4cf3dcc07, ipoName=퓨릿(구.신디프), ipoCode=445180, owner=문재웅, locate=경기도 화성시 금반1길 53 204호(동탄 푸르지오하임 2), seed=6,894 (백만원), business=기초 화학물질 제조업, ipoQuantity=4,137,000 주, faceValue=500 원, collusion=8,800 ~ 10,700 원, chief=미래에셋증권, compete=1415.76:1, commit=0.00%, date=2023.10.05  ~   2023.10.06, publicDate=2023.10.18, sale=[63,867, 137,372, 106,664], profit=[7,599, 14,282, 9,993], pureProfit=[6,422, 11,554, 7,447], protect=11,507,366 주, protectPercent=68.54 %, possible=5,282,000 주, possiblePercent=31.46 %, sharedQuantity=16,789,366 주, finalCollusion=10,700)]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

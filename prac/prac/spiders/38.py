@@ -5,55 +5,44 @@ from pymongo import MongoClient
 from bs4 import BeautifulSoup
 
 
-#client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
-#db = client.test
+client = MongoClient('mongodb+srv://engh0205:dhwjdgh1102@stockcluster.m2fm1sr.mongodb.net/?retryWrites=true&w=majority')
+db = client.test
 
 class StockSpider(Spider):
-    name = 'base'
+    name = 'update'
     IPO_list = []
 
     def start_requests(self):
         url = "http://www.38.co.kr/html/fund/index.htm?o=k"
+        #url = "http://www.38.co.kr/html/fund/index.htm?o=k&page=2"
         yield scrapy.Request(url, self.parse_start)
 
     def parse_start(self, response):
         # Find the total number of items and generate indices for the URLs
-        #total = 30
+        total = 30
+        index = 1
+        check = []
 
         base_url = "http://www.38.co.kr"
-        # for index in indices:
+        for index in range(1,total+1):
+            a = []
+            name = response.xpath(f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/font/text()').get()
         #     # Generate the link xpath
-        for index in range(1):
-            #link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
-            link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[1]/td[1]/a/@href'
-            
-
-            link = response.xpath(link_xpath).get()
-
-            if link:
-                # Create the full link URL by joining base_url and link
-                full_link_url = f"{base_url}{link}"
-                yield scrapy.Request(full_link_url, callback=self.parse_item)
+        #for index in range(1,6):
+        link_xpath = f'/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a/@href'
+        #/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[2]/td/table//tr[{index}]/td[1]/a
+        link = response.xpath(link_xpath).get()
 
 
+        if link:
+            # Create the full link URL by joining base_url and link
+            full_link_url = f"{base_url}{link}"
+            yield scrapy.Request(full_link_url, callback=self.parse_item)
 
     def parse_item(self, response):
         item = items.BaseItem()
-        item['ipo_Name'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
-        item['ipo_code'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[4]/text()').get().strip()  
-        item['market'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[2]/td[2]/text()').get().strip()
-        item['owner'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[4]/td[2]/text()').get().strip()
-        item['locate'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[5]/td[2]/text()').get().strip()
-        item['seed'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[9]/td[4]/text()').get().strip()
-        item['business'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[3]/td[2]/text()').get().strip()
-        item['ipo_count'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[2]/text()').get().strip()
-        item['face_value'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[1]/td[4]/text()').get().strip()
-        item['collusion'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[3]/td[2]/text()').get().strip()
-        item['chief'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[4]//tr[5]/td[2]/b/text()').get().strip()
-        item['compete'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[2]/text()').get().strip()
-        item['commit'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[9]/td[2]/table//tr/td[4]/text()').get().strip()
-        item['date'] = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[2]/td[2]/text()').get().strip()
-
-        
-        yield item
-        #db.test.insert_one(dict(item))
+        name = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[2]//tr[1]/td[2]/a/b/font/text()').get()
+        public = response.xpath('/html/body/table[3]//tr/td/table[1]//tr/td[1]/table[6]//tr[6]/td[2]').get.strip()
+        print(public)
+        db.test.update_one({"ipoName" : name},{"$set" : {"public" : public}})
+        #a = list(result)
