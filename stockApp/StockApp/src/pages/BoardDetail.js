@@ -175,7 +175,6 @@ export const BoardDetail = ({ route }) => {
     }
   };
 
-  // 좋아요 상태를 토글하는 함수
   const toggleLike = async () => {
     const likeDto = {
       boardId: boardId,
@@ -183,12 +182,10 @@ export const BoardDetail = ({ route }) => {
     };
     
     if (liked) {
-      // 이미 좋아요가 되어 있을 경우, 좋아요 취소 로직
       await deleteLike(boardId, currentUserEmail);
       setLiked(false);
       setLikeCount(prevCount => prevCount - 1);
     } else {
-      // 좋아요가 되어 있지 않을 경우, 좋아요 로직
       await addLike(likeDto);
       setLiked(true);
       setLikeCount(prevCount => prevCount + 1);
