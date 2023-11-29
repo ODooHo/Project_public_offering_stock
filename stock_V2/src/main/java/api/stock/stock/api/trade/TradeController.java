@@ -25,8 +25,8 @@ public class TradeController {
     }
 
     @GetMapping("/getTrade")
-    ResponseDto<List<TradeEntity>> getTrade(@RequestBody String requestBody){
-        ResponseDto<List<TradeEntity>> result = tradeService.getTradeList(requestBody);
+    ResponseDto<List<TradeEntity>> getTrade(@AuthenticationPrincipal String userEmail){
+        ResponseDto<List<TradeEntity>> result = tradeService.getTradeList(userEmail);
         return result;
     }
 
