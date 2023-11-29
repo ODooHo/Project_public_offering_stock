@@ -69,7 +69,7 @@ function MainStack() {
       <Stack.Screen name="SignUp" component={SignUpPage} options={{ headerShown: true, headerTransparent: true, headerTitle:'', headerBackTitleVisible: false }} />
       <Stack.Screen name="MainStack" component={TabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="BoardDetail" component={BoardDetail} options={{ headerShown: true, headerTitle:'게시글', headerBackTitleVisible: false }} />
-      <Stack.Screen name="TradeDetail" component={TradeDetail} />
+      <Stack.Screen name="TradeDetail" component={TradeDetail} options={{ headerShown: true, headerTitle:'매매일지', headerBackTitleVisible: false }}/>
       <Stack.Screen name="IpoDetail" component={IpoDetail} options={{ headerShown: true, headerTitle: '공모주 상세정보', headerBackTitleVisible: false }}/>
       <Stack.Screen name="SearchPage" component={SearchPage} options={{ headerShown: false }} />
     </Stack.Navigator>

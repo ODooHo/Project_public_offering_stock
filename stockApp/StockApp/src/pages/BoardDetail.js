@@ -237,9 +237,6 @@ export const BoardDetail = ({ route }) => {
           <View style={styles.iconInfoContainer}>
             <FontAwesome5 name="eye" style={styles.icon}/>
             <Text style={styles.iconInfoText}>{board.boardClickCount}    </Text>
-          {/* </View>
-          <View style={styles.iconInfoContainer}> */}
-            {/* <FontAwesome5 name="heart" style={styles.icon}/> */}
             <TouchableOpacity onPress={toggleLike} style={styles.icon}>
               <Icon
                 name={liked ? 'heart' : 'heart-o'}
@@ -248,8 +245,6 @@ export const BoardDetail = ({ route }) => {
               />
             </TouchableOpacity>
             <Text style={styles.iconInfoText}>{likeCount}    </Text>
-          {/* </View>
-          <View style={styles.iconInfoContainer}> */}
             <FontAwesome5 name="comment" style={styles.icon}/>
             <Text style={styles.iconInfoText}>{board.boardCommentCount}</Text>
           </View>
