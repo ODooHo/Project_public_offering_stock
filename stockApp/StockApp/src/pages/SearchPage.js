@@ -33,7 +33,11 @@ const SearchPage = ({ route, navigation }) => {
             } else if (searchType === 'community') {
                 response = await BoardApi.fetchRecentSearches();
             }
-            setRecentSearches(response.data);
+            if (response && response.data) {
+                setRecentSearches(response.data);
+            } else {
+                console.error('Response or data is undefined:', response);
+            }
         } catch (error) {
             console.error('Error fetching recent searches: ', error);
         }
@@ -63,10 +67,9 @@ const SearchPage = ({ route, navigation }) => {
 
     const getRecentSearches = async () => {
         try {
-            const response = await fetchRecentSearches();
-            setRecentSearches(response.data);
+            await fetchRecentSearches();
         } catch (error) {
-            console.error('Error fetching recent searches:', error);
+            console.error('Error fetching recent searches(여기):', error);
         }
     };
 
@@ -88,7 +91,7 @@ const SearchPage = ({ route, navigation }) => {
 
     const deleteRecentSearch = async (searchId) => {
         try {
-            await deleteSearchesTerm(searchId);
+            await BoardApi.deleteSearchesTerm(searchId);
             await getRecentSearches();
         } catch (error) {
             console.error('Error deleting recent search:', error);
