@@ -43,7 +43,6 @@ export const fetchBoardImage = async (boardId) => {
     }
 };
 
-
 export const createBoard = async (formData, token) => {
     try {
         const authToken = await getAuthToken();
