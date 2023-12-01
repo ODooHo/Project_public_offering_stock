@@ -19,7 +19,11 @@ public class QTradeEntity extends EntityPathBase<TradeEntity> {
 
     public static final QTradeEntity tradeEntity = new QTradeEntity("tradeEntity");
 
+    public final NumberPath<Integer> buyPrice = createNumber("buyPrice", Integer.class);
+
     public final StringPath memo = createString("memo");
+
+    public final NumberPath<Integer> sellPrice = createNumber("sellPrice", Integer.class);
 
     public final DatePath<java.time.LocalDate> tradeDate = createDate("tradeDate", java.time.LocalDate.class);
 
@@ -29,11 +33,7 @@ public class QTradeEntity extends EntityPathBase<TradeEntity> {
 
     public final StringPath tradeName = createString("tradeName");
 
-    public final NumberPath<Integer> tradePrice = createNumber("tradePrice", Integer.class);
-
     public final NumberPath<Integer> tradeQuantity = createNumber("tradeQuantity", Integer.class);
-
-    public final StringPath tradeType = createString("tradeType");
 
     public final StringPath userEmail = createString("userEmail");
 

@@ -109,8 +109,8 @@ public class AuthService {
         userEntity.setUserPassword("");
 
         String token = tokenProvider.createAccessToken(userEmail);
-        Integer exprTime = 1800000;
-
+//        Integer exprTime = 1800000;
+        Integer exprTime = 1000;
         String refreshToken = tokenProvider.createRefreshToken(userEmail);
         Integer refreshExprTime = 360000000;
 
