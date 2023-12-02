@@ -110,7 +110,7 @@ public class AuthService {
 
         String token = tokenProvider.createAccessToken(userEmail);
 //        Integer exprTime = 1800000;
-        Integer exprTime = 1000;
+        Integer exprTime = 5000;
         String refreshToken = tokenProvider.createRefreshToken(userEmail);
         Integer refreshExprTime = 360000000;
 
@@ -138,7 +138,8 @@ public class AuthService {
         try {
             String accessToken = tokenProvider.createAccessTokenFromRefreshToken(refreshToken);
 
-            Integer exprTime = 1800000;
+//        Integer exprTime = 1800000;
+            Integer exprTime = 5000;
 
             RefreshResponseDto refreshResponseDto = new RefreshResponseDto(accessToken, exprTime);
 
