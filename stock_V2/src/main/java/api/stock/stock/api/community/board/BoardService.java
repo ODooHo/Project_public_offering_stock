@@ -105,21 +105,21 @@ public class BoardService {
         return ResponseDto.setSuccess("Success",response);
     }
 
-    public ResponseDto<String> deleteBoard(String userEmail, Integer boardId){
-        BoardEntity board = boardRepository.findById(boardId).orElse(null);
-        String boardWriterEmail = board.getBoardWriterEmail();
-        if(!userEmail.equals(boardWriterEmail)){
-            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
-        }
-
-        try{
-            boardRepository.deleteById(boardId);
-        }catch (Exception e){
-            return ResponseDto.setFailed("DataBase Error");
-        }
-        return ResponseDto.setSuccess("Success","Delete Completed");
-    }
-
+//    public ResponseDto<String> deleteBoard(String userEmail, Integer boardId){
+//        BoardEntity board = boardRepository.findById(boardId).orElse(null);
+//        String boardWriterEmail = board.getBoardWriterEmail();
+//        if(!userEmail.equals(boardWriterEmail)){
+//            return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
+//        }
+//
+//        try{
+//            boardRepository.deleteById(boardId);
+//        }catch (Exception e){
+//            return ResponseDto.setFailed("DataBase Error");
+//        }
+//        return ResponseDto.setSuccess("Success","Delete Completed");
+//    }
+//
 
 
 }

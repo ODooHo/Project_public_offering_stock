@@ -17,11 +17,13 @@ public class BoardController {
 
     private final BoardService boardService;
     private final FileService fileService;
+    private final BoardDeleteImpl boardDelete;
 
     @Autowired
-    public BoardController(BoardService boardService, FileService fileService) {
+    public BoardController(BoardService boardService, FileService fileService, BoardDeleteImpl boardDelete) {
         this.boardService = boardService;
         this.fileService = fileService;
+        this.boardDelete = boardDelete;
     }
 
     @PostMapping("/writeBoard")
@@ -55,9 +57,15 @@ public class BoardController {
         return result;
     }
 
+//    @DeleteMapping("/delete/{boardId}")
+//    public ResponseDto<String> deleteBoard(@AuthenticationPrincipal String userEmail, @PathVariable Integer boardId){
+//        ResponseDto<String> result = boardService.deleteBoard(userEmail,boardId);
+//        return result;
+//    }
+
     @DeleteMapping("/delete/{boardId}")
-    public ResponseDto<String> deleteBoard(@AuthenticationPrincipal String userEmail, @PathVariable Integer boardId){
-        ResponseDto<String> result = boardService.deleteBoard(userEmail,boardId);
+    public ResponseDto<String> deleteInfo(@AuthenticationPrincipal String userEmail, @PathVariable Integer boardId){
+        ResponseDto<String> result = boardDelete.deleteInfo(userEmail,boardId);
         return result;
     }
 
