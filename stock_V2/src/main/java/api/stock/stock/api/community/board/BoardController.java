@@ -75,6 +75,11 @@ public class BoardController {
             return result;
     }
 
+    @DeleteMapping("/test/{boardId}")
+    public ResponseDto<String> deleteTest(@PathVariable Integer boardId){
+        ResponseDto<String> result = fileService.deleteBoardImage(boardId);
+        return result;
+    }
 
 //    @GetMapping("/{boardId}")
 //    public ResponseDto<?>increaseView(@PathVariable Integer boardId){

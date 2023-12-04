@@ -7,6 +7,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LikesService {
     private final LikesRepository likesRepository;
@@ -61,6 +63,8 @@ public class LikesService {
         return ResponseDto.setSuccess("Success","Delete Completed");
     }
 
+
+
     public ResponseDto<Integer> getLikesCount(Integer boardId){
         Integer count = 0;
         BoardEntity board = null;
@@ -77,6 +81,16 @@ public class LikesService {
         }
 
         return ResponseDto.setSuccess("Success",count);
+    }
+
+    public ResponseDto<String> deleteAllLikes(Integer boardId){
+        List<LikesEntity> likeList = likesRepository.findByBoardId(boardId);
+        try{
+            likesRepository.deleteAllByBoardId(boardId);
+        }catch (Exception e){
+            return ResponseDto.setFailed("DataBase Error");
+        }
+        return ResponseDto.setSuccess("Success", "Delete Completed");
     }
 
 }

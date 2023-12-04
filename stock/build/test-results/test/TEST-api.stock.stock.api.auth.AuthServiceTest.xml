@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="api.stock.stock.api.auth.AuthServiceTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-08-29T03:42:32" hostname="oduhoui-MacBookAir.local" time="0.668">
+  <properties/>
+  <testcase name="signUp_Success()" classname="api.stock.stock.api.auth.AuthServiceTest" time="0.668"/>
+  <system-out><![CDATA[12:42:33.617 [Test worker] INFO api.stock.stock.api.auth.AuthServiceTest -- created user: api.stock.stock.api.user.UserEntity@3d49fd31
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

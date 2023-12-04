@@ -79,4 +79,17 @@ class CommentServiceTest {
 //    }
 //
 
+    @Test
+    public void delete(){
+        //given
+        String userEmail = "1";
+        Integer boardId = 23;
+        //when
+        ResponseDto<String> response = commentService.deleteAllComment(boardId);
+        //then
+        log.info("DeleteComment {}", response.getData());
+        assertThat(response.getMessage()).isEqualTo("Success");
+        assertThat(response.getData()).isNotNull();
+    }
+
 }

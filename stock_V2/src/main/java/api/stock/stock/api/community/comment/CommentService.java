@@ -93,6 +93,17 @@ public class CommentService {
         }
 
         return ResponseDto.setSuccess("Success","Delete Completed");
+    }
+
+    public ResponseDto<String> deleteAllComment(Integer boardId){
+        List<CommentEntity> commentList = commentRepository.findByBoardId(boardId);
+        try{
+            commentRepository.deleteAllByBoardId(boardId);
+        }catch (Exception e){
+            return ResponseDto.setFailed("DataBase Error");
+        }
+
+        return ResponseDto.setSuccess("Success","Delete Completed");
 
     }
 

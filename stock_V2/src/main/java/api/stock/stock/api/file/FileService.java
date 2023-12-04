@@ -6,6 +6,7 @@ import api.stock.stock.api.user.UserEntity;
 import api.stock.stock.api.user.UserRepository;
 import api.stock.stock.global.response.ResponseDto;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -88,7 +88,7 @@ public class FileService {
         }
     }
 
-    public ResponseEntity<byte[]> getProfileImage(String userEmail) throws IOException {
+    public ResponseEntity<byte[]> getProfileImage(String userEmail){
         UserEntity user = new UserEntity();
         user = userRepository.findById(userEmail).orElse(null);
 
@@ -97,12 +97,41 @@ public class FileService {
         return getImage(imageName,"profile/");
     }
 
-    public ResponseEntity<byte[]> getBoardImage(Integer boardId) throws IOException {
+    public ResponseEntity<byte[]> getBoardImage(Integer boardId){
         BoardEntity board = new BoardEntity();
         board = boardRepository.findById(boardId).orElse(null);
         String imageName = board.getBoardImage();
         return getImage(imageName,"img/");
     }
+
+    public ResponseDto<String> deleteBoardImage(Integer boardId){
+        BoardEntity board = boardRepository.findById(boardId).orElse(null);
+        String fileName = board.getBoardImage();
+        String path = uploadDir + "img/" + fileName;
+        System.out.println("imageName = " + path);
+        try{
+            amazonS3.deleteObject(bucketName,path);
+        }catch (AmazonS3Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("S3 Error");
+        }
+        return ResponseDto.setSuccess("Success","Delete Completed");
+
+    }
+
+//    public ResponseDto<String> deleteBoardImage(Integer boardId){
+//        BoardEntity board = boardRepository.findById(boardId).orElse(null);
+//        String fileName = board.getBoardImage();
+//        String path = uploadDir + "img/" + fileName;
+//        try{
+//            amazonS3.deleteObject(bucketName,path);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return ResponseDto.setFailed("S3 Error");
+//        }
+//        return ResponseDto.setSuccess("Success","Delete Completed");
+//
+//    }
 
 
     private ResponseEntity<byte[]> getImage(String imageName, String path) {
@@ -146,6 +175,8 @@ public class FileService {
     }
 
 
+
+
     private void uploadFileToS3(MultipartFile file, String s3Key) {
         try {
             InputStream inputStream = file.getInputStream();
@@ -157,7 +188,7 @@ public class FileService {
         }
     }
 
-    private String getExtension(String fileDirectory, String fileId) throws IOException {
+    private String getExtension(String fileDirectory, String fileId){
         File folder = new File(fileDirectory);
 
         FilenameFilter filter = (dir, name) -> {

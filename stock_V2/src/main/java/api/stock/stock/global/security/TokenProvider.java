@@ -22,8 +22,8 @@ public class TokenProvider {
     private String SECURITY_KEY;
     //jwt 생성하는 메서드
     public String createAccessToken(String userEmail){
-        Date exprTime = Date.from(Instant.now().plus(5, ChronoUnit.SECONDS));
-//        Date exprTime = Date.from(Instant.now().plus(30, ChronoUnit.MINUTES));
+//        Date exprTime = Date.from(Instant.now().plus(5, ChronoUnit.SECONDS));
+        Date exprTime = Date.from(Instant.now().plus(30, ChronoUnit.MINUTES));
 
         //jwt 생성
         return Jwts.builder()

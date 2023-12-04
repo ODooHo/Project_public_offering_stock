@@ -13,7 +13,7 @@ public interface LikesRepository extends JpaRepository<LikesEntity, Integer> {
     void deleteByBoardIdAndUserEmail(Integer boardId, String userEmail);
     List<LikesEntity> findByBoardId(Integer boardId);
 
-    void deleteByBoardId(Integer boardId);
+    void deleteAllByBoardId(Integer boardId);
 
     boolean existsByUserEmailAndBoardId(String userEmail, Integer BoardId);
 }
