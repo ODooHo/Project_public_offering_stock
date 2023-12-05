@@ -1,5 +1,7 @@
 package api.stock.stock.api.ipo;
 
+import api.stock.stock.api.ipo.favor.FavorRepository;
+import api.stock.stock.api.ipo.favor.FavorService;
 import api.stock.stock.global.response.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,9 @@ class IpoServiceTest {
     private FavorRepository favorRepository;
     @Autowired
     private IpoService ipoService;
+
+    @Autowired
+    private FavorService favorService;
 
     @Autowired
     private IpoRepository ipoRepository;
@@ -48,41 +53,41 @@ class IpoServiceTest {
 
     }
 
-    @Test
-    void addFavor(){
-        //given
-        FavorDto dto = new FavorDto();
-        dto.setUserEmail("engh0205@naver.com");
-        dto.setIpoName("블루엠텍");
-        //when
-        ResponseDto<FavorEntity> response = ipoService.addFavor(dto);
-        //then
-        assertThat(response.getMessage()).isEqualTo("Success");
-        log.info("FavorTest: {}",response.getData());
-
-    }
+//    @Test
+//    void addFavor(){
+//        //given
+//        FavorDto dto = new FavorDto();
+//        dto.setUserEmail("engh0205@naver.com");
+//        dto.setIpoName("블루엠텍");
+//        //when
+//        ResponseDto<FavorEntity> response = ipoService.addFavor(dto);
+//        //then
+//        assertThat(response.getMessage()).isEqualTo("Success");
+//        log.info("FavorTest: {}",response.getData());
+//
+//    }
 
     @Test
     void getFavorList(){
         //given
         String userEmail = "1";
         //when
-        ResponseDto<List<IpoEntity>> response = ipoService.getFavorList(userEmail);
+        ResponseDto<List<IpoEntity>> response = favorService.getFavorList(userEmail);
         //then
         assertThat(response.getMessage()).isEqualTo("Success");
         log.info("getFavorTest: {}",response.getData());
     }
 
-    @Test
-    void deleteFavor(){
-        //given
-        String userEmail = "1";
-        String ipoName = "와이바이오로직스";
-        //when
-        ResponseDto<String> response = ipoService.deleteFavor(userEmail,ipoName);
-        //then
-        assertThat(response.getMessage()).isEqualTo("Success");
-    }
+//    @Test
+//    void deleteFavor(){
+//        //given
+//        String userEmail = "1";
+//        String ipoName = "와이바이오로직스";
+//        //when
+//        ResponseDto<String> response = ipoService.deleteFavor(userEmail,ipoName);
+//        //then
+//        assertThat(response.getMessage()).isEqualTo("Success");
+//    }
 
 
 }

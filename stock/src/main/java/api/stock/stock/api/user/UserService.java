@@ -5,7 +5,6 @@ import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,7 +29,7 @@ public class UserService {
         UserEntity userEntity = null;
 
         try{
-            userEntity = userRepository.findByUserEmail(userEmail);
+            userEntity = userRepository.findById(userEmail).orElse(null);
             if(userEntity == null){
                 return ResponseDto.setFailed("Does Not Exist User");
             }

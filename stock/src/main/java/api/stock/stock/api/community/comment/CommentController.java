@@ -1,7 +1,6 @@
 package api.stock.stock.api.community.comment;
 
 import api.stock.stock.global.response.ResponseDto;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

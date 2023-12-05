@@ -8,13 +8,9 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
-
-    List<BoardEntity> findByOrderByBoardWriteDateDescBoardIdDesc();
+public interface BoardRepository extends JpaRepository<BoardEntity, Integer>,BoardQueryDslRepository {
     List<BoardEntity> findByBoardTitleContains(String boardTitle);
     List<BoardEntity> findByBoardWriterEmail(String userEmail);
 
-
-    void deleteBoardEntityByBoardId(Integer BoardId);
-
+    void deleteAllByBoardWriterEmail(String userEmail);
 }

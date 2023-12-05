@@ -40,12 +40,6 @@ public class UserController {
         return result;
     }
 
-    @DeleteMapping("/api/myPage/withDraw")
-    public ResponseDto<String> withDraw(@AuthenticationPrincipal String userEmail){
-        ResponseDto<String> result = userService.withDraw(userEmail);
-        return result;
-    }
-
 
 
 }

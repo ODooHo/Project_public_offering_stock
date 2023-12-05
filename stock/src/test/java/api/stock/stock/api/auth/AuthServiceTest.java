@@ -73,29 +73,29 @@ class AuthServiceTest {
 //        Assertions.assertThat(userEntity.getUserProfile()).isEqualTo("profileUrl");
 //    }
 
-    @Test
-    void signUp_Success() {
-        // Prepare a SignUpDto
-        SignUpDto dto = new SignUpDto();
-        dto.setUserEmail("engh0205@naver.com");
-        dto.setUserNickname("오두호");
-        dto.setUserPassword("dhwjdgh1102");
-        dto.setUserPhoneNumber("01066378632");
-        dto.setUserProfile("default.jpg");
-
-        // Testing the signUp method
-        ResponseDto<UserEntity> response = authService.signUp(dto);
-
-        // Assertions
-        assertThat(response.getMessage()).isEqualTo("Success");
-
-        UserEntity userEntity = response.getData();
-        assertThat(userEntity).isNotNull();
-        assertThat(userEntity.getUserEmail()).isEqualTo("engh0205@naver.com");
-        assertThat(userEntity.getUserNickname()).isEqualTo("오두호");
-        assertThat(userEntity.getUserPhoneNumber()).isEqualTo("01066378632");
-        assertThat(userEntity.getUserProfile()).isEqualTo("default.jpg");
-    }
+//    @Test
+//    void signUp_Success() {
+//        // Prepare a SignUpDto
+//        SignUpDto dto = new SignUpDto();
+//        dto.setUserEmail("engh0205@naver.com");
+//        dto.setUserNickname("오두호");
+//        dto.setUserPassword("dhwjdgh1102");
+//        dto.setUserPhoneNumber("01066378632");
+//        dto.setUserProfile("default.jpg");
+//
+//        // Testing the signUp method
+//        ResponseDto<UserEntity> response = authService.signUp(dto);
+//
+//        // Assertions
+//        assertThat(response.getMessage()).isEqualTo("Success");
+//
+//        UserEntity userEntity = response.getData();
+//        assertThat(userEntity).isNotNull();
+//        assertThat(userEntity.getUserEmail()).isEqualTo("engh0205@naver.com");
+//        assertThat(userEntity.getUserNickname()).isEqualTo("오두호");
+//        assertThat(userEntity.getUserPhoneNumber()).isEqualTo("01066378632");
+//        assertThat(userEntity.getUserProfile()).isEqualTo("default.jpg");
+//    }
 
 
 

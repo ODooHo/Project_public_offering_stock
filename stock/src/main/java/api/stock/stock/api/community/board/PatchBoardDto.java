@@ -2,7 +2,6 @@ package api.stock.stock.api.community.board;
 
 import lombok.*;
 
-import java.time.LocalDate;
 
 @Getter
 @Setter

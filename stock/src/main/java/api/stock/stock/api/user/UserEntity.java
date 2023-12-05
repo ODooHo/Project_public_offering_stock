@@ -1,13 +1,9 @@
 package api.stock.stock.api.user;
 
-import api.stock.stock.api.auth.SignUpDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
-import org.modelmapper.ModelMapper;
-
-import java.util.List;
 
 @Getter
 @Setter

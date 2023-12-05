@@ -2,17 +2,12 @@ package api.stock.stock.api.community.board;
 
 import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +35,6 @@ public class BoardService {
             String boardWriterNickname,
             MultipartFile boardImage) {
 
-//        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
-//        ZonedDateTime zonedDateTime = ZonedDateTime.parse(boardWriteDate, formatter.withZone(ZoneId.of("UTC")));
-//        LocalDate localDate =  zonedDateTime.toLocalDate();
-        //localDate = LocalDate.now();
 
         BoardEntity board = new BoardEntity();
         board.setBoardTitle(boardTitle);
@@ -52,7 +43,6 @@ public class BoardService {
         board.setBoardWriterProfile(boardWriterProfile);
         board.setBoardWriterNickname(boardWriterNickname);
         board.setBoardWriteDate(LocalDate.now());
-        //board.setBoardImage(dto.getBoardImageBytes());
         boardRepository.save(board);
         try{
             fileService.uploadImage(boardImage,board);
@@ -81,7 +71,7 @@ public class BoardService {
     public ResponseDto<List<BoardEntity>> getList() {
         List<BoardEntity> boardList = new ArrayList<>();
         try{
-            boardList = boardRepository.findByOrderByBoardWriteDateDescBoardIdDesc();
+            boardList = boardRepository.findList();
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
@@ -123,11 +113,25 @@ public class BoardService {
         }
 
         try{
-            boardRepository.deleteBoardEntityByBoardId(boardId);
+            boardRepository.deleteById(boardId);
         }catch (Exception e){
             return ResponseDto.setFailed("DataBase Error");
         }
         return ResponseDto.setSuccess("Success","Delete Completed");
+    }
+
+    public ResponseDto<String> deleteByWithdraw(String userEmail){
+        List<BoardEntity> boardList = boardRepository.findByBoardWriterEmail(userEmail);
+
+        try{
+            for (BoardEntity board : boardList) {
+                Integer boardId = board.getBoardId();
+                deleteBoard(userEmail,boardId);
+            }
+        }catch (Exception e){
+            return ResponseDto.setFailed("DataBase Error");
+        }
+        return ResponseDto.setSuccess("Success" , "Delete Completed");
     }
 
 

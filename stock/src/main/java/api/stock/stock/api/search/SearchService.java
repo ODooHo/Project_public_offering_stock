@@ -30,7 +30,7 @@ public class SearchService {
     public ResponseDto<List<SearchEntity>>getRecentBoard(String userEmail){
         List<SearchEntity> search = new ArrayList<>();
         try{
-            search = searchRepository.findTop5ByUserEmailAndCategoryOrderBySearchIdDesc(userEmail,"board");
+            search = searchRepository.findRecent(userEmail,"board");
         }catch (Exception e){
             e.printStackTrace();
             ResponseDto.setFailed("DataBase Error");
@@ -42,7 +42,7 @@ public class SearchService {
     public ResponseDto<List<SearchEntity>>getRecentIpo(String userEmail){
         List<SearchEntity> search = new ArrayList<>();
         try{
-            search = searchRepository.findTop5ByUserEmailAndCategoryOrderBySearchIdDesc(userEmail,"ipo");
+            search = searchRepository.findRecent(userEmail,"ipo");
         }catch (Exception e){
             e.printStackTrace();
             ResponseDto.setFailed("DataBase Error");
@@ -103,6 +103,19 @@ public class SearchService {
 
         return ResponseDto.setSuccess("Success","Delete Completed");
     }
+
+
+    public ResponseDto<String> deleteByWithdraw(String userEmail){
+        try{
+            searchRepository.deleteAllByUserEmail(userEmail);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error");
+        }
+        return ResponseDto.setSuccess("Success","Delete Completed");
+    }
+
+
 
 
 

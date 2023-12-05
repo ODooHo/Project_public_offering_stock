@@ -86,12 +86,31 @@ public class CommentService {
         }
 
         try{
-            commentRepository.deleteCommentEntityByCommentId(commentId);
+            commentRepository.deleteById(commentId);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
         }
 
+        return ResponseDto.setSuccess("Success","Delete Completed");
+    }
+
+    public ResponseDto<String> deleteByBoard(Integer boardId){
+        try{
+            commentRepository.deleteAllByBoardId(boardId);
+        }catch (Exception e){
+            return ResponseDto.setFailed("DataBase Error");
+        }
+
+        return ResponseDto.setSuccess("Success","Delete Completed");
+
+    }
+    public ResponseDto<String> deleteByWithdraw(String userEmail){
+        try{
+            commentRepository.deleteAllByCommentWriterEmail(userEmail);
+        }catch (Exception e){
+            return ResponseDto.setFailed("DataBase Error");
+        }
         return ResponseDto.setSuccess("Success","Delete Completed");
 
     }

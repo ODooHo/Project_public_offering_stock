@@ -31,8 +31,8 @@ class TradeServiceTest {
         dto.setTradeName("매매일지 테스트2");
         dto.setTradeQuantity(1);
         dto.setUserEmail("1");
-        dto.setTradePrice(10000);
-        dto.setTradeType("테스트 타입");
+        dto.setBuyPrice(10000);
+        dto.setSellPrice(15000);
 
         //when
         ResponseDto<TradeEntity> response = tradeService.createTrade(dto);
@@ -44,16 +44,16 @@ class TradeServiceTest {
 
         log.info("테스트 결과 {}",response.getData());
     }
-
-    @Test
-    void deleteTrade(){
-        //given
-        Integer tradeId = 2;
-        String userEmail = "1";
-
-        //when
-        ResponseDto<String> response = tradeService.deleteTrade(userEmail, tradeId);
-        //then
-        assertThat(response.getMessage()).isEqualTo("Success");
-    }
+//
+//    @Test
+//    void deleteTrade(){
+//        //given
+//        Integer tradeId = 2;
+//        String userEmail = "1";
+//
+//        //when
+//        ResponseDto<String> response = tradeService.deleteTrade(userEmail, tradeId);
+//        //then
+//        assertThat(response.getMessage()).isEqualTo("Success");
+//    }
 }

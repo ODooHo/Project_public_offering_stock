@@ -15,8 +15,8 @@ public class TradeDto {
     private String userEmail;
     private LocalDate tradeDate;
     private String tradeName;
-    private String tradeType;
-    private Integer tradePrice;
+    private Integer buyPrice;
+    private Integer sellPrice;
     private Integer tradeQuantity;
     private Integer tradeFee;
     private String memo;

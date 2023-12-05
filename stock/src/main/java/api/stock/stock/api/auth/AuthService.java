@@ -4,8 +4,6 @@ import api.stock.stock.api.user.UserEntity;
 import api.stock.stock.global.response.ResponseDto;
 import api.stock.stock.global.security.TokenProvider;
 import api.stock.stock.api.user.UserRepository;
-import com.fasterxml.jackson.core.JsonParser;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +95,7 @@ public class AuthService {
         UserEntity userEntity = null;
 
         try{
-            userEntity = userRepository.findByUserEmail(userEmail);
+            userEntity = userRepository.findById(userEmail).orElse(null);
             if(userEntity == null){
                 return ResponseDto.setFailed("Unknown User!");
             }
@@ -112,7 +110,7 @@ public class AuthService {
 
         String token = tokenProvider.createAccessToken(userEmail);
         Integer exprTime = 1800000;
-
+//        Integer exprTime = 5000;
         String refreshToken = tokenProvider.createRefreshToken(userEmail);
         Integer refreshExprTime = 360000000;
 
@@ -139,8 +137,8 @@ public class AuthService {
     public ResponseDto<RefreshResponseDto> getAccess(String refreshToken) {
         try {
             String accessToken = tokenProvider.createAccessTokenFromRefreshToken(refreshToken);
-
             Integer exprTime = 1800000;
+//            Integer exprTime = 5000;
 
             RefreshResponseDto refreshResponseDto = new RefreshResponseDto(accessToken, exprTime);
 

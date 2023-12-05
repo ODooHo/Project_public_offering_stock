@@ -25,12 +25,12 @@ public class TradeController {
     }
 
     @GetMapping("/getTrade")
-    ResponseDto<List<TradeEntity>> getTrade(@RequestBody String requestBody){
-        ResponseDto<List<TradeEntity>> result = tradeService.getTradeList(requestBody);
+    ResponseDto<List<TradeEntity>> getTrade(@AuthenticationPrincipal String userEmail){
+        ResponseDto<List<TradeEntity>> result = tradeService.getTradeList(userEmail);
         return result;
     }
 
-    @GetMapping("/deleteTrade/{tradeId}")
+    @DeleteMapping("/deleteTrade/{tradeId}")
     ResponseDto<String>deleteTrade(@AuthenticationPrincipal String userEmail, @PathVariable Integer tradeId){
         ResponseDto<String> result = tradeService.deleteTrade(userEmail, tradeId);
         return result;

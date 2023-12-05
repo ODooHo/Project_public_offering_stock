@@ -19,7 +19,7 @@ public class TradeService {
         this.modelMapper = modelMapper;
     }
 
-    ResponseDto<TradeEntity> createTrade(TradeDto dto){
+    public ResponseDto<TradeEntity> createTrade(TradeDto dto){
         String tradeName = dto.getTradeName();
         try{
             if (tradeRepository.existsByTradeName(tradeName)){
@@ -41,7 +41,7 @@ public class TradeService {
         return ResponseDto.setSuccess("Success",trade);
     }
 
-    ResponseDto<String> deleteTrade(String userEmail, Integer tradeId){
+    public ResponseDto<String> deleteTrade(String userEmail, Integer tradeId){
         TradeEntity trade = tradeRepository.findById(tradeId).orElse(null);
         String tradeUserEmail = trade.getUserEmail();
 
@@ -50,7 +50,7 @@ public class TradeService {
         }
 
         try{
-            tradeRepository.deleteTradeEntityByTradeId(tradeId);
+            tradeRepository.deleteById(tradeId);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.setFailed("DataBase Error");
@@ -58,7 +58,7 @@ public class TradeService {
         return ResponseDto.setSuccess("Success","Delete Completed");
     }
 
-    ResponseDto<List<TradeEntity>> getTradeList(String userEmail){
+    public ResponseDto<List<TradeEntity>> getTradeList(String userEmail){
         List<TradeEntity> tradeList = new ArrayList<>();
 
         try{
@@ -69,6 +69,17 @@ public class TradeService {
         }
 
         return ResponseDto.setSuccess("Success",tradeList);
+    }
+
+
+    public ResponseDto<String> deleteByWithdraw(String userEmail){
+        try{
+            tradeRepository.deleteAllByUserEmail(userEmail);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("DataBase Error");
+        }
+        return ResponseDto.setSuccess("Success","Delete Completed");
     }
 
 

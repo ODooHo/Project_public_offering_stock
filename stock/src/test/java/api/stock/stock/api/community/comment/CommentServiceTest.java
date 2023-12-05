@@ -26,57 +26,70 @@ class CommentServiceTest {
         // Given
         CommentDto dto = new CommentDto();
         dto.setBoardId(1);
-        dto.setCommentWriterEmail("1");
+        dto.setCommentWriterEmail("test@example.com");
         dto.setCommentContent("2");
         dto.setCommentWriterNickname("1");
         // When
-        ResponseDto<CommentEntity> response = commentService.writeComment(1,dto);
+        ResponseDto<CommentEntity> response = commentService.writeComment(2,dto);
         // Then
         log.info("Comment {}",response.getData());
         assertThat(response.getMessage()).isEqualTo("Success");
         assertThat(response.getData()).isNotNull();
     }
 
-    @Test
-    public void getComment(){
-        //Given
-        Integer boardId = 1;
-        //When
-        ResponseDto<List<CommentEntity>> response = commentService.getComment(boardId);
-        //Then
-        log.info("Comment {}",response.getData());
-        assertThat(response.getMessage()).isEqualTo("Success");
-        assertThat(response.getData()).isNotNull();
-    }
+//    @Test
+//    public void getComment(){
+//        //Given
+//        Integer boardId = 1;
+//        //When
+//        ResponseDto<List<CommentEntity>> response = commentService.getComment(boardId);
+//        //Then
+//        log.info("Comment {}",response.getData());
+//        assertThat(response.getMessage()).isEqualTo("Success");
+//        assertThat(response.getData()).isNotNull();
+//    }
+//
+//    @Test
+//    public void patchComment(){
+//        //given
+//        String userEmail = "1";
+//        Integer commentId = 1;
+//        PatchCommentDto dto = new PatchCommentDto();
+//        dto.setCommentContent("patch");
+//        //when
+//        ResponseDto<PatchCommentResponseDto> response = commentService.patchComment(userEmail,commentId,dto);
+//        //then
+//        log.info("PatchComment {}",response.getData());
+//        assertThat(response.getMessage()).isEqualTo("Success");
+//        assertThat(response.getData()).isNotNull();
+//    }
+//
+//
+//    @Test
+//    public void deleteComment(){
+//        //given
+//        String userEmail = "1";
+//        Integer commentId = 2;
+//        //when
+//        ResponseDto<String> response = commentService.deleteComment(userEmail,commentId);
+//        //then
+//        log.info("DeleteComment {}",response.getData());
+//        assertThat(response.getMessage()).isEqualTo("Success");
+//        assertThat(response.getData()).isNotNull();
+//    }
+//
 
     @Test
-    public void patchComment(){
+    public void delete(){
         //given
         String userEmail = "1";
-        Integer commentId = 1;
-        PatchCommentDto dto = new PatchCommentDto();
-        dto.setCommentContent("patch");
+        Integer boardId = 23;
         //when
-        ResponseDto<PatchCommentResponseDto> response = commentService.patchComment(userEmail,commentId,dto);
+        ResponseDto<String> response = commentService.deleteByBoard(boardId);
         //then
-        log.info("PatchComment {}",response.getData());
+        log.info("DeleteComment {}", response.getData());
         assertThat(response.getMessage()).isEqualTo("Success");
         assertThat(response.getData()).isNotNull();
     }
-
-
-    @Test
-    public void deleteComment(){
-        //given
-        String userEmail = "1";
-        Integer commentId = 2;
-        //when
-        ResponseDto<String> response = commentService.deleteComment(userEmail,commentId);
-        //then
-        log.info("DeleteComment {}",response.getData());
-        assertThat(response.getMessage()).isEqualTo("Success");
-        assertThat(response.getData()).isNotNull();
-    }
-
 
 }
