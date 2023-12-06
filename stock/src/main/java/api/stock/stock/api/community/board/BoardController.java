@@ -1,5 +1,6 @@
 package api.stock.stock.api.community.board;
 
+import api.stock.stock.api.app.DeleteApplication;
 import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,10 @@ public class BoardController {
 
     private final BoardService boardService;
     private final FileService fileService;
-    private final BoardDeleteApplication boardDelete;
+    private final DeleteApplication boardDelete;
 
     @Autowired
-    public BoardController(BoardService boardService, FileService fileService, BoardDeleteApplication boardDelete) {
+    public BoardController(BoardService boardService, FileService fileService, DeleteApplication boardDelete) {
         this.boardService = boardService;
         this.fileService = fileService;
         this.boardDelete = boardDelete;

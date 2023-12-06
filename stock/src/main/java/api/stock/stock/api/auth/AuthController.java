@@ -1,5 +1,6 @@
 package api.stock.stock.api.auth;
 
+import api.stock.stock.api.app.DeleteApplication;
 import api.stock.stock.api.user.UserEntity;
 import api.stock.stock.global.response.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private final WithdrawApplication withDraw;
+    private final DeleteApplication withDraw;
 
     @Autowired
-    public AuthController(AuthService authService, WithdrawApplication withDraw) {
+    public AuthController(AuthService authService, DeleteApplication withDraw) {
         this.authService = authService;
         this.withDraw = withDraw;
     }

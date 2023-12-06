@@ -1,37 +1,61 @@
-package api.stock.stock.api.auth;
+package api.stock.stock.api.app;
 
 import api.stock.stock.api.community.board.BoardService;
 import api.stock.stock.api.community.comment.CommentService;
 import api.stock.stock.api.community.likes.LikesService;
+import api.stock.stock.api.file.FileService;
 import api.stock.stock.api.ipo.favor.FavorService;
 import api.stock.stock.api.search.SearchService;
 import api.stock.stock.api.trade.TradeService;
 import api.stock.stock.api.user.UserService;
 import api.stock.stock.global.response.ResponseDto;
+import com.amazonaws.services.s3.AmazonS3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WithdrawApplication {
-    private final UserService userService;
+public class DeleteApplication {
+
     private final BoardService boardService;
     private final CommentService commentService;
     private final LikesService likesService;
+    private final FileService fileService;
     private final FavorService favorService;
     private final TradeService tradeService;
     private final SearchService searchService;
+    private final UserService userService;
+
+    private final AmazonS3 amazonS3;
 
 
     @Autowired
-    public WithdrawApplication(UserService userService, BoardService boardService, CommentService commentService, LikesService likesService,
-                               FavorService favorService, TradeService tradeService, SearchService searchService) {
-        this.userService = userService;
+    public DeleteApplication(BoardService boardService, CommentService commentService, LikesService likesService,
+                                  FileService fileService, FavorService favorService, TradeService tradeService,
+                                  SearchService searchService, UserService userService, AmazonS3 amazonS3) {
         this.boardService = boardService;
         this.commentService = commentService;
         this.likesService = likesService;
+        this.fileService = fileService;
         this.favorService = favorService;
         this.tradeService = tradeService;
         this.searchService = searchService;
+        this.userService = userService;
+        this.amazonS3 = amazonS3;
+    }
+
+
+    public ResponseDto<String> deleteInfo(String userEmail, Integer boardId){
+        try{
+            //사진 삭제 구현해야함
+            fileService.deleteBoardImage(boardId);
+            commentService.deleteByBoard(boardId);
+            likesService.deleteByBoard(boardId);
+            boardService.deleteBoard(userEmail,boardId);
+
+        }catch (Exception e){
+            return ResponseDto.setFailed("Database Error");
+        }
+        return ResponseDto.setSuccess("delete Completed","");
     }
 
     public ResponseDto<String> widthDraw(String userEmail){
@@ -50,8 +74,5 @@ public class WithdrawApplication {
 
         return ResponseDto.setSuccess("Success", "Delete Completed");
     }
-
-
-
 
 }
