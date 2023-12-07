@@ -1,10 +1,6 @@
 package api.stock.stock.api.ipo;
 
-import api.stock.stock.api.ipo.favor.FavorDto;
-import api.stock.stock.api.ipo.favor.FavorEntity;
-import api.stock.stock.api.ipo.favor.FavorRepository;
 import api.stock.stock.global.response.ResponseDto;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

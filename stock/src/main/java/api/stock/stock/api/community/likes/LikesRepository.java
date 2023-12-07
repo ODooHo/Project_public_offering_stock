@@ -11,8 +11,6 @@ import java.util.List;
 public interface LikesRepository extends JpaRepository<LikesEntity, Integer> {
     Integer countByBoardId(Integer boardId);
     void deleteByBoardIdAndUserEmail(Integer boardId, String userEmail);
-    List<LikesEntity> findByBoardId(Integer boardId);
-
     void deleteAllByBoardId(Integer boardId);
     void deleteAllByUserEmail(String userEmail);
     boolean existsByUserEmailAndBoardId(String userEmail, Integer BoardId);

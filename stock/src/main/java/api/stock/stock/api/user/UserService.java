@@ -1,9 +1,7 @@
 package api.stock.stock.api.user;
 
-import api.stock.stock.api.community.board.BoardRepository;
 import api.stock.stock.api.file.FileService;
 import api.stock.stock.global.response.ResponseDto;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,15 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BoardRepository boardRepository;
-    private final ModelMapper modelMapper;
     private final FileService fileService;
 
     @Autowired
-    public UserService(UserRepository userRepository, BoardRepository boardRepository, ModelMapper modelMapper, FileService fileService) {
+    public UserService(UserRepository userRepository, FileService fileService) {
         this.userRepository = userRepository;
-        this.boardRepository = boardRepository;
-        this.modelMapper = modelMapper;
         this.fileService = fileService;
     }
 

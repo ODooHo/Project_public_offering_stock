@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface FavorRepository extends JpaRepository<FavorEntity, Integer> {
-    FavorEntity findByFavorId(Integer FavorId);
     @Query("SELECT f.ipoName FROM favor f WHERE f.userEmail = :user_email")
     List<String> findIpoNameByUserEmail(@Param("user_email") String userEmail);
 

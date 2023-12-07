@@ -31,6 +31,7 @@ class BaseItem(scrapy.Item):
     profit = scrapy.Field() #영업이익
     pureProfit = scrapy.Field() #순 이익
     finalCollusion = scrapy.Field #확정 공모가
+
     
 
 
