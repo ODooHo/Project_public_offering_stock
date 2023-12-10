@@ -111,7 +111,6 @@ public class BoardService {
         if(!userEmail.equals(boardWriterEmail)){
             return ResponseDto.setFailed("Wrong Request(userEmail doesn't Match)");
         }
-
         try{
             boardRepository.deleteById(boardId);
         }catch (Exception e){
@@ -126,6 +125,7 @@ public class BoardService {
         try{
             for (BoardEntity board : boardList) {
                 Integer boardId = board.getBoardId();
+                fileService.deleteBoardImage(boardId);
                 deleteBoard(userEmail,boardId);
             }
         }catch (Exception e){
@@ -133,7 +133,6 @@ public class BoardService {
         }
         return ResponseDto.setSuccess("Success" , "Delete Completed");
     }
-
 
 
 }

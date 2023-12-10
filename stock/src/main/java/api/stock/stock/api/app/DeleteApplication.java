@@ -46,12 +46,10 @@ public class DeleteApplication {
 
     public ResponseDto<String> deleteInfo(String userEmail, Integer boardId){
         try{
-            //사진 삭제 구현해야함
             fileService.deleteBoardImage(boardId);
             commentService.deleteByBoard(boardId);
             likesService.deleteByBoard(boardId);
             boardService.deleteBoard(userEmail,boardId);
-
         }catch (Exception e){
             return ResponseDto.setFailed("Database Error");
         }
