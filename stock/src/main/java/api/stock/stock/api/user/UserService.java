@@ -27,9 +27,12 @@ public class UserService {
             if(userEntity == null){
                 return ResponseDto.setFailed("Does Not Exist User");
             }
-            userEntity.setUserNickname(userNickname);
-            fileService.setProfile(userProfile,userEmail);
+            if (userNickname != null) {
+                userEntity.setUserNickname(userNickname);
+            }
+            fileService.setProfile(userProfile, userEmail);
             userRepository.save(userEntity);
+
 
         }catch (Exception e){
             e.printStackTrace();

@@ -119,8 +119,7 @@ public class AuthService {
         return ResponseDto.setSuccess("Success",signInResponseDto);
     }
 
-    public ResponseDto<String> logout(LogoutDto dto){
-        String token = dto.getToken();
+    public ResponseDto<String> logout(String token){
         try{
             Long expiration = tokenProvider.getExpiration(token);
             redisTemplate.opsForValue().set(token,"logout",expiration, TimeUnit.MILLISECONDS);
@@ -136,6 +135,7 @@ public class AuthService {
 
     public ResponseDto<RefreshResponseDto> getAccess(String refreshToken) {
         try {
+            System.out.println("refreshToken = " + refreshToken);
             String accessToken = tokenProvider.createAccessTokenFromRefreshToken(refreshToken);
             Integer exprTime = 1800000;
 //            Integer exprTime = 5000;

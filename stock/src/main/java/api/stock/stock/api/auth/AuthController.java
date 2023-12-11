@@ -45,13 +45,13 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseDto<String> logout(@RequestBody LogoutDto requestBody){
-        ResponseDto<String> result = authService.logout(requestBody);
+    public ResponseDto<String> logout(@RequestHeader String token){
+        ResponseDto<String> result = authService.logout(token);
         return result;
     }
 
     @PostMapping("/getAccess")
-    public ResponseDto<RefreshResponseDto> getAccess(@RequestBody String refreshToken){
+    public ResponseDto<RefreshResponseDto> getAccess(@RequestHeader String refreshToken){
         ResponseDto<RefreshResponseDto> result = authService.getAccess(refreshToken);
         return result;
     }
