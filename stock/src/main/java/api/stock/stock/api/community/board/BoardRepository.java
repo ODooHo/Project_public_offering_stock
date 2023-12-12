@@ -11,6 +11,4 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer>,BoardQueryDslRepository {
     List<BoardEntity> findByBoardTitleContains(String boardTitle);
     List<BoardEntity> findByBoardWriterEmail(String userEmail);
-
-    void deleteAllByBoardWriterEmail(String userEmail);
 }
