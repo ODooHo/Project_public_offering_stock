@@ -77,8 +77,8 @@ class AuthServiceTest {
 //    void signUp_Success() {
 //        // Prepare a SignUpDto
 //        SignUpDto dto = new SignUpDto();
-//        dto.setUserEmail("engh0205@naver.com");
-//        dto.setUserNickname("오두호");
+//        dto.setUserEmail("test");
+//        dto.setUserNickname("테스트");
 //        dto.setUserPassword("dhwjdgh1102");
 //        dto.setUserPhoneNumber("01066378632");
 //        dto.setUserProfile("default.jpg");

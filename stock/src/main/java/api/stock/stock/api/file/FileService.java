@@ -117,6 +117,22 @@ public class FileService {
 
     }
 
+    public ResponseDto<String> deleteProfileImage(String userEmail){
+        UserEntity user = userRepository.findById(userEmail).orElse(null);
+        user.setUserProfile("default.jpg");
+        String fileName = userEmail + ".jpg";
+        String path = uploadDir + "profile/" + fileName;
+        try{
+            userRepository.save(user);
+            amazonS3.deleteObject(bucketName,path);
+        }catch (AmazonS3Exception e){
+            e.printStackTrace();
+            return ResponseDto.setFailed("S3 Error");
+        }
+        return ResponseDto.setSuccess("Success","Delete Completed");
+
+    }
+
 //    public ResponseDto<String> deleteBoardImage(Integer boardId){
 //        BoardEntity board = boardRepository.findById(boardId).orElse(null);
 //        String fileName = board.getBoardImage();

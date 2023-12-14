@@ -41,6 +41,12 @@ public class UserController {
         return result;
     }
 
+    @DeleteMapping("/profile/delete")
+    public ResponseDto<String> deleteProfile(@AuthenticationPrincipal String userEmail){
+        ResponseDto<String> result = fileService.deleteProfileImage(userEmail);
+        return result;
+    }
+
 
 
 }
