@@ -133,19 +133,7 @@ public class FileService {
 
     }
 
-//    public ResponseDto<String> deleteBoardImage(Integer boardId){
-//        BoardEntity board = boardRepository.findById(boardId).orElse(null);
-//        String fileName = board.getBoardImage();
-//        String path = uploadDir + "img/" + fileName;
-//        try{
-//            amazonS3.deleteObject(bucketName,path);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return ResponseDto.setFailed("S3 Error");
-//        }
-//        return ResponseDto.setSuccess("Success","Delete Completed");
-//
-//    }
+
 
 
     private ResponseEntity<byte[]> getImage(String imageName, String path) {
