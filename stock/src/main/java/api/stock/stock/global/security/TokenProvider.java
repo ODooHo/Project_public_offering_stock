@@ -45,7 +45,6 @@ public class TokenProvider {
             String userEmail = claims.getSubject();
 
             // 여기에서 필요한 추가 로직을 구현하여 새로운 Access Token을 생성하고 반환
-            // 예를 들어, 데이터베이스에서 해당 유저의 정보를 조회하거나, 다른 정보를 기반으로 Access Token을 생성할 수 있습니다.
             String newAccessToken = createAccessToken(userEmail);
             return newAccessToken;
         } catch (Exception e) {

@@ -44,7 +44,7 @@ public class DeleteApplication {
     }
 
 
-    public ResponseDto<String> deleteInfo(String userEmail, Integer boardId){
+    public ResponseDto<String> deleteBoard(String userEmail, Integer boardId){
         try{
             fileService.deleteBoardImage(boardId);
             commentService.deleteByBoard(boardId);

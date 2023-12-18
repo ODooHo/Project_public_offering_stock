@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private final DeleteApplication withDraw;
+    private final DeleteApplication deleteApplication;
 
     @Autowired
-    public AuthController(AuthService authService, DeleteApplication withDraw) {
+    public AuthController(AuthService authService, DeleteApplication deleteApplication) {
         this.authService = authService;
-        this.withDraw = withDraw;
+        this.deleteApplication = deleteApplication;
     }
 
     @PostMapping("/signUp")
@@ -58,7 +58,7 @@ public class AuthController {
 
     @DeleteMapping("/withDraw")
     public ResponseDto<String> withDraw(@AuthenticationPrincipal String userEmail){
-        ResponseDto<String> result = withDraw.widthDraw(userEmail);
+        ResponseDto<String> result = deleteApplication.widthDraw(userEmail);
         return result;
     }
 
