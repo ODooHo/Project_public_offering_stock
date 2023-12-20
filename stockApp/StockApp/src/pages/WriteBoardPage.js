@@ -1,147 +1,112 @@
-import React, { useEffect, useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, Alert, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, StyleSheet, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import { createBoard, editBoard } from '../API/BoardApi';
 import useUserStore from '../UserInfo/UserStore';
-import { createBoard, editBoard } from '../API/BoardApi'
-import { getToken } from '../tokenManager'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { JumpingTransition } from 'react-native-reanimated';
+import { BoardDetail } from './BoardDetail';
 
-const WriteBoardPage = ({ navigation, route }) => {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [image, setImage] = useState(null);
-    const userInfo = useUserStore((state) => state.user);
-
-    const board = route.params?.board;
-
-    useEffect(() => {
-        if (board) {
-            setTitle(board.boardTitle);
-            setContent(board.boardContent);
-        }
-
-        navigation.setOptions({
-            headerRight: () => (
-                <TouchableOpacity onPress={handleAction} style={{ marginRight: 10 }}>
-                    <Text style={{ color: 'black', fontSize: 14, marginRight: 6 }}>
-                        {board ? "수정" : "작성"}
-                    </Text>
-                </TouchableOpacity>
-            ),
-        });
-    }, [navigation, board, handleAction]);
+const WriteBoardPage = ({ route, navigation }) => {
+    // const [title, setTitle] = useState('');
+    // const [content, setContent] = useState('');
+    // const [image, setImage] = useState(null);
+    // const userInfo = useUserStore();
+    const existingBoard = route.params?.board;
+    const [title, setTitle] = useState(existingBoard?.boardTitle || '');
+    const [content, setContent] = useState(existingBoard?.boardContent || '');
+    const [image, setImage] = useState(existingBoard?.boardImage ? { uri: existingBoard.boardImage } : null);
+    const userInfo = useUserStore();
 
     const selectImage = () => {
-        launchImageLibrary({}, (response) => {
+        const options = {
+            mediaType: 'photo',
+            quality: 1,
+        };
+    
+        launchImageLibrary(options, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
             } else if (response.error) {
                 console.log('ImagePicker Error: ', response.error);
             } else {
-                setImage(response);
+                const source = { uri: response.assets[0].uri };
+                setImage(source);
+                console.log('Selected image: ', source);
             }
         });
     };
-  
-    const handlePostSubmit = async () => {
-        if (!title.trim() || !content.trim) {
+
+    const handleSubmit = async () => {
+        if (!title || !content) {
             Alert.alert('Error', 'Both title and content are required.');
             return;
         }
+        
+        const formData = new FormData();
+        formData.append('boardTitle', title);
+        formData.append('boardContent', content);
+        formData.append('boardWriterEmail', userInfo.user.userEmail);
+        formData.append('boardWriterProfile', userInfo.user.userProfile);
+        formData.append('boardWriterNickname', userInfo.user.userNickname);
+
+        const boardData = {
+            boardTitle: title,
+            boardContent: content,
+            boardWriterEmail: userInfo.user.userEmail,
+            boardWriterProfile: userInfo.user.userProfile,
+            boardWriterNickname: userInfo.user.userNickname,
+        };
+
+        if (image) {
+            const imageUri = Platform.OS === 'ios' ? image.uri.replace('file://', '') : image.uri;
+            formData.append('boardImage', {
+                uri: imageUri,
+                type: 'image/jpeg', // 실제 이미지 타입에 따라 변경할 수 있습니다.
+                name: 'photo.jpg', // 실제 파일 이름이나, 동적으로 생성된 파일 이름을 사용할 수 있습니다.
+            });
+        }
+
         try {
-            const token = await getToken();
-
-            const formData = new FormData();
-            formData.append('boardTitle', title);
-            formData.append('boardContent', content);
-            formData.append('boardWriterEmail', userInfo.userEmail);
-            formData.append('boardWriterProfile', userInfo.userProfile);
-            formData.append('boardWriterNickname', userInfo.userNickname);
-
-            //날짜
-            const currentDate = new Date().toISOString();
-            formData.append('boardWriteDate', currentDate);
-
-            if (image) {
-                formData.append('boardImage', {
-                    uri: image.uri,
-                    type: image.type,
-                    name: image.fileName,
-                });
+            console.log(`Submitting form with title: ${title} and content: ${content}`);
+            if (existingBoard) {
+                console.log(`Editing existing board with ID: ${existingBoard.boardId}`);
+                // 기존 글 수정
+                const response = await editBoard(existingBoard.boardId, boardData);
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+                    console.log('Server Response:', jsonResponse);
+                    Alert.alert('Success', 'Board edited successfully');
+                    navigation.goBack();
+                } else {
+                    const errorResponse = await response.text();
+                    console.error('Server Error:', errorResponse);
+                    Alert.alert('Error', 'Failed to edit board.');
+                }
             } else {
-                formData.append('boardImage', null);
+                // 새로운 글 작성
+                const response = await createBoard(formData);
+                console.log('Server Response:', response);
+                Alert.alert('Success', 'Board created successfully');
             }
-            const response = await createBoard(formData, token);
-            console.log('작성된 글:', response);
-            const isSuccess = response.result && response.message === "Success";
-            if (isSuccess) {
-                navigation.goBack();
-            } else {
-                Alert.alert('Error', 'Try again.');
-            }
+            navigation.goBack();
         } catch (error) {
-            console.error('Failed to post the board:', error);
-            Alert.alert('Error', 'Try again.');
+            console.error('Error creating/editing board:', error);
+            Alert.alert('Error', 'There was an issue creating/editing the board.');
         }
-    };
 
-    const handleEditSubmit = async () => {
-        if(!title || !content) {
-            Alert.alert('Error', 'Both title and content are required.');
-            return;
-        }
-        try {
-            const token = await getToken();
+        // try {
+        //     const response = await createBoard(formData);
+        //     console.log('Server Response:', response);
+        //     Alert.alert('Success', 'Board created successfully');
+        //     navigation.goBack();
+        // } catch (error) {
+        //     console.error('Error creating board:', error);
+        //     Alert.alert('Error', 'There was an issue creating the board.');
+        // }
 
-            const formData = new FormData();
-            formData.append('boardTitle', title);
-            formData.append('boardContent', content);
-            formData.append('boardWriterEmail', userInfo.userEmail);
-            formData.append('boardWriterProfile', userInfo.userProfile);
-            formData.append('boardWriterNickname', userInfo.userNickname);
-
-            //날짜
-            const currentDate = new Date().toISOString().split('T')[0];
-            // const currentDate = new Date().toISOString();
-            formData.append('boardWriteDate', currentDate);
-
-            if (image) {
-                formData.append('boardImage', {
-                    uri: image.uri,
-                    type: image.type,
-                    name: image.fileName,
-                });
-            } else {
-                formData.append('boardImage', null);
-            }
-
-            const response = await editBoard(board.id, formData, token);
-            console.log("수정된 글:", response)
-            const isSuccess = response.result && response.message === "Success";
-            if (isSuccess) {
-                navigation.goBack();
-            } else {
-                Alert.alert('Error', 'Try again.');
-            }
-        } catch (error) {
-            console.error('Failed to edit the board:', error);
-            Alert.alert('Error', 'Try again.');
-        }
-    };
-
-    const handleAction = async () => {
-        if (board) {
-            handleEditSubmit();
-        } else {
-            handlePostSubmit();
-        }
     };
 
     return (
         <View style={styles.container}>
-            {/* <Text style={styles.header}>{board ? "게시글 수정" : "게시글 작성"}</Text> */}
             <TextInput 
                 style={styles.input}
                 placeholder="제목"
@@ -159,62 +124,50 @@ const WriteBoardPage = ({ navigation, route }) => {
             <TouchableOpacity style={styles.button} onPress={selectImage}>
                 <Text style={styles.buttonText}>이미지 선택</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>작성</Text>
+            </TouchableOpacity>
         </View>
     );
-
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: 'white',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: 'black',
-    textAlign: 'center',
-  },
-  input: {
-    backgroundColor: 'white',
-    borderBottomWidth: 2,
-    borderBottomColor: '#e1e1e1',
-    marginBottom: 20,
-    paddingHorizontal: 15,
-    // padding: 15,
-    borderRadius: 0,
-    // backgroundColor: '#f5f5f5',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // flexDirection: 'row',
-    height: 50,
-    fontSize: 16,
-  },
-  contentInput: {
-    height: 250,
-    textAlignVertical: 'top',
-
-  },
-  image: {
-      width: 100,
-      height: 100,
-      marginBottom: 20,
-  },
-  button: {
-      backgroundColor: 'skyblue',
-      padding: 10,
-      borderRadius: 10,
-      alignItems: 'center',
-      marginBottom: 15,
-      height: 35,
-  },
-  buttonText: {
-      color: 'white',
-      fontWeight: '300',
-      fontSize: 15,
-  }
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: 'white',
+    },
+    input: {
+        backgroundColor: 'white',
+        borderBottomWidth: 2,
+        borderBottomColor: '#e1e1e1',
+        marginBottom: 20,
+        paddingHorizontal: 15,
+        height: 50,
+        fontSize: 16,
+    },
+    contentInput: {
+        height: 250,
+        textAlignVertical: 'top',
+    },
+    image: {
+        width: 100,
+        height: 100,
+        marginBottom: 20,
+    },
+    button: {
+        backgroundColor: 'skyblue',
+        padding: 10,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginBottom: 15,
+        height: 35,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: '300',
+        fontSize: 15,
+    },
 });
 
 export default WriteBoardPage;

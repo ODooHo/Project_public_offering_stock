@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { setRefreshToken, setToken, getToken } from '../tokenManager';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { setRefreshToken, setToken, getRefreshToken, getToken } from '../tokenManager';
 import { SignInApi, getAccessTokenApi } from '../API/AuthApi';
 import SignInStyles  from '../styleSheet/SignInStyle';
 import useUserStore from '../UserInfo/UserStore';
@@ -18,6 +18,7 @@ const SignInPage = ({ navigation }) => {
   
         if (token) {
           console.log("Received Token: ", token); // 받은 토큰 값 출력
+          console.log("Received RefreshToken: ", refreshToken); // 받은 리프레시토큰 값 출력
           await setToken(token);
           await setRefreshToken(refreshToken);
   
@@ -54,20 +55,24 @@ const SignInPage = ({ navigation }) => {
 
   const fetchDataWithToken = async () => {
     try {
-      const token = await getToken();
-      // console.log('Stored Token: ', token); //저장된 토큰 값 출력
-      const response = await getAccessTokenApi(token);
-      if (response && response.data && response.data.token) {
-        await setToken(response.data.token);
+      const accessToken = await getToken();
+      if (!accessToken) {
+        const refreshToken = await getRefreshToken();
+        if (refreshToken) {
+          const newAccessToken = await getAccessTokenApi();
+          if (newAccessToken) {
+            await setToken(newAccessToken);
+          }
+        }
       }
     } catch (error) {
+      console.log("로그인 페이지에서 토큰 가져오는데 오류:", error);
     }
   };
 
   useEffect(() => {
     fetchDataWithToken();
   }, []);
-
 
   return (
     <View style={SignInStyles.container}>

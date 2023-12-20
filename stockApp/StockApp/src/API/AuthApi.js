@@ -1,8 +1,5 @@
-// import axios from 'axios';
-// import { getToken, setToken, removeToken, setRefreshToken, getRefreshToken } from '../tokenManager';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// const SERVER_URL = 'http://15.165.24.146:8080'; //실제 API 서버의 기본 주소
+import axios from 'axios';
+import { SERVER_URL, makeAuthenticatedRequest } from "../tokenManager";
 
 // async function makeRequest(method, endpoint, data = {}, token = null, skipTokenFetch = false) {
 //     try {
@@ -25,8 +22,6 @@
 //         const response = await axios(config);
 //         return response.data;
 //     } catch (error) {
-//         console.error("API Request Error:", error.response.data);  // 에러 발생 시 서버 응답 본문 출력
-
 //         if (error.response && error.response.status === 401) {
 //             await removeToken();
 //         }
@@ -43,6 +38,72 @@
 //   }
 // };
 
+// export const SignUpApi = async (data) => {
+//     try {
+//         return await makeAuthenticatedRequest('POST', '/api/uth/signUp', data);
+//     } catch (error) {
+//         console.error('Signup failed!', error);
+//         throw error;
+//     }
+// };
+
+export const SignUpApi = async (data) => {
+    try {
+        const response = await axios.post(`${SERVER_URL}/api/auth/signUp`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Signup failed!', error);
+        throw error;
+    }
+};
+
+export const SignInApi = async (data) => {
+    try {
+        const response = await axios.post(`${SERVER_URL}/api/auth/signIn`,data);
+        return response.data;
+    } catch (error) {
+        console.error('로그인 실패:', error);
+        throw error;
+    }
+};
+
+// export const SignInApi = async (data) => {
+//     try {
+//         return await makeAuthenticatedRequest('POST', '/api/uth/signIn', data);
+//     } catch (error) {
+//         console.error('SignIn failed!', error);
+//         throw error;
+//     }
+// };
+
+// export const SignInApi = async (data) => {
+//     const response = await makeRequest('post', '/api/auth/signIn', data);
+//     if (response && response.data && response.data.token) {
+//         await setToken(response.data.token);
+//         await setRefreshToken(response.data.refreshToken);
+
+//         // 액세스 토큰의 만료 시간 계산
+//         const accessTokenExpiration = new Date(new Date().getTime() + response.data.tokenExprTIme);
+//         console.log("액세스 토큰 만료 시간:", accessTokenExpiration);
+
+//         // 리프레시 토큰의 만료 시간 계산
+//         const refreshTokenExpiration = new Date(new Date().getTime() + response.data.refreshExprTime);
+//         console.log("리프레시 토큰 만료 시간:", refreshTokenExpiration);
+//         // console.log("토큰 정보:", response.data);
+//     }
+//     return response;
+// };
+
+export const CheckEmailDuplicationApi = async (userEmail) => {
+    try {
+        const response = await axios.post(`${SERVER_URL}/api/auth/signUp/emailCheck/${userEmail}`);
+        return response.data;
+    } catch (error) {
+        console.error('이메일 중복 확인 실패:', error);
+        throw error;
+    }
+};
+
 // export const CheckEmailDuplicationApi = async (userEmail) => {
 //     try {
 //         const response = await makeRequest('POST', `/api/auth/signUp/emailCheck/${userEmail}`);
@@ -52,6 +113,16 @@
 //         throw error;
 //     }
 // };
+
+export const CheckNicknameDuplicationApi = async (userNickname) => {
+    try {
+        const response = await axios.post(`${SERVER_URL}/api/auth/signUp/nicknameCheck/${userNickname}`);
+        return response.data;
+    } catch (error) {
+        console.error('닉네임 중복 확인 실패:', error);
+        throw error;
+    }
+};
 
 // export const CheckNicknameDuplicationApi = async (userNickname) => {
 //     try {
@@ -63,119 +134,53 @@
 //     }
 // };
 
-// // export const SignInApi = async (data) => {
-// //     const response = await makeRequest('post', '/api/auth/signIn', data);
-// //     if (response && response.data && response.data.token) {
-// //         await setToken(response.data.token);
-// //         await setRefreshToken(response.data.refreshToken);  
-// //     }
-// //     return response;
-// // };
+export const LogoutApi = async () => {
+    try {
+        await makeAuthenticatedRequest('POST', '/api/auth/logout', { token });
+        await removeToken();
+        await removeRefreshToken();
+    } catch (error) {
+        console.error('로그아웃 에러:', error);
+        throw error;
+    }
+};
 
-// export const SignInApi = async (data) => {
+// export const LogoutApi = async () => {
 //     try {
-//         const response = await makeRequest('POST', '/api/auth/signIn', data);
-//         if (response && response.token) {
-//             console.log("Received Token: ", response.token); // 받은 토큰 값 출력
-//             await setToken(response.token);
-//             await setRefreshToken(response.refreshToken);  
-//             return response; // 응답 객체 전체 반환
-//         } else {
-//             console.error("로그인 실패: 토큰이 응답에 없습니다.");
-//             throw new Error("Token is missing in the response");
+//         const token = await getToken();
+//         if (!token) {
+//             throw new Error("No token available for logout");
 //         }
+//         await makeRequest('POST', '/api/auth/logout', { token });
+
+//         await removeToken();
+//         await removeRefreshToken();
 //     } catch (error) {
-//         console.error("로그인 에러:", error);
+//         console.error("로그아웃 에러:", error);
 //         throw error;
 //     }
 // };
 
-
-// // export const getAccessTokenApi = async (token) => {
-// //     const refreshToken = await getRefreshToken();
-// //     return makeRequest('post', '/api/auth/getAccess', {refreshToken}, token);
-// // };
-
-// export const getAccessTokenApi = (token) => {
-//     return makeRequest('post', '/api/auth/getAccess', {}, token);
+// export const getAccessTokenApi = async () => {
+//     try {
+//         const refreshToken = await getRefreshToken();
+//         if (!refreshToken) {
+//             throw new Error("저장된 리프레시 토큰이 없음!");
+//         }
+//         const response = await makeRequest('POST', '/api/auth/getAccess', { refreshToken: refreshToken });
+//         if (response && response.accessToken) {
+//             await setToken(response.accessToken);
+//             if (response.refreshToken) {
+//                 await setRefreshToken(response.refreshToken);
+//             }
+//             return response.accessToken;
+//         } else {
+//             throw new Error("새로운 토큰을 받아오는데 실패함!");
+//         }
+//     } catch (error) {
+//         console.error("리프레시 토큰 사용 에러:", error);
+//         await removeToken();
+//         await removeRefreshToken();
+//         throw error;
+//     }
 // };
-
-// export const LogoutApi = async () => {
-//     const token = await getToken();
-//     return makeRequest('POST', '/api/auth/logout', { token });
-// };
-
-import axios from 'axios';
-import { getToken, setToken, removeToken, setRefreshToken } from '../tokenManager';
-
-const SERVER_URL = 'http://15.165.24.146:8080'; //실제 API 서버의 기본 주소
-
-async function makeRequest(method, endpoint, data = {}, token = null, skipTokenFetch = false) {
-    try {
-        const config = {
-            method: method,
-            url: `${SERVER_URL}${endpoint}`,
-            data: data,
-            headers: {}
-        };
-
-        //skipTokenFetch가 true가 아닐 때만 getToken을 호출
-        if (!skipTokenFetch && !token) {
-            token = await getToken();
-        }
-
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        
-        const response = await axios(config);
-        return response.data;
-    } catch (error) {
-        if (error.response && error.response.status === 401) {
-            await removeToken();
-        }
-        throw error;
-    }
-}
-
-export const SignUpApi = async (data) => {
-  try {
-    const response = await makeRequest('POST', '/api/auth/signUp', data, null, true);
-    return response;
-  } catch (error) {
-    throw new Error("Signup failed!");
-  }
-};
-
-export const SignInApi = async (data) => {
-    const response = await makeRequest('post', '/api/auth/signIn', data);
-    if (response && response.data && response.data.token) {
-        await setToken(response.data.token);
-        await setRefreshToken(response.data.refreshToken);  
-    }
-    return response;
-};
-
-export const CheckEmailDuplicationApi = async (userEmail) => {
-    try {
-        const response = await makeRequest('POST', `/api/auth/signUp/emailCheck/${userEmail}`);
-        return response;
-    } catch (error) {
-        console.error("이메일 중복 확인 실패:", error);
-        throw error;
-    }
-};
-
-export const CheckNicknameDuplicationApi = async (userNickname) => {
-    try {
-        const response = await makeRequest('POST', `/api/auth/signUp/nicknameCheck/${userNickname}`);
-        return response;
-    } catch (error) {
-        console.error("닉네임 중복 확인 실패:", error);
-        throw error;
-    }
-};
-
-export const getAccessTokenApi = (token) => {
-    return makeRequest('post', '/api/auth/getAccess', {}, token);
-};

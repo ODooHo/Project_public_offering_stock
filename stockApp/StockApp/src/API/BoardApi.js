@@ -1,15 +1,6 @@
 import axios from 'axios';
-import { getToken } from '../tokenManager';
+import { SERVER_URL, makeAuthenticatedRequest, getAuthToken } from "../tokenManager";
 
-const SERVER_URL = 'http://15.165.24.146:8080';
-
-const getAuthToken = async () => {
-    const token = await getToken();
-    if (token) {
-        return `Bearer ${token}`;
-    }
-    return null;
-};
 
 export const fetchBoardList = async () => {
     try {
@@ -34,80 +25,78 @@ export const fetchBoardDetail = async (boardId) => {
 
 export const fetchBoardImage = async (boardId) => {
     try {
-        const response = await axios.get(`${SERVER_URL}/api/community/board/${boardId}/image`);
-        console.log(response.data)
-        return response.data;
+        const response = await axios.get(`${SERVER_URL}/api/community/board/${boardId}/image`, {
+            responseType: 'blob'
+        });
+        const urlCreator = window.URL || window.webkitURL;
+        const imageUrl = urlCreator.createObjectURL(response.data);
+        return imageUrl;
     } catch (error) {
-        console.error('Error fetchin BoardImage:', error);
+        console.error('Error fetching Board Image:', error);
         throw error;
     }
 };
 
-export const createBoard = async (formData, token) => {
+// export const createBoard = async (formData) => {
+//     try {
+//         return await makeAuthenticatedRequest('POST', `/api/community/board/writeBoard`, formData);
+//     } catch (error) {
+//         console.error('Error creating board:', error);
+//         throw error;
+//     }
+// };
+export const createBoard = async (formData) => {
     try {
-        const authToken = await getAuthToken();
+        const response = await fetch(`${SERVER_URL}/api/community/board/writeBoard`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': await getAuthToken(),
+                // 'Content-Type': 'multipart/form-data'는 설정하지 않습니다.
+            },
+        });
 
-        if (authToken) {
-            const response = await axios.post(
-                `${SERVER_URL}/api/community/board/writeBoard`,
-                formData,
-                {
-                    headers: {
-                        Authorization: authToken,
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
-            console.log("작성된 글 API:", response.data);
-            return response.data;
-        } else {
-            console.error('토큰이 없습니다.');
-            throw new Error('토큰이 없습니다.');
-        }
+        const responseData = await response.json();
+        console.log('Server Response:', responseData);
+        return responseData;
     } catch (error) {
         console.error('Error creating board:', error);
         throw error;
     }
 };
 
-export const editBoard = async (boardId, boardData, token) => {
+// export const editBoard = async (boardId, boardData) => {
+//     try {
+//         console.log('수정된 정보:', boardData);
+//         return await makeAuthenticatedRequest('PATCH', `/api/community/board/edit/${boardId}`, boardData);
+//     } catch (error) {
+//         console.error('Error editing board:', error);
+//         throw error;
+//     }
+// };
+export const editBoard = async (boardId, boardData) => {
     try {
-        console.log('수정된 정보:', boardData);
-        const response = await axios.patch(
-            `${SERVER_URL}/api/community/board/edit/${boardId}`,
-            boardData,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-        console.log(response.data);
-        return response.data;
+        console.log('Sending edit request for board ID:', boardId);
+        const response = await fetch(`${SERVER_URL}/api/community/board/edit/${boardId}`, {
+            method: 'PATCH',
+            body: JSON.stringify(boardData), // 수정된 데이터를 JSON 문자열로 변환하여 요청 본문에 포함
+            headers: {
+                'Content-Type': 'application/json', // JSON 형식으로 요청
+                'Authorization': await getAuthToken(), // 인증 토큰을 가져와서 헤더에 추가
+            },
+        });
+        console.log('Edit request sent. Awaiting response...');
+        return response;
     } catch (error) {
         console.error('Error editing board:', error);
         throw error;
     }
 };
 
+
 export const deleteBoard = async (boardId) => {
     try {
-        const authToken = await getAuthToken();
-        if (authToken) {
-            const response = await axios.delete(
-                `${SERVER_URL}/api/community/board/delete/${boardId}`,
-                {
-                    headers: {
-                        Authorization: authToken,
-                    },
-                }
-            );
-            console.log(response.data)
-            return response.data;
-        } else {
-            console.error('토큰이 없습니다.');
-            throw new Error('토큰이 없습니다.');
-        }
+        return await makeAuthenticatedRequest('DELETE', `/api/community/board/delete/${boardId}`);
     } catch (error) {
         console.error('Error deleting board:', error);
         throw error;
@@ -128,51 +117,35 @@ export const searchBoards = async (serachDto) => {
 
 export const fetchRecentSearches = async () => {
     try {
-        const authToken = await getAuthToken();
-        const response = await axios.get(`${SERVER_URL}/api/search/community`, {
-            headers: {
-                'Authorization': authToken,
-            },
-        });
-        console.log("최근 검색어(커뮤니티):", response.data);
-        return response.data;
+        return await makeAuthenticatedRequest('GET', '/api/search/community');
     } catch (error) {
-        console.error("최근 검색어(커뮤니티)를 가져오는 중 오류 발생:", error);
+        console.error('Error deleting board:', error);
         throw error;
     }
 };
 
 export const deleteSearchesTerm = async (searchId) => {
     try {
-        const response = await axios.delete(`${SERVER_URL}/api/search/${searchId}/delete`);
-        console.log("최근 검색어 삭제:", response.data);
-        return response.data;
+        return await makeAuthenticatedRequest('DELETE', `/api/search/${searchId}/delete`);
     } catch (error) {
-        console.error("최근 검색어를 삭제하는 중 오류 발생:", error);
+        console.error('Error deleting board:', error);
         throw error;
     }
 };
 
-//좋아요
+//좋아요 (문제 없음)
 export const addLike = async (likeDto) => {
     try {
-        const response = await axios.post(`${SERVER_URL}/api/community/board/${likeDto.boardId}/likes/add`, likeDto);
-        return response.data;
+        return await makeAuthenticatedRequest('POST', `/api/community/board/${likeDto.boardId}/likes/add`, likeDto);
     } catch (error) {
-        console.error('Error adding like:', error);
+        console.error('Error add like:', error);
         throw error;
     }
 };
 
-export const deleteLike = async (boardId, userEmail) => {
+export const deleteLike = async (boardId) => {
     try {
-        const authToken = await getAuthToken();
-        const response = await axios.delete(`${SERVER_URL}/api/community/board/${boardId}/likes/delete`, {
-            headers: {
-                'Authorization': authToken,
-            },
-        });
-        return response.data;
+        return await makeAuthenticatedRequest('DELETE', `/api/community/board/${boardId}/likes/delete`);
     } catch (error) {
         console.error('Error deleting like:', error);
         throw error;
@@ -186,26 +159,20 @@ export const getLikeCount = async (boardId) => {
 };
 
 
-//댓글
+//댓글 (문제 없음)
+export const fetchBoardComments = async (boardId) => {
+    try {
+        const response = await axios.get(`${SERVER_URL}/api/community/board/${boardId}/comment`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetchin Comments:', error);
+        throw error;
+      }
+};
+
 export const createComment = async (boardId, commentData) => {
     try {
-        const authToken = await getAuthToken();
-        if (authToken) {
-            const response = await axios.post(
-                `${SERVER_URL}/api/community/board/${boardId}/writeComment`,
-                commentData,
-                {
-                    headers: {
-                        Authorization: authToken,
-                    },
-                }
-            );
-            console.log(response.data)
-            return response.data;
-        } else {
-            console.error('토큰이 없습니다.');
-            throw new Error('토큰이 없습니다.');
-        }
+        return await makeAuthenticatedRequest('POST', `/api/community/board/${boardId}/writeComment`, commentData);
     } catch (error) {
         console.error('Error creating comment:', error);
         throw error;
@@ -214,22 +181,7 @@ export const createComment = async (boardId, commentData) => {
 
 export const deleteComment = async (boardId, commentId) => {
     try {
-        const authToken = await getAuthToken();
-        if (authToken) {
-            const response = await axios.delete(
-                `${SERVER_URL}/api/community/board/${boardId}/delete/${commentId}`,
-                {
-                    headers: {
-                        Authorization: authToken,
-                    },
-                }
-            );
-            console.log("댓글삭제 API:", response.data)
-            return response.data;
-        } else {
-            console.error('토큰이 없습니다.');
-            throw new Error('토큰이 없습니다.');
-        }
+        return await makeAuthenticatedRequest('DELETE', `/api/community/board/${boardId}/delete/${commentId}`);
     } catch (error) {
         console.error('Error deleting comment:', error);
         throw error;
@@ -238,44 +190,9 @@ export const deleteComment = async (boardId, commentId) => {
 
 export const editComment = async (boardId, commentId, commentData) => {
     try {
-        const authToken = await getAuthToken();
-
-        if (authToken) {
-            const response = await axios.patch(
-                `${SERVER_URL}/api/community/board/${boardId}/edit/${commentId}`,
-                commentData,
-                {
-                    headers: {
-                        Authorization: authToken,
-                    },
-                }
-            );
-            console.log(response.data)
-            return response.data;
-        } else {
-            console.error('토큰이 없습니다.');
-            throw new Error('토큰이 없습니다.');
-        }
+        return await makeAuthenticatedRequest('PATCH', `/api/community/board/${boardId}/edit/${commentId}`, commentData);
     } catch (error) {
-        if (error.response){
-            console.error('Server Response:', error.response);
-        } else if (error.request){
-            console.error('No response received:', error.request);
-        } else {
-            console.error('Error:', error.message);
-        }
-        // console.error('Error editing comment:', error);
+        console.error('Error editing comment:', error);
         throw error;
     }
-};
-  
-export const fetchBoardComments = async (boardId) => {
-    try {
-        const response = await axios.get(`${SERVER_URL}/api/community/board/${boardId}/comment`);
-        console.log(response.data)
-        return response.data;
-      } catch (error) {
-        console.error('Error fetchin Comments:', error);
-        throw error;
-      }
 };

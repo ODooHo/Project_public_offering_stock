@@ -1,87 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { View,Text,Button,FlatList,StyleSheet,TextInput,TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
-import { getProfileImageApi,createTradeEntryApi, } from '../API/MyPageApi';
+import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { LogoutApi } from '../API/AuthApi';
 import { useNavigation } from '@react-navigation/native';
 import useUserStore from '../UserInfo/UserStore';
-
-import EditProfile from './EditProfile';
-import TradeDetail from './TradeDetail';
-
-const SERVER_URL = 'http://15.165.24.146:8080';
+import { getTrades } from '../API/TradeApi';
+import { calculateTotalProfitRate } from './TradeProfit';
+import { getProfileImageApi, updateMyPageApi } from '../API/MyPageApi'
 
 const MyPage = () => {
   const userStore = useUserStore();
-  const { user, setUser } = userStore;
-  // const userProfileInfo = userStore.user;
+  const user = userStore.user;
   const [userProfileImage, setUserProfileImage] = useState({});
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-
-  console.log("정보확인:", user);
+  const [totalProfitRate, setTotalProfitRate] = useState(0);
+  const [monthlyProfitRate, setMonthlyProfitRate] = useState(0);
 
   useEffect(() => {
+    const fetchProfileImage = async () => {
+        setLoading(true);
+        try {
+            const imageUrl = await getProfileImageApi(user?.userEmail);
+            setUserProfileImage(imageUrl);
+        } catch (error) {
+            console.error('프로필 이미지 가져오기 실패:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (user) {
-      setUserProfileImage(user.userProfile); // 이미지 URL 업데이트
+      fetchProfileImage();
     }
   }, [user]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const imageUrl = await getProfileImageApi();
-        console.log("가져온 이미지 url확인:", imageUrl);
-        if (imageUrl) {
-          setUserProfileImage(imageUrl);
-        } else {
-          console.log("유효한 이미지 URL이 없습니다.")
-        }
-        // setUserProfileImage(imageUrl);
-        // 사용자 매매일지 불러오기
-        // getUserTradesApi()와 관련된 코드 추가
-        setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch MyPage data!', error);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
   const handleUpdateProfile = () => {
-    if (!user || !user.userNickname) {
-      Alert.alert('오류', '필요한 프로필 정보가 없습니다.');
-      return;
-    }
     navigation.navigate('EditProfile', {
       userProfile: user,
-      userProfileImage,
-      onUpdate: (updatedProfileInfo) => {
-        setUser(updatedProfileInfo);
+      onUpdate: async (updatedProfileInfo) => {
+        const newUser = updatedProfileInfo.data ? updatedProfileInfo.data.user : updatedProfileInfo;
+        userStore.setUser(newUser);
+
+        const imageUrl = await getProfileImageApi(newUser.userEmail);
+        setUserProfileImage(imageUrl);
       }
     });
   };
-
-  const handleCreateTradeEntry = async () => {
-    try {
-      const token = await getToken();
-      const tradeEntryData = {
-        // 매매일지 작성 정보 추가
-      };
-
-      // 매매일지 작성 로직 구현
-      await createTradeEntryApi(token, tradeEntryData);
-
-      // 작성 후 사용자 매매일지 다시 불러오기
-      // getUserTradesApi()와 관련된 코드 추가
-    } catch (error) {
-      console.error('Failed to create trade entry!', error);
-    }
-  };
-
+  
   const handleLogout = async () => {
     try {
-      await removeToken();
+      await LogoutApi;
       Alert.alert('로그아웃', '로그아웃되었습니다.');
       navigation.navigate('SignIn');
     } catch (error) {
@@ -89,29 +58,58 @@ const MyPage = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchTradesAndCalculateProfit = async () => {
+      try {
+        const response = await getTrades();
+        if (response && response.data) {
+          setTrades(response.data);
+          setTotalProfitRate(calculateTotalProfitRate(response.data));
+          const currentMonthTrades = response.data.filter(trade => {
+            const tradeDate = new Date(trade.tradeDate);
+            const currentDate = new Date();
+            return tradeDate.getMonth() === currentDate.getMonth() &&
+                   tradeDate.getFullYear() === currentDate.getFullYear();
+          });
+          setMonthlyProfitRate(calculateTotalProfitRate(currentMonthTrades));
+        }
+      } catch (error) {
+        console.error('거래 정보 가져오기 오류:', error);
+      }
+    };
+
+    fetchTradesAndCalculateProfit();
+  }, []);
+
+
   return (
     <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <View style={styles.profileSection}>
-          <View style={styles.imageContainer}>
-            {userProfileImage ? (
-              <Image source={{ uri: userProfileImage }} style={styles.profileImage} />
-            ) : (
-              <Text>프로필 이미지가 없습니다.</Text>
-            )}
-          </View>
-          <View style={styles.userInfoContainer}>
-            {user && (
-              <>
-                <Text style={styles.userNickname}>{user.userNickname}</Text>
-                <Text style={styles.userEmail}>{user.userEmail}</Text> 
-              </>
-            )}
-          </View>
-        </View>
-      )}
+      <View style={styles.profileSection}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          userProfileImage && (
+            // <Image source={image ? { uri: image.uri } : null} style={styles.profileImage} />
+            <Image source={{ uri: userProfileImage }} style={styles.profileImage} />
+          )
+        )}
+        <Text style={styles.userNickname}>{user.userNickname}</Text>
+        <Text style={styles.userEmail}>{user.userEmail}</Text>
+        {/* <Text style={styles.userNickname}>{user.data.user.userNickname}</Text> */}
+        {/* <Text style={styles.userEmail}>{user.data.user.userEmail}</Text> */}
+      </View>
+      {/* <View style={styles.profileSection}>
+        {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Image
+              source={{ uri: userProfileImage }}
+              style={styles.profileImage}
+            />
+          )}
+        <Text style={styles.userNickname}>{user?.userNickname}</Text>
+        <Text style={styles.userEmail}>{user?.userEmail}</Text> */}
+      {/* </View> */}
 
       <View style={styles.actionSection}>
         <TouchableOpacity
@@ -122,15 +120,18 @@ const MyPage = () => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate('TradeDetail')}
-        //   onPress={handleCreateTradeEntry}
           style={[styles.actionButton, styles.rightActionButton]}
         >
           <Text style={styles.actionButtonText}>매매일지 작성</Text>
         </TouchableOpacity>
       </View>
-      
+
       {/* 매매일지 목록 표시 */}
-      <Text style={styles.header}>매매일지</Text>
+      <View style={styles.profitRateSection}>
+        <Text style={styles.profitRateTitle}>수익률</Text>
+        <Text style={styles.profitRateText}>총 수익률: {totalProfitRate}%</Text>
+        <Text style={styles.profitRateText}>월별 수익률: {monthlyProfitRate}%</Text>
+      </View>
       <FlatList
         data={trades}
         keyExtractor={(item) => item.tradeId.toString()}
@@ -151,6 +152,7 @@ const MyPage = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -191,14 +193,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   actionSection: {
-   flexDirection: 'row',
-   justifyContent: 'space-between',
-   marginBottom: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
   },
   actionButton: {
     flex: 1,
     backgroundColor: '#77B5FE',
-    // #4f97A3, #3A75C4, #003366, #4169E1
     paddingVertical: 8,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -215,14 +216,32 @@ const styles = StyleSheet.create({
   rightActionButton: {
     marginLeft: 5,
   },
-  logoutButton:{
+  logoutButton: {
     backgroundColor: '#77B5FE',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
+  profitRateSection: {
+    backgroundColor: '#f8f8f8',
+    padding: 16,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginVertical: 10,
+  },
+  profitRateTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8
+  },
+  profitRateText: {
+    fontSize: 16
+  },
 });
 
 export default MyPage;

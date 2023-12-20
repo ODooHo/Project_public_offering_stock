@@ -22,7 +22,7 @@ const signUpStyles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 10,
         borderRadius: 5,
-        width: 100,
+        width: 280,       
     },
     inputError: {
         borderColor: 'red'

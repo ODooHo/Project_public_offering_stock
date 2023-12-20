@@ -293,20 +293,21 @@ const styles = StyleSheet.create({
   },
   importantInfoLabel: {
     fontWeight: 'bold',
-    color: '#000', // Dark text for better readability
+    color: '#000',
   },
   importantInfoValue: {
     fontWeight: 'bold',
     color: '#000',
+    width: 300,
   },
   lessImportantInfoContainer: {
-    // Style for less important information
+
   },
   lessImportantInfoLabel: {
-    // Style for less important labels
+
   },
   lessImportantInfoValue: {
-    // Style for less important values
+
   },
   favoriteButton: {
     alignItems: 'center',

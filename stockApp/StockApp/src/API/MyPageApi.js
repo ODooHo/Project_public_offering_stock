@@ -1,90 +1,83 @@
-import axios from 'axios';
-import { getToken } from '../tokenManager';
+import { SERVER_URL, makeAuthenticatedRequest, getAuthToken } from "../tokenManager";
 
-const SERVER_URL = 'http://15.165.24.146:8080';
-
-const getAuthToken = async () => {
-  const token = await getToken();
-  if (token) {
-      return `Bearer ${token}`;
-  }
-  return null;
-};
-
+//프로필 사진 가져오기
 export const getProfileImageApi = async () => {
-  const authToken = await getAuthToken();
   try {
-    const response = await axios.get(`${SERVER_URL}/api/myPage/profile`, {
-      responseType: 'blob',
-      headers: {
-        Authorization: authToken,
-      },
-    });
-    if (response.status === 200 && response.data) {
+    const responseBlob = await makeAuthenticatedRequest('GET', '/api/myPage/profile', null, 'blob');
+    if (responseBlob) {
       const urlCreator = window.URL || window.webkitURL;
-      const imageUrl = urlCreator.createObjectURL(response.data);
-      console.log("dlalwl URL:", imageUrl);
+      const imageUrl = urlCreator.createObjectURL(responseBlob);
+      console.log("프로필 이미지 URL:", imageUrl);
       return imageUrl;
     } else {
-      console.log(`Response status: ${response.status}`);
+      console.log("No image data received");
       return null;
     }
-    // const urlCreator = window.URL || window.webkitURL;
-    // const imageUrl = urlCreator.createObjectURL(response.data);
-    // console.log('한 번 보자:', imageUrl);
-    // return imageUrl;
-    // return response.data;
   } catch (error) {
     console.error('사용자 프로필 불러오기 에러 (MyPageApi.js)');
     throw error;
   }
 };
 
-// 회원 정보 수정
-export const updateMyPageApi = async (nickname, imageUri) => {
-  const authToken = await getAuthToken();
-  if(!authToken){
-    throw new Error('Authentication token is not available');
-  }
+// //회원 정보 수정
+// export const updateMyPageApi = async (nickname, imageUri) => {
+//   const formData = new FormData();
+//   formData.append('userNickname', nickname);
 
+//   if (imageUri) {
+//     console.log('imageUri:', imageUri);
+
+//     // 여기서는 imageUri가 이미 문자열이라고 가정합니다.
+//     formData.append('userProfile', {
+//       uri: imageUri,
+//       type: 'image/jpeg',
+//       name: 'profile.jpg',
+//     });
+
+//     try {
+//       const response = await makeAuthenticatedRequest('PATCH', '/api/myPage/patchUser', formData);
+//       console.log("회원 정보 수정:", response);
+//       return response;
+//     } catch (error) {
+//       console.error('사용자 프로필 업데이트 실패:', error);
+//       throw error;
+//     }
+//   } else {
+//     console.log('No imageUri provided');
+//   }
+// };
+
+export const updateMyPageApi = async (nickname, imageUri) => {
   const formData = new FormData();
+  // console.log("닉네임이랑 사진", imageUri);
   formData.append('userNickname', nickname);
 
-  if(imageUri) {
+  if (imageUri) {
     formData.append('userProfile', {
       uri: imageUri,
-      type: 'image/jpeg', // 또는 imageUri의 타입에 따라 변경
+      type: 'image/jpg',
       name: 'profile.jpg',
     });
-  }
 
-  try {
-    const response = await axios.patch(`${SERVER_URL}/api/myPage/patchUser`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: authToken,
-      },
-    });
+    try {
+      const response = await fetch(`${SERVER_URL}/api/myPage/patchUser`, {
+        method: 'PATCH',
+        body: formData,
+        headers: {
+          'Authorization': await getAuthToken(),
+        },
+      });
 
-    console.log("회원 정보 수정:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error('사용자 프로필 업데이트 실패:', error);
-    throw error;
-  }
-};
-
-
-// 매매일지
-export const createTradeEntryApi = async (token, tradeEntryData) => {
-  try {
-    const response = await axios.post(`${SERVER_URL}/api/myPage/trade`, tradeEntryData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
+      console.log("보낸 데이터", response);
+      
+      const responseData = await response.json();
+      console.log("회원 정보 수정 응답:", responseData);
+      return responseData;
+    } catch (error) {
+      console.error('사용자 프로필 업데이트 실패:', error);
+      throw error;
+    }
+  } else {
+    console.log('No imageUri provided');
   }
 };

@@ -3,16 +3,15 @@ import { View, Text, Button, FlatList, StyleSheet, TextInput, TouchableOpacity, 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { getProfileImageApi } from '../API/MyPageApi';
 
 import { fetchBoardDetail, fetchBoardImage, fetchBoardComments, createComment, deleteBoard, deleteComment, editComment, addLike, deleteLike, getLikeCount } from '../API/BoardApi';
 import useUserStore from '../UserInfo/UserStore';
 
-const SERVER_URL = 'http://15.165.24.146:8080';
-
 export const BoardDetail = ({ route }) => {
   const { boardId } = route.params;
   const { user } = useUserStore();
-  const [board, setBoard] = useState(null);
+  const [board, setBoard] = useState({});
   const [boardImageUrl, setBoardImageUrl] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -23,6 +22,7 @@ export const BoardDetail = ({ route }) => {
   const [liked, setLiked] = useState(false);
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
 
   const navigation = useNavigation();
 
@@ -32,7 +32,7 @@ export const BoardDetail = ({ route }) => {
 
   const handleEditInModal = () => {
     if(board.boardWriterEmail === currentUserEmail) {
-      navigation.navigate('WriteBoard', { board: board });
+      navigation.navigate('WriteBoard', { board: { ...board, imageUri: boardImageUrl } });
     } else {
       Alert.alert("알림", "자신이 작성한 게시글만 수정할 수 있습니다.");
     }
@@ -73,10 +73,17 @@ export const BoardDetail = ({ route }) => {
       .then(response => {
         if (response && response.data){
           setBoard(response.data);
+          if (response.data.boardWriterProfile) {
+            getProfileImageApi().then(profileImageUrl => {
+              setProfileImageUrl(profileImageUrl);
+            }).catch(error => {
+              console.error("프로필 이미지를 가져오는 중 오류 발생", error);
+            });
+          }
           if (response.data.boardImage) {
             fetchBoardImage(boardId)
-              .then(imageResponse => {
-                setBoardImageUrl(`${SERVER_URL}/api/community/board/${boardId}/image`);
+              .then(imageUrl => {
+                setBoardImageUrl(imageUrl);
               })
               .catch(error => {
                 console.error("게시글 이미지 불러오는 중 오류 발생!", error);
@@ -197,7 +204,7 @@ export const BoardDetail = ({ route }) => {
       {board && (
         <View style={styles.boardContainer}>
           <View style={styles.headerContainer}>
-            <Image source={{ uri: boardImageUrl }} style={styles.profileImage} />
+            <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
             <View style={styles.authorInfo}>
               <Text style={styles.authorName}>{board.boardWriterNickname}</Text>
               <Text style={styles.postDate}>{board.boardWriteDate}</Text>
